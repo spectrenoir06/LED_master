@@ -1,0 +1,6 @@
+[submodule "lib/LEDsController"]
+	path = lib/LEDsController
+	url = git@github.com:spectrenoir06/LEDsController.git
+[submodule "lib/LoveFrames"]
+	path = lib/LoveFrames
+	url = git@github.com:linux-man/LoveFrames.git
