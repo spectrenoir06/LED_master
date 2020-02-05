@@ -12,6 +12,6 @@ vec3 hsb2rgb( in vec3 c ){
 
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
-    return vec4(hsb2rgb(vec3(iTime/4,1.0,1.0)), 1.0);
+    return vec4(hsb2rgb(vec3(iTime/4,1.0,1.0)), 1.0) * color;
 
 }

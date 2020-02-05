@@ -20,6 +20,6 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
     float angle = iTime*2.0 + 2.0*(sin(iTime+radius));
     vec3 c = vec3((angle/(2.0*PI)),1.0,1.0);
 
-    return vec4(hsb2rgb(c), 1.0);
+    return vec4(hsb2rgb(c), 1.0) * color;
 
 }
