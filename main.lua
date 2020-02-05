@@ -8,57 +8,33 @@ local counter = 0
 
 local time = 0
 
-local lx = 64
-local ly = 8
+local lx = 20
+local ly = 20
 
 local json = require "lib.json"
-
-function rgb(r,g,b)
-	return r/255,g/255,b/255
-end
-
-
-function hslToRgb(h, s, l, a)
-	local r, g, b
-
-	if s == 0 then
-		r, g, b = l, l, l -- achromatic
-	else
-		function hue2rgb(p, q, t)
-			if t < 0   then t = t + 1 end
-			if t > 1   then t = t - 1 end
-			if t < 1/6 then return p + (q - p) * 6 * t end
-			if t < 1/2 then return q end
-			if t < 2/3 then return p + (q - p) * (2/3 - t) * 6 end
-			return p
-		end
-
-		local q
-		if l < 0.5 then q = l * (1 + s) else q = l + s - l * s end
-		local p = 2 * l - q
-
-		r = hue2rgb(p, q, h + 1/3)
-		g = hue2rgb(p, q, h)
-		b = hue2rgb(p, q, h - 1/3)
-	end
-
-	return r, g, b, a
-end
-
+require("lib/color")
 
 function love.load(arg)
 	canvas = love.graphics.newCanvas(lx, ly)
 	canvas_test = love.graphics.newCanvas(lx, ly)
 	canvas:setFilter("nearest", "nearest")
-	font = love.graphics.setNewFont(10)
+	font = love.graphics.setNewFont(14)
 	love.graphics.setFont(font)
 
 	poke = love.graphics.newImage("ressource/antoine.png")
+	mario = love.graphics.newImage("ressource/mario.png")
+	mario_anim = love.graphics.newImage("ressource/mario_anim.png")
 
-	controller = LEDsController:new(lx*ly, "RGB888", "192.168.1.210")--"10.80.1.18")
-	controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
-	controller.rgbw = false
-	controller.leds_by_uni = 170
+	quad = {
+		love.graphics.newQuad( 0, 0, 16, 20, mario_anim:getDimensions()),
+		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
+	}
+
+	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")--"10.80.1.18")
+	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
+	controller.rgbw = true
+	controller.leds_by_uni = 100
+	controller.debug = false
 
 	love.graphics.setLineWidth(1)
 	love.graphics.setLineStyle("rough")
@@ -66,7 +42,7 @@ function love.load(arg)
 	-- controller:start_dump("BRO888")
 
 	shaders = {}
-	shader_nb = 4
+	shader_nb = 1
 
 	local list = love.filesystem.getDirectoryItems("shader/")
 	print("Compile shader:")
@@ -77,14 +53,14 @@ function love.load(arg)
 		shaders[k].name = v
 	end
 
-	for k,v in pairs(loveframes.skins) do print(k,v) end
+	-- for k,v in pairs(loveframes.skins) do print(k,v) end
 
 	-- loveframes.SetActiveSkin("Orange")
 	loveframes.SetActiveSkin("Default red")
 
 	local frame = loveframes.Create("frame")
 	frame:SetName("Animation")
-	frame:SetSize(40*10, 20*10)
+	frame:SetSize(20*20, 20*20)
 	frame:SetResizable(true)
 	frame:SetMaxWidth(800)
 	frame:SetMaxHeight(600)
@@ -135,6 +111,8 @@ function love.load(arg)
 	node_list:AddColumn("port")
 	node_list:AddColumn("net")
 	node_list:AddColumn("subnet")
+	node_list:AddColumn("nb_port")
+	node_list:AddColumn("bindIndex")
 	node_list:AddColumn("status")
 
 	local frame3 = loveframes.Create("frame")
@@ -157,28 +135,30 @@ function love.load(arg)
 	for x=1, #controller.map do
 		for y=1, #controller.map[1] do
 			local m = controller.map[x][y]
-			local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
-			local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
-			local text = {
-				{color = {ur, ug, ub}},
-				"Uni:"..m.uni,
-				{color = {ir, ig, ib}},
-				"\nID:"..m.id,
-			}
-			local text1 = loveframes.Create("text")
-			text1:SetText(text)
-			grid:AddItem(text1, y, x)
+			if m then
+				local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
+				local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
+				local text = {
+					{color = {ur, ug, ub}},
+					"Uni:"..m.uni,
+					{color = {ir, ig, ib}},
+					"\nID:"..m.id,
+				}
+				local text1 = loveframes.Create("text")
+				text1:SetText(text)
+				grid:AddItem(text1, y, x)
+			end
 		end
 	end
 
-	local frame3 = loveframes.Create("frame")
-	frame3:SetName("Network Map")
-	frame3:SetSize(600, 250)
-	frame3:SetPos(0, 600)
+	local frame4 = loveframes.Create("frame")
+	frame4:SetName("Network Map")
+	frame4:SetSize(600, 250)
+	frame4:SetPos(0, 600)
 
-	network_map = loveframes.Create("columnlist", frame3)
+	network_map = loveframes.Create("columnlist", frame4)
 	network_map:SetPos(5, 30)
-	network_map:SetSize(frame3:GetWidth()-10, frame3:GetHeight()-30-5)
+	network_map:SetSize(frame4:GetWidth()-10, frame4:GetHeight()-30-5)
 	network_map:AddColumn("net")
 	network_map:AddColumn("subnet")
 	network_map:AddColumn("ip")
@@ -187,16 +167,59 @@ function love.load(arg)
 	network_map:AddColumn("On")
 
 	for i=0,8 do
-		print(info)
 		network_map:AddRow(
 			0,
 			i,
 			"192.168.1."..i,
 			6454,
+			nb_port,
+			bindIndex,
 			"False",
 			"True"
 		)
 	end
+
+	local frame5 = loveframes.Create("frame")
+	frame5:SetName("Pixel Map 2")
+	-- frame5:SetSize(300, 715)
+	frame5:SetSize(890, 715)
+	frame5:SetPos(0, 300)
+
+	local map = loveframes.Create("columnlist", frame5)
+	map:SetPos(5, 30)
+	map:SetSize(frame5:GetWidth()-10, frame5:GetHeight()-30-5)
+	map:SetDefaultColumnWidth(60)
+
+
+	local id = 1
+	for x=1, #controller.map do
+		map:AddColumn(x)
+	end
+
+	for y=1, #controller.map[1] do
+		local t= {}
+		for x=1, #controller.map do
+			local m = controller.map[x][y]
+			if m then
+				-- local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
+				-- local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
+				-- local text = {
+				-- 	{color = {ur, ug, ub}},
+				-- 	"Uni:"..m.uni,
+				-- 	{color = {ir, ig, ib}},
+				-- 	"\nID:"..m.id,
+				-- }
+				-- local text1 = loveframes.Create("text")
+				--
+				-- print(x,y)
+				-- map:AddItem(text1, y, x)
+				table.insert(t, "Uni:"..m.uni..", Id:"..m.uni)
+			end
+		end
+
+		map:AddRow(unpack(t))
+	end
+
 
 	local image = love.graphics.newImage("ressource/bg.png")
 	image:setWrap("repeat", "repeat")
@@ -223,13 +246,29 @@ function love.update(dt)
 	if timer > 1 / fps then
 
 		canvas:renderTo(function()
-			love.graphics.clear()
+			love.graphics.clear(0,0,0,1)
 
+			love.graphics.setColor(0.5, 0.5, 0.5)
 			love.graphics.setShader(shaders[shader_nb].shader)
 				love.graphics.draw(canvas_test,0,0)
 			love.graphics.setShader()
+			
+			love.graphics.push()
+				love.graphics.translate(10, 10)
+				love.graphics.rotate(time*4)
+				local r,g,b = hslToRgb(math.sin(time)/2+1, 1, 0.5)
+				love.graphics.setColor(r,g,b,1)
+				love.graphics.rectangle("fill", -6, -6, 12, 12)
+			love.graphics.pop()
+			-- love.graphics.print(math.floor(time), 0, 0)
 
-			love.graphics.setColor(1,1,1,1)
+			love.graphics.setColor(1,1,1)
+
+			-- love.graphics.draw(mario,0,0)
+			-- love.graphics.draw(mario_anim, quad[math.floor(time*5)%2+1] ,2,0)
+
+			--
+
 		end)
 
 		local data = canvas:newImageData()
@@ -238,10 +277,15 @@ function love.update(dt)
 		for x=0,canvas:getWidth()-1,1 do
 			for y=0,canvas:getHeight()-1,1 do
 				local r,g,b = data:getPixel(x, y)
-				controller:setArtnetLED(x, y, {r*255, g*255, b*255})
+				-- local w = (math.max(r,g,b) + math.min(r,g,b)) / 2
+				-- local w = math.min(r,g,b)
+				-- r,g,b = r-w, g-w, b-w
+				local w = 0
+
+				controller:setArtnetLED(x, y, {r*255, g*255, b*255, w*255})
 			end
 		end
-		-- controller:send(1/fps, true)
+		controller:send(1/fps, false)
 	end
 
 	if shaders[shader_nb] then
@@ -269,6 +313,8 @@ function love.update(dt)
 					info.port,
 					info.net,
 					info.subnet,
+					info.nb_port,
+					info.bindIndex,
 					info.status
 				)
 			-- end
