@@ -4,13 +4,15 @@ function network_scan:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Network Discovery")
 	frame:SetPos(0, 300)
-	frame:SetSize(600, 200)
+	frame:SetSize(600, 300)
 
 	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
 	frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
+
+	frame:SetDockable(true)
 
 	local node_list = loveframes.Create("columnlist", frame)
 	node_list:SetPos(5, 60)

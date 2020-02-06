@@ -5,15 +5,13 @@ local music = {}
 local abs = math.abs
 local new = complex.new
 
-local wave_size=8
-local color = {0,200,0}
-
-local t = {}
-
 function map(x,  in_min,  in_max,  out_min,  out_max)
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 end
 
+function lerp(a, b, t)
+	return a + (b - a) * t
+end
 
 function spectro_up(obj, sdata, size)
 	local MusicPos = obj:tell("samples")
@@ -31,22 +29,14 @@ function spectro_up(obj, sdata, size)
 		end
 
 	end
-	spectrum = fft(List, false)
-	-- for i,v in ipairs(spectrum) do
-	-- 	spectrum[i] = spectrum[i] * wave_size
-	-- end
+	return fft(List, false)
 end
-
-function lerp(a, b, t)
-	return a + (b - a) * t
-end
-
 
 function music:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("music")
-	frame:SetSize(300, 300)
-	frame:SetPos(300,0)
+	frame:SetSize(300, 120)
+	frame:SetPos(300,60)
 
 	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
 	local sound = love.audio.newSource(soundData)
@@ -57,6 +47,8 @@ function music:load(loveframes, lx, ly)
 	frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
+
+	frame:SetDockable(true)
 
 	local slider1 = loveframes.Create("slider", frame)
 	slider1:SetPos(5, 50)
@@ -77,31 +69,40 @@ function music:load(loveframes, lx, ly)
 	progressbar:SetWidth(290)
 	progressbar:SetMinMax(0, math.floor(sound:getDuration()))
 
+	local t = {}
+
 	frame.Update = function(object)
+		local l = 1
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
-		spectro_up(sound,soundData, size*2)
+		local spectre = spectro_up(sound,soundData, size*2/l)
 
 		love.graphics.setCanvas(canvas)
 		love.graphics.clear(0,0,0,1)
-		local lx = (canvas:getWidth() / size)*1
+		local lx = (canvas:getWidth() / size) * l
 		local ly = (canvas:getHeight() / 20)
 		love.graphics.setColor(0, 0, 0)
 		-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-		for i = 0, #spectrum/2-1 do
+		for i = 0, #spectre/2-1 do
 			local r,g,b = hslToRgb((time+i/20)%1,1,0.5)
+			-- local r,g,b = hslToRgb((i/50)%1,1,0.5)
 			love.graphics.setColor(r,g,b)
-			local v = 100*(spectrum[i+1]:abs())
+			local v = 100*(spectre[i+1]:abs())
 			v = math.min(v,200)
 			local m = map(v, 0, 200, 0, 20)
 			t[i+1] = lerp(t[i+1] or 0, m, slider1:GetValue())
 			love.graphics.rectangle("fill", i*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
-			-- love.graphics.rectangle("fill", canvas:getWidth()-i*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+			-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 		end
 		progressbar:SetValue(math.floor(sound:tell("seconds")))
 		love.graphics.setCanvas()
 
+	end
+
+	frame.OnClose = function(object)
+		sound:stop()
+		print("The frame was closed.")
 	end
 end
 

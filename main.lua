@@ -1,3 +1,6 @@
+love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua")
+
+
 local LEDsController = require "lib.LEDsController.LEDsController"
 local loveframes = require("lib.loveframes")
 
@@ -31,7 +34,7 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	lx, ly = 40, 20
+	lx, ly = 128, 128
 	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
 	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
 	controller.rgbw = true
@@ -78,7 +81,7 @@ function love.load(arg)
 	node_list = frame_network_scan:load(loveframes)
 	frame_pixel_map:load(loveframes)
 	frame_network_map:load(loveframes)
-	frame_music:load(loveframes)
+	-- frame_music:load(loveframes)
 	frame_player:load(loveframes)
 	print(node_list)
 
@@ -143,6 +146,7 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 	loveframes.draw()
+	love.graphics.print(love.timer.getFPS(), 10, 10)
 end
 
 function love.update(dt)
