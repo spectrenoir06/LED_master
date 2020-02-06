@@ -4,12 +4,15 @@ function pixel_map:load(loveframes)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Pixel Map")
 	frame:SetSize(890, 715)
-	frame:SetPos(610, 0)
+	frame:SetPos(600, 0)
 
 	frame:SetMaxWidth(1000)
 	frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
+
+
+	frame:SetDockable(true)
 
 
 	local grid = loveframes.Create("grid", frame)
@@ -40,6 +43,9 @@ function pixel_map:load(loveframes)
 				grid:AddItem(text1, y, x)
 			end
 		end
+	end
+	function frame:mousepressed(x, y, button)
+		print(x,y,button)
 	end
 
 end

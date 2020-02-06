@@ -11,6 +11,8 @@ function animation:load(loveframes, lx, ly)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
 
+	frame:SetDockable(true)
+
 	local panel = loveframes.Create("panel", frame)
 	panel:SetPos(4, 28)
 	panel:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)

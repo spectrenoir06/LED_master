@@ -3,7 +3,7 @@ local network_map = {}
 function network_map:load(loveframes)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Network Map")
-	frame:SetSize(600+10, 250)
+	frame:SetSize(600, 200)
 	frame:SetPos(0, 600)
 
 	frame:SetResizable(true)
@@ -12,6 +12,7 @@ function network_map:load(loveframes)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
 
+	frame:SetDockable(true)
 
 	network_map = loveframes.Create("columnlist", frame)
 	network_map:SetPos(5, 30)

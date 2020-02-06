@@ -27,6 +27,6 @@ vec4 effect( vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
     //create stripes
     vec3 col = vec3(1.0 - mod(uv.y * 0.5 - (iTime * (FALLING_SPEED + value / 5.0)) + value, 0.5));
     //add color
-    col *= hsb2rgb(vec3(iTime/4-uv.y/4/8,1,1));
+    col *= hsb2rgb(vec3(iTime/4.0-uv.y/4.0/8.0,1,1));
     return vec4(col,1.0) * color;
 }
