@@ -1,12 +1,18 @@
 local LEDsController = require "lib.LEDsController.LEDsController"
 local loveframes = require("lib.loveframes")
 
+local frame_animation = require("frame.animation")
+local frame_network_scan = require("frame.network_scan")
+local frame_pixel_map = require("frame.pixel_map")
+local frame_network_map = require("frame.network_map")
+local frame_music = require("frame.music")
+
 
 local timer = 0
 local fps = 30
 local counter = 0
 
-local time = 0
+time = 0
 
 local lx = 20
 local ly = 20
@@ -58,167 +64,54 @@ function love.load(arg)
 	-- loveframes.SetActiveSkin("Orange")
 	loveframes.SetActiveSkin("Default red")
 
-	local frame = loveframes.Create("frame")
-	frame:SetName("Animation")
-	frame:SetSize(20*20, 20*20)
-	frame:SetResizable(true)
-	frame:SetMaxWidth(800)
-	frame:SetMaxHeight(600)
-	frame:SetMinWidth(200)
-	frame:SetMinHeight(200)
-
-	local panel = loveframes.Create("panel", frame)
-	panel:SetPos(4, 28)
-	panel:SetSize(frame:GetWidth(), frame:GetHeight())
-
-	panel.Draw = function(object)
-		love.graphics.setColor(1, 1, 1)
-		love.graphics.draw(
-			canvas,
-			object:GetX(),
-			object:GetY(),
-			0,
-			(object:GetWidth()-4)/lx,
-			(object:GetHeight()-4)/ly
-		)
-	end
-
-	panel.Update = function(object)
-		object:SetSize(frame:GetWidth()-2, frame:GetHeight()-2-26)
-	end
-
-	local frame2 = loveframes.Create("frame")
-	frame2:SetName("Network Discovery")
-	frame2:SetSize(600, 400)
-	frame2:SetPos(0, 300)
-	-- frame2:SetResizable(true)
-
-	local button = loveframes.Create("button", frame2)
-	button:SetWidth(200)
-	button:SetPos(5, 30)
-	button:SetText("Scan network")
-	-- button:Center()
-	button.OnClick = function(object, x, y)
-		node_list:Clear()
-		controller:sendArtnetPoll()
-	end
-
-	node_list = loveframes.Create("columnlist", frame2)
-	node_list:SetPos(5, 60)
-	node_list:SetSize(frame2:GetWidth()-10, frame2:GetHeight()-60-5)
-	node_list:AddColumn("Name")
-	node_list:AddColumn("ip")
-	node_list:AddColumn("port")
-	node_list:AddColumn("net")
-	node_list:AddColumn("subnet")
-	node_list:AddColumn("nb_port")
-	node_list:AddColumn("bindIndex")
-	node_list:AddColumn("status")
-
-	local frame3 = loveframes.Create("frame")
-	frame3:SetName("Pixel Map")
-	-- frame3:SetSize(300, 715)
-	frame3:SetSize(890, 715)
-	frame3:SetPos(0, 300)
-
-	local grid = loveframes.Create("grid", frame3)
-	grid:SetPos(5, 30)
-	grid:SetRows(#controller.map[1])
-	grid:SetColumns(#controller.map)
-	grid:SetCellWidth(40)
-	grid:SetCellHeight(30)
-	grid:SetCellPadding(2)
-	grid:SetItemAutoSize(true)
-
-	local id = 1
-
-	for x=1, #controller.map do
-		for y=1, #controller.map[1] do
-			local m = controller.map[x][y]
-			if m then
-				local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
-				local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
-				local text = {
-					{color = {ur, ug, ub}},
-					"Uni:"..m.uni,
-					{color = {ir, ig, ib}},
-					"\nID:"..m.id,
-				}
-				local text1 = loveframes.Create("text")
-				text1:SetText(text)
-				grid:AddItem(text1, y, x)
-			end
-		end
-	end
-
-	local frame4 = loveframes.Create("frame")
-	frame4:SetName("Network Map")
-	frame4:SetSize(600, 250)
-	frame4:SetPos(0, 600)
-
-	network_map = loveframes.Create("columnlist", frame4)
-	network_map:SetPos(5, 30)
-	network_map:SetSize(frame4:GetWidth()-10, frame4:GetHeight()-30-5)
-	network_map:AddColumn("net")
-	network_map:AddColumn("subnet")
-	network_map:AddColumn("ip")
-	network_map:AddColumn("port")
-	network_map:AddColumn("Sync")
-	network_map:AddColumn("On")
-
-	for i=0,8 do
-		network_map:AddRow(
-			0,
-			i,
-			"192.168.1."..i,
-			6454,
-			nb_port,
-			bindIndex,
-			"False",
-			"True"
-		)
-	end
-
-	local frame5 = loveframes.Create("frame")
-	frame5:SetName("Pixel Map 2")
-	-- frame5:SetSize(300, 715)
-	frame5:SetSize(890, 715)
-	frame5:SetPos(0, 300)
-
-	local map = loveframes.Create("columnlist", frame5)
-	map:SetPos(5, 30)
-	map:SetSize(frame5:GetWidth()-10, frame5:GetHeight()-30-5)
-	map:SetDefaultColumnWidth(60)
+	frame_animation:load(loveframes, lx, ly)
+	frame_network_scan:load(loveframes)
+	frame_pixel_map:load(loveframes)
+	frame_network_map:load(loveframes)
+	frame_music:load(loveframes)
 
 
-	local id = 1
-	for x=1, #controller.map do
-		map:AddColumn(x)
-	end
 
-	for y=1, #controller.map[1] do
-		local t= {}
-		for x=1, #controller.map do
-			local m = controller.map[x][y]
-			if m then
-				-- local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
-				-- local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
-				-- local text = {
-				-- 	{color = {ur, ug, ub}},
-				-- 	"Uni:"..m.uni,
-				-- 	{color = {ir, ig, ib}},
-				-- 	"\nID:"..m.id,
-				-- }
-				-- local text1 = loveframes.Create("text")
-				--
-				-- print(x,y)
-				-- map:AddItem(text1, y, x)
-				table.insert(t, "Uni:"..m.uni..", Id:"..m.uni)
-			end
-		end
+	-- local frame5 = loveframes.Create("frame")
+	-- frame5:SetName("Pixel Map 2")
+	-- -- frame5:SetSize(300, 715)
+	-- frame5:SetSize(890, 715)
+	-- frame5:SetPos(0, 300)
+	--
+	-- local map = loveframes.Create("columnlist", frame5)
+	-- map:SetPos(5, 30)
+	-- map:SetSize(frame5:GetWidth()-10, frame5:GetHeight()-30-5)
+	-- map:SetDefaultColumnWidth(60)
 
-		map:AddRow(unpack(t))
-	end
+
+	-- local id = 1
+	-- for x=1, #controller.map do
+	-- 	map:AddColumn(x)
+	-- end
+	--
+	-- for y=1, #controller.map[1] do
+	-- 	local t= {}
+	-- 	for x=1, #controller.map do
+	-- 		local m = controller.map[x][y]
+	-- 		if m then
+	-- 			-- local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
+	-- 			-- local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
+	-- 			-- local text = {
+	-- 			-- 	{color = {ur, ug, ub}},
+	-- 			-- 	"Uni:"..m.uni,
+	-- 			-- 	{color = {ir, ig, ib}},
+	-- 			-- 	"\nID:"..m.id,
+	-- 			-- }
+	-- 			-- local text1 = loveframes.Create("text")
+	-- 			--
+	-- 			-- print(x,y)
+	-- 			-- map:AddItem(text1, y, x)
+	-- 			table.insert(t, "Uni:"..m.uni..", Id:"..m.uni)
+	-- 		end
+	-- 	end
+	--
+	-- 	map:AddRow(unpack(t))
+	-- end
 
 
 	local image = love.graphics.newImage("ressource/bg.png")
@@ -252,7 +145,7 @@ function love.update(dt)
 			love.graphics.setShader(shaders[shader_nb].shader)
 				love.graphics.draw(canvas_test,0,0)
 			love.graphics.setShader()
-			
+
 			love.graphics.push()
 				love.graphics.translate(10, 10)
 				love.graphics.rotate(time*4)
