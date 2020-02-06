@@ -8,7 +8,6 @@ local frame_animation = require("frame.animation")
 local frame_network_scan = require("frame.network_scan")
 local frame_pixel_map = require("frame.pixel_map")
 local frame_network_map = require("frame.network_map")
-local frame_music = require("frame.music")
 local frame_player = require("frame.player")
 
 
@@ -34,18 +33,18 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	lx, ly = 128, 128
-	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
-	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
-	controller.rgbw = true
-	controller.leds_by_uni = 100
+	-- lx, ly = 64, 64
+	-- controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
+	-- controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
+	-- controller.rgbw = true
+	-- controller.leds_by_uni = 100
 
 
-	-- lx, ly = 64, 8
-	-- controller = LEDsController:new(lx*ly, "artnet", "192.168.1.210")--"10.80.1.18")
-	-- controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
-	-- controller.rgbw = false
-	-- controller.leds_by_uni = 170
+	lx, ly = 64, 8
+	controller = LEDsController:new(lx*ly, "artnet", "192.168.1.210")--"10.80.1.18")
+	controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
+	controller.rgbw = false
+	controller.leds_by_uni = 170
 
 
 	controller.debug = false
@@ -72,61 +71,19 @@ function love.load(arg)
 		shaders[k].name = v
 	end
 
-	-- for k,v in pairs(loveframes.skins) do print(k,v) end
+	for k,v in pairs(loveframes.skins) do print(k,v) end
 
 	loveframes.SetActiveSkin("Orange")
+	-- loveframes.SetActiveSkin("Blue")
 	-- loveframes.SetActiveSkin("Default red")
+	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes, lx, ly)
 	node_list = frame_network_scan:load(loveframes)
 	frame_pixel_map:load(loveframes)
 	frame_network_map:load(loveframes)
-	-- frame_music:load(loveframes)
 	frame_player:load(loveframes)
 	print(node_list)
-
-
-
-	-- local frame5 = loveframes.Create("frame")
-	-- frame5:SetName("Pixel Map 2")
-	-- -- frame5:SetSize(300, 715)
-	-- frame5:SetSize(890, 715)
-	-- frame5:SetPos(0, 300)
-	--
-	-- local map = loveframes.Create("columnlist", frame5)
-	-- map:SetPos(5, 30)
-	-- map:SetSize(frame5:GetWidth()-10, frame5:GetHeight()-30-5)
-	-- map:SetDefaultColumnWidth(60)
-
-
-	-- local id = 1
-	-- for x=1, #controller.map do
-	-- 	map:AddColumn(x)
-	-- end
-	--
-	-- for y=1, #controller.map[1] do
-	-- 	local t= {}
-	-- 	for x=1, #controller.map do
-	-- 		local m = controller.map[x][y]
-	-- 		if m then
-	-- 			-- local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
-	-- 			-- local ir,ig,ib = hslToRgb(m.id/100,1,0.0)
-	-- 			-- local text = {
-	-- 			-- 	{color = {ur, ug, ub}},
-	-- 			-- 	"Uni:"..m.uni,
-	-- 			-- 	{color = {ir, ig, ib}},
-	-- 			-- 	"\nID:"..m.id,
-	-- 			-- }
-	-- 			-- local text1 = loveframes.Create("text")
-	-- 			--
-	-- 			-- print(x,y)
-	-- 			-- map:AddItem(text1, y, x)
-	-- 			table.insert(t, "Uni:"..m.uni..", Id:"..m.uni)
-	-- 		end
-	-- 	end
-	--
-	-- 	map:AddRow(unpack(t))
-	-- end
 
 
 	local image = love.graphics.newImage("ressource/bg.png")
@@ -171,7 +128,7 @@ function love.update(dt)
 			end
 		end
 
-		controller:send(0, false)
+		controller:send(0, true)
 		timer = 0
 	end
 
