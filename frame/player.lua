@@ -1,3 +1,5 @@
+require "lib.luafft"
+
 local player = {}
 
 local abs = math.abs
