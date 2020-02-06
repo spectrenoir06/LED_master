@@ -6,6 +6,7 @@ local frame_network_scan = require("frame.network_scan")
 local frame_pixel_map = require("frame.pixel_map")
 local frame_network_map = require("frame.network_map")
 local frame_music = require("frame.music")
+local frame_player = require("frame.player")
 
 
 local timer = 0
@@ -14,16 +15,10 @@ local counter = 0
 
 time = 0
 
-local lx = 20
-local ly = 20
-
 local json = require "lib.json"
 require("lib/color")
 
 function love.load(arg)
-	canvas = love.graphics.newCanvas(lx, ly)
-	canvas_test = love.graphics.newCanvas(lx, ly)
-	canvas:setFilter("nearest", "nearest")
 	font = love.graphics.setNewFont(14)
 	love.graphics.setFont(font)
 
@@ -36,11 +31,26 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")--"10.80.1.18")
+	lx, ly = 40, 20
+	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
 	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
 	controller.rgbw = true
 	controller.leds_by_uni = 100
+
+
+	-- lx, ly = 64, 8
+	-- controller = LEDsController:new(lx*ly, "artnet", "192.168.1.210")--"10.80.1.18")
+	-- controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
+	-- controller.rgbw = false
+	-- controller.leds_by_uni = 170
+
+
 	controller.debug = false
+
+
+	canvas = love.graphics.newCanvas(lx, ly)
+	canvas_test = love.graphics.newCanvas(lx, ly)
+	canvas:setFilter("nearest", "nearest")
 
 	love.graphics.setLineWidth(1)
 	love.graphics.setLineStyle("rough")
@@ -61,14 +71,16 @@ function love.load(arg)
 
 	-- for k,v in pairs(loveframes.skins) do print(k,v) end
 
-	-- loveframes.SetActiveSkin("Orange")
-	loveframes.SetActiveSkin("Default red")
+	loveframes.SetActiveSkin("Orange")
+	-- loveframes.SetActiveSkin("Default red")
 
 	frame_animation:load(loveframes, lx, ly)
-	frame_network_scan:load(loveframes)
+	node_list = frame_network_scan:load(loveframes)
 	frame_pixel_map:load(loveframes)
 	frame_network_map:load(loveframes)
 	frame_music:load(loveframes)
+	frame_player:load(loveframes)
+	print(node_list)
 
 
 
@@ -128,6 +140,7 @@ function love.joystickpressed( joystick, button )
 end
 
 function love.draw()
+	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 	loveframes.draw()
 end
@@ -135,34 +148,9 @@ end
 function love.update(dt)
 	timer = timer + dt
 	time = time + dt
+	-- print(1/dt)
 
 	if timer > 1 / fps then
-
-		canvas:renderTo(function()
-			love.graphics.clear(0,0,0,1)
-
-			love.graphics.setColor(0.5, 0.5, 0.5)
-			love.graphics.setShader(shaders[shader_nb].shader)
-				love.graphics.draw(canvas_test,0,0)
-			love.graphics.setShader()
-
-			love.graphics.push()
-				love.graphics.translate(10, 10)
-				love.graphics.rotate(time*4)
-				local r,g,b = hslToRgb(math.sin(time)/2+1, 1, 0.5)
-				love.graphics.setColor(r,g,b,1)
-				love.graphics.rectangle("fill", -6, -6, 12, 12)
-			love.graphics.pop()
-			-- love.graphics.print(math.floor(time), 0, 0)
-
-			love.graphics.setColor(1,1,1)
-
-			-- love.graphics.draw(mario,0,0)
-			-- love.graphics.draw(mario_anim, quad[math.floor(time*5)%2+1] ,2,0)
-
-			--
-
-		end)
 
 		local data = canvas:newImageData()
 		local ctn = 1
@@ -178,7 +166,9 @@ function love.update(dt)
 				controller:setArtnetLED(x, y, {r*255, g*255, b*255, w*255})
 			end
 		end
-		controller:send(1/fps, false)
+
+		controller:send(0, false)
+		timer = 0
 	end
 
 	if shaders[shader_nb] then
@@ -213,7 +203,7 @@ function love.update(dt)
 			-- end
 		end
 	end
-
+	--
 	loveframes.update(dt)
 end
 
