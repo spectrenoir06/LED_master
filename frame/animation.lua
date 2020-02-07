@@ -27,10 +27,11 @@ function animation:load(loveframes, lx, ly)
 			(object:GetWidth())/canvas:getWidth(),
 			(object:GetHeight())/canvas:getHeight()
 		)
+		local lx, ly = canvas:getDimensions()
 		love.graphics.setColor(0, 0, 0)
-		love.graphics.print("FPS: "..love.timer.getFPS(), object:GetX()+1, object:GetY()+1)
+		love.graphics.print(lx.."x"..ly.." FPS: "..love.timer.getFPS(), object:GetX()+5+1, object:GetY()+5+1)
 		love.graphics.setColor(1, 1, 1)
-		love.graphics.print("FPS: "..love.timer.getFPS(), object:GetX(), object:GetY())
+		love.graphics.print(lx.."x"..ly.." FPS: "..love.timer.getFPS(), object:GetX()+5, object:GetY()+5)
 	end
 
 	panel.Update = function(object)

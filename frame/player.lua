@@ -37,6 +37,7 @@ function player:load(loveframes, lx, ly)
 	frame:SetName("Player")
 	frame:SetSize(300, 300)
 	frame:SetPos(300,0)
+	frame:SetAlwaysUpdate(true)
 
 	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
@@ -46,112 +47,176 @@ function player:load(loveframes, lx, ly)
 
 	frame:SetDockable(true)
 
-	local multichoice = loveframes.Create("multichoice", frame)
-	multichoice:SetPos(5, 30)
+	local tabs = loveframes.Create("tabs", frame)
+	tabs:SetPos(4, 30)
+	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
 
+	local panel_video = loveframes.Create("panel")
+	local panel_shader = loveframes.Create("panel")
+	local panel_music = loveframes.Create("panel")
 
-
-	for k,v in ipairs(shaders) do
-		multichoice:AddChoice(v.name)
-	end
-	multichoice:AddChoice("Music")
-	multichoice:AddChoice("Video")
-
+	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
+	local video_source = video:getSource()
 	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
 	local sound = love.audio.newSource(soundData)
 
-	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
+	tabs:AddTab("Shader", panel_shader, nil)
+	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
+	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
 
-	multichoice.OnChoiceSelected = function(object, choice)
-		print(choice .. " was selected.")
-		sound:pause()
-		video:pause()
-		if choice == "Music" then
-			sound:play()
-		elseif choice == "Video" then
-			video:play()
+---------------------------- Video ---------------------------------------------
+
+	local video_progressbar = loveframes.Create("progressbar", panel_video)
+	video_progressbar:SetPos(68, 8)
+	video_progressbar:SetWidth(210)
+	video_progressbar:SetMinMax(0, math.floor(video_source:getDuration()))
+
+	local video_button = loveframes.Create("button", panel_video)
+	video_button:SetPos(8, 8)
+	video_button:SetSize(50, 25)
+	video_button:SetText("Pause")
+	video_button.OnClick = function(object, x, y)
+		if video:isPlaying() then
+			video:pause()
+			object:SetText("Play")
 		else
-			for k,v in ipairs(shaders) do
-				if v.name == choice then
-					shader_nb = k
-				end
+			video:play()
+			object:SetText("Pause")
+		end
+	end
+
+	panel_video.Update = function(object, dt)
+		love.graphics.setCanvas(canvas)
+		love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
+		love.graphics.setCanvas()
+		video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
+	end
+
+---------------------------- Shader --------------------------------------------
+
+	local choice_shader = loveframes.Create("multichoice", panel_shader)
+	choice_shader:SetPos(8, 8)
+	choice_shader:SetSize(panel_shader:GetWidth()-16, 25)
+
+	local slider_speed = loveframes.Create("slider", panel_shader)
+	slider_speed:SetPos(100, 40)
+	slider_speed:SetWidth(panel_shader:GetWidth()-100-8)
+	slider_speed:SetMinMax(0.0, 10)
+	slider_speed:SetValue(1)
+
+	local slider_speed_text = loveframes.Create("text", panel_shader)
+	slider_speed_text:SetPos(8, 40)
+	slider_speed_text:SetText("Speed: "..slider_speed:GetValue())
+
+	slider_speed.OnValueChanged = function(object)
+		slider_speed_text:SetText("Speed: "..math.floor(slider_speed:GetValue()*100)/100)
+		shaders_param.speed = slider_speed:GetValue()
+	end
+
+	local slider_density = loveframes.Create("slider", panel_shader)
+	slider_density:SetPos(100, 70)
+	slider_density:SetWidth(panel_shader:GetWidth()-100-8)
+	slider_density:SetMinMax(0.0, 4)
+	slider_density:SetValue(1)
+
+	local text1 = loveframes.Create("text", panel_shader)
+	text1:SetPos(8, 70)
+	text1:SetText("Density: "..slider_density:GetValue())
+
+	slider_density.OnValueChanged = function(object)
+		text1:SetText("Density: "..math.floor(slider_density:GetValue()*100)/100)
+		shaders_param.density = slider_density:GetValue()
+	end
+
+	for k,v in ipairs(shaders) do
+		choice_shader:AddChoice(v.name)
+	end
+
+	panel_shader.Update = function(object, dt)
+		love.graphics.setCanvas(canvas)
+			love.graphics.setColor(1,1,1,1)
+			-- love.graphics.setColor(0.5, 0.5, 0.5)
+			love.graphics.setShader(shaders[shader_nb].shader)
+				love.graphics.draw(canvas_test,0,0)
+			love.graphics.setShader()
+		love.graphics.setCanvas()
+	end
+
+	choice_shader.OnChoiceSelected = function(object, choice)
+		for k,v in ipairs(shaders) do
+			if v.name == choice then
+				shader_nb = k
 			end
 		end
 	end
-	multichoice:SelectChoice("distord.glsl")
+	choice_shader:SelectChoice("distord.glsl")
 
-	local slider1 = loveframes.Create("slider", frame)
-	slider1:SetPos(5, 100)
-	slider1:SetWidth(290)
+---------------------------- Music ---------------------------------------------
+
+	local slider1 = loveframes.Create("slider", panel_music)
+	slider1:SetPos(100, 8)
+	slider1:SetWidth(panel_music:GetWidth()-100-8)
 	slider1:SetMinMax(0.05, 1)
 	slider1:SetValue(0.4)
 
-	local text1 = loveframes.Create("text", frame)
-	text1:SetPos(100, 70)
+	local text1 = loveframes.Create("text", panel_music)
+	text1:SetPos(8, 9)
 	text1:SetText("Lerp: "..slider1:GetValue())
 
-	slider1.Update = function(object, dt)
+	slider1.OnValueChanged = function(object)
 		text1:SetText("Lerp: "..slider1:GetValue())
 	end
 
-	local progressbar = loveframes.Create("progressbar", frame)
-	progressbar:SetPos(5, 150)
-	progressbar:SetWidth(290)
+	local progressbar = loveframes.Create("slider", panel_music)
+	progressbar:SetPos(8, 34)
+	progressbar:SetWidth(panel_music:GetWidth()-16)
 	progressbar:SetMinMax(0, math.floor(sound:getDuration()))
 
+	progressbar.OnValueChanged = function(object)
+		-- progressbar:SetValue(math.floor(sound:tell("seconds")))
+		-- self.value = math.floor(sound:tell("seconds"))
+		sound:seek(progressbar:GetValue(), "seconds")
+	end
+
 	local t = {}
+	local timer = 0
 
-	frame.Update = function(object, dt)
-		if multichoice:GetChoice() == "Music" then
-			local l = 1
-			--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
-			local size = canvas:getWidth()
-			local spectre = spectro_up(sound, soundData, size/l)
+	panel_music.Update = function(object, dt)
+		timer = timer + dt
+		local l = 1
+		local div = 2
+		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
+		local size = canvas:getWidth()
+		local spectre = spectro_up(sound, soundData, size*div/l)
 
-			love.graphics.setCanvas(canvas)
+		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
 			local lx = (canvas:getWidth() / size) * l
 			local ly = (canvas:getHeight() / 20)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-			for i = 0, #spectre-1 do
+			for i = 0, #spectre/div-1 do
 				local v = 100*(spectre[i+1]:abs())
 				v = math.min(v,200)
 				local m = map(v, 0, 200, 0, 20)
 				t[i+1] = lerp(t[i+1] or 0, m, slider1:GetValue())
 
-				local x = (i*lx + canvas:getWidth()/2)%canvas:getWidth()
-				local r,g,b = hslToRgb((time+x/20)%1,1,0.5)
+				local x = i*lx --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
+				local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
 				-- local r,g,b = hslToRgb((i/50)%1,1,0.5)
 				love.graphics.setColor(r,g,b)
 
 				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 			end
-			progressbar:SetValue(math.floor(sound:tell("seconds")))
-			love.graphics.setCanvas()
-
-		elseif multichoice:GetChoice() == "Video" then
-			love.graphics.setCanvas(canvas)
-
-			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
-			love.graphics.setCanvas()
-		else
-			love.graphics.setColor(1,1,1,1)
-			love.graphics.setCanvas(canvas)
-				-- love.graphics.setColor(0.5, 0.5, 0.5)
-				love.graphics.setShader(shaders[shader_nb].shader)
-					love.graphics.draw(canvas_test,0,0)
-				love.graphics.setShader()
-
-				love.graphics.setColor(1,0,0,1)
-				-- love.graphics.rectangle("fill", 23	, 5, 1, 1)
-			love.graphics.setCanvas()
-
-
-		end
+			-- progressbar:SetValue(math.floor(sound:tell("seconds")))
+			-- self.value = math.floor(sound:tell("seconds"))
+		love.graphics.setCanvas()
 	end
+
+--------------------------------------------------------------------------------
+
 end
 
 return player

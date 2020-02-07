@@ -1,4 +1,5 @@
 uniform float iTime;
+uniform float density;
 uniform vec3 iResolution;
 
 vec3 hsb2rgb( in vec3 c ){
@@ -12,6 +13,6 @@ vec3 hsb2rgb( in vec3 c ){
 
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
-    return vec4(hsb2rgb(vec3(texture_coords.x+iTime/4.0,1,1)), 1.0) * color;
+    return vec4(hsb2rgb(vec3(texture_coords.x*density+iTime,1,1)), 1.0) * color;
 
 }
