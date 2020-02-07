@@ -7,7 +7,7 @@ local loveframes = require("lib.loveframes")
 local frame_animation = require("frame.animation")
 local frame_network_scan = require("frame.network_scan")
 local frame_pixel_map = require("frame.pixel_map")
-local frame_network_map = require("frame.network_map")
+-- local frame_network_map = require("frame.network_map")
 local frame_player = require("frame.player")
 
 
@@ -15,7 +15,7 @@ local timer = 0
 local fps = 60
 local counter = 0
 
-time = 0
+local time = 0
 
 local json = require "lib.json"
 require("lib/color")
@@ -33,19 +33,19 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	-- lx, ly = 40, 20
-	-- controller = LEDsController:new(2000, "artnet", "10.80.1.18")
-	-- controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
-	-- controller.rgbw = true
-	-- controller.leds_by_uni = 100
+	lx, ly = 40, 20
+	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
+	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
+	controller.rgbw = true
+	controller.leds_by_uni = 100
 
 
-	lx, ly = 64, 8
+	-- lx, ly = 64, 8
 	-- lx, ly = 64, 64
-	controller = LEDsController:new(lx*ly, "artnet")--"10.80.1.18")
-	controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
-	controller.rgbw = false
-	controller.leds_by_uni = 170
+	-- controller = LEDsController:new(lx*ly, "artnet")--"10.80.1.18")
+	-- controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
+	-- controller.rgbw = false
+	-- controller.leds_by_uni = 170
 
 
 	controller.debug = false
@@ -61,6 +61,10 @@ function love.load(arg)
 	-- controller:start_dump("BRO888")
 
 	shaders = {}
+	shaders_param = {
+		speed = 1,
+		density = 1
+	}
 	shader_nb = 1
 
 	local list = love.filesystem.getDirectoryItems("shader/")
@@ -74,15 +78,15 @@ function love.load(arg)
 
 	for k,v in pairs(loveframes.skins) do print(k,v) end
 
-	loveframes.SetActiveSkin("Orange")
+	-- loveframes.SetActiveSkin("Orange")
 	-- loveframes.SetActiveSkin("Blue")
-	-- loveframes.SetActiveSkin("Default red")
+	loveframes.SetActiveSkin("Default blue")
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes, lx, ly)
 	node_list = frame_network_scan:load(loveframes)
 	frame_pixel_map:load(loveframes)
-	frame_network_map:load(loveframes)
+	-- frame_network_map:load(loveframes)
 	frame_player:load(loveframes)
 	print(node_list)
 
@@ -109,7 +113,7 @@ end
 
 function love.update(dt)
 	timer = timer + dt
-	time = time + dt
+	time = time + (dt * shaders_param.speed)
 	-- print(1/dt)
 
 	if timer > 1 / fps then
@@ -143,6 +147,11 @@ function love.update(dt)
 		if shaders[shader_nb].shader:hasUniform('iMouse') then
 			local lx, ly = love.graphics.getDimensions()
 			shaders[shader_nb].shader:send('iMouse', { lx/love.mouse.getX(), ly/love.mouse.getY()})
+		end
+		for k,v in pairs(shaders_param) do
+			if shaders[shader_nb].shader:hasUniform(k) then
+				shaders[shader_nb].shader:send(k,v)
+			end
 		end
 	end
 
@@ -185,7 +194,7 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed( key, scancode, isrepeat )
-	print(key)
+	-- print(key)
 	if key == "up" then
 		ly = ly + 1
 	elseif key == "down" and canvas:getHeight() > 1 then
