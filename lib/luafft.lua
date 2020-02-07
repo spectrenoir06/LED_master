@@ -75,7 +75,16 @@ function fft(input, inverse)
 	--the size of input defines the number of total points
 	local num_points = #input
 
-	assert(#input == next_possible_size(#input), string.format("The size of your input is not correct. For your size=%i, use a table of size=%i with zeros at the end.", #input, next_possible_size(#input)))
+	-- assert(#input == next_possible_size(#input), string.format("The size of your input is not correct. For your size=%i, use a table of size=%i with zeros at the end.", #input, next_possible_size(#input)))
+	local n = next_possible_size(num_points)
+
+	if n ~= num_points then
+		for i=1, n-num_points do
+			table.insert(input, 0)
+		end
+	end
+	num_points = #input
+
 
 	local twiddles = {}
 	for i = 0,num_points-1 do

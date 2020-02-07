@@ -24,14 +24,20 @@ function animation:load(loveframes, lx, ly)
 			object:GetX(),
 			object:GetY(),
 			0,
-			(object:GetWidth())/lx,
-			(object:GetHeight())/ly
+			(object:GetWidth())/canvas:getWidth(),
+			(object:GetHeight())/canvas:getHeight()
 		)
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.print("FPS: "..love.timer.getFPS(), object:GetX()+1, object:GetY()+1)
+		love.graphics.setColor(1, 1, 1)
+		love.graphics.print("FPS: "..love.timer.getFPS(), object:GetX(), object:GetY())
 	end
 
 	panel.Update = function(object)
 		object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 	end
+
+
 end
 
 return animation

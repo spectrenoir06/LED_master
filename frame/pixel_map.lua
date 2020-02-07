@@ -6,6 +6,7 @@ function pixel_map:load(loveframes)
 	frame:SetSize(890, 715)
 	frame:SetPos(600, 0)
 
+	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
 	frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
@@ -14,8 +15,9 @@ function pixel_map:load(loveframes)
 
 	frame:SetDockable(true)
 
+	local panel = loveframes.Create("panel", frame)
 
-	local grid = loveframes.Create("grid", frame)
+	local grid = loveframes.Create("grid", panel)
 	grid:SetPos(5, 30)
 	grid:SetRows(#controller.map[1])
 	grid:SetColumns(#controller.map)
@@ -44,9 +46,15 @@ function pixel_map:load(loveframes)
 			end
 		end
 	end
-	function frame:mousepressed(x, y, button)
-		print(x,y,button)
+
+	function panel:Draw()
+
 	end
+
+
+	-- function frame:mousepressed(x, y, button)
+	-- 	print(x,y,button)
+	-- end
 
 end
 
