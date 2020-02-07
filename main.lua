@@ -1,7 +1,7 @@
 love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua")
 
 
-local LEDsController = require "lib.LEDsController.LEDsController"
+local LEDsController = require "lib.LEDsController"
 local loveframes = require("lib.loveframes")
 
 local frame_animation = require("frame.animation")
@@ -12,7 +12,7 @@ local frame_player = require("frame.player")
 
 
 local timer = 0
-local fps = 30
+local fps = 60
 local counter = 0
 
 time = 0
@@ -33,15 +33,16 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	-- lx, ly = 64, 64
-	-- controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
+	-- lx, ly = 40, 20
+	-- controller = LEDsController:new(2000, "artnet", "10.80.1.18")
 	-- controller:loadMap(json.decode(love.filesystem.read("map/map_20x20_bis.json")))
 	-- controller.rgbw = true
 	-- controller.leds_by_uni = 100
 
 
 	lx, ly = 64, 8
-	controller = LEDsController:new(lx*ly, "artnet", "192.168.1.210")--"10.80.1.18")
+	-- lx, ly = 64, 64
+	controller = LEDsController:new(lx*ly, "artnet")--"10.80.1.18")
 	controller:loadMap(json.decode(love.filesystem.read("map/map_hat_bis.json")))
 	controller.rgbw = false
 	controller.leds_by_uni = 170
@@ -103,7 +104,7 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 	loveframes.draw()
-	love.graphics.print(love.timer.getFPS(), 10, 10)
+	-- love.graphics.print(love.timer.getFPS(), 10, 10)
 end
 
 function love.update(dt)
@@ -128,7 +129,7 @@ function love.update(dt)
 			end
 		end
 
-		controller:send(0, true)
+		controller:send(0, false)
 		timer = 0
 	end
 
@@ -150,7 +151,13 @@ function love.update(dt)
 		local type, info = controller:receiveArtnet(data, ip, port)
 		if type == "reply" then
 			-- for i=0,20 do
-				print(info)
+				controller:addArtnetNode(
+					info.net,
+					info.subnet,
+					info.ip[1].."."..info.ip[2].."."..info.ip[3].."."..info.ip[4],
+					info.port,
+					nb
+				)
 				node_list:AddRow(
 					info.short_name,
 					info.ip[1].."."..info.ip[2].."."..info.ip[3].."."..info.ip[4],
@@ -178,8 +185,19 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed( key, scancode, isrepeat )
-	if key == "up" and shader_nb > 1 then shader_nb = shader_nb - 1 end
-	if key == "down" and shader_nb < #shaders then shader_nb = shader_nb + 1 end
+	print(key)
+	if key == "up" then
+		ly = ly + 1
+	elseif key == "down" and canvas:getHeight() > 1 then
+		ly = ly - 1
+	elseif key == "left" and canvas:getWidth() > 1 then
+		lx = lx - 1
+	elseif key == "right" then
+		lx = lx + 1
+	end
+	canvas = love.graphics.newCanvas(lx, ly)
+	canvas_test = love.graphics.newCanvas(lx, ly)
+	canvas:setFilter("nearest", "nearest")
 	loveframes.keypressed(key, unicode)
 end
 

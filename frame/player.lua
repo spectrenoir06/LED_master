@@ -78,7 +78,7 @@ function player:load(loveframes, lx, ly)
 			end
 		end
 	end
-	multichoice:SetChoice("color.glsl")
+	multichoice:SelectChoice("distord.glsl")
 
 	local slider1 = loveframes.Create("slider", frame)
 	slider1:SetPos(5, 100)
@@ -106,7 +106,7 @@ function player:load(loveframes, lx, ly)
 			local l = 1
 			--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 			local size = canvas:getWidth()
-			local spectre = spectro_up(sound, soundData, size*2/l)
+			local spectre = spectro_up(sound, soundData, size/l)
 
 			love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
@@ -115,15 +115,18 @@ function player:load(loveframes, lx, ly)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-			for i = 0, #spectre/2-1 do
-				local r,g,b = hslToRgb((time+i/20)%1,1,0.5)
-				-- local r,g,b = hslToRgb((i/50)%1,1,0.5)
-				love.graphics.setColor(r,g,b)
+			for i = 0, #spectre-1 do
 				local v = 100*(spectre[i+1]:abs())
 				v = math.min(v,200)
 				local m = map(v, 0, 200, 0, 20)
 				t[i+1] = lerp(t[i+1] or 0, m, slider1:GetValue())
-				love.graphics.rectangle("fill", i*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+
+				local x = (i*lx + canvas:getWidth()/2)%canvas:getWidth()
+				local r,g,b = hslToRgb((time+x/20)%1,1,0.5)
+				-- local r,g,b = hslToRgb((i/50)%1,1,0.5)
+				love.graphics.setColor(r,g,b)
+
+				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 			end
 			progressbar:SetValue(math.floor(sound:tell("seconds")))

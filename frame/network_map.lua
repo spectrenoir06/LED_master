@@ -30,10 +30,8 @@ function network_map:load(loveframes)
 			i,
 			"192.168.1."..i,
 			6454,
-			nb_port,
-			bindIndex,
-			"False",
-			"True"
+			"True",
+			"False"
 		)
 	end
 end
