@@ -4,6 +4,7 @@ function animation:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Animation")
 	frame:SetSize(300, 300)
+	frame:SetScreenLocked(true)
 
 	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
