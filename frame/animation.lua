@@ -3,7 +3,7 @@ local animation = {}
 function animation:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Animation")
-	frame:SetSize(300, 300)
+	frame:SetSize(600, 300)
 	frame:SetScreenLocked(true)
 
 	frame:SetResizable(true)
