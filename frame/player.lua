@@ -13,10 +13,7 @@ function lerp(a, b, t)
 	return a + (b - a) * t
 end
 
-function spectro_up(obj, sdata, size)
-	local MusicPos = obj:tell("samples")
-	local MusicSize = sdata:getSampleCount()
-
+function spectro_up_mic(obj, sdata, size)
 	if mic:getSampleCount() > size then
 		local List = {}
 		local data = mic:getData()
@@ -25,18 +22,24 @@ function spectro_up(obj, sdata, size)
 		end
 		return fft(List, false)
 	end
+end
 
-		-- for i= MusicPos, MusicPos + (size-1) do
-		-- 	CopyPos = i
-		-- 	if i + 2048 > MusicSize then i = MusicSize/2 end
-		--
-		-- 	if sdata:getChannelCount()==1 then
-		-- 		List[#List+1] = new(sdata:getSample(i), 0)
-		-- 	else
-		-- 		List[#List+1] = new(sdata:getSample(i*2), 0)
-		-- 	end
-		-- end
-	-- return fft(List, false)
+function spectro_up(obj, sdata, size)
+	local MusicPos = obj:tell("samples")
+	local MusicSize = sdata:getSampleCount()
+	local List = {}
+
+	for i= MusicPos, MusicPos + (size-1) do
+		CopyPos = i
+		if i + 2048 > MusicSize then i = MusicSize/2 end
+
+		if sdata:getChannelCount()==1 then
+			List[#List+1] = new(sdata:getSample(i), 0)
+		else
+			List[#List+1] = new(sdata:getSample(i*2), 0)
+		end
+	end
+	return fft(List, false)
 end
 
 function player:load(loveframes, lx, ly)
@@ -76,7 +79,7 @@ function player:load(loveframes, lx, ly)
 	end
 
 	mic = list[1]
-	mic:start(200, 16000)
+	mic:start(200, 8000)
 	spectre = {}
 
 	tabs:AddTab("Shader", panel_shader, nil)
@@ -198,8 +201,12 @@ function player:load(loveframes, lx, ly)
 		sound:seek(progressbar:GetValue(), "seconds")
 	end
 
+	local checkbox = loveframes.Create("checkbox", panel_music)
+	checkbox:SetText("Checkbox")
+	checkbox:SetPos(5, 100)
 	local t = {}
 	local timer = 0
+	spectre = {}
 
 	panel_music.Update = function(object, dt)
 		timer = timer + dt
@@ -207,9 +214,11 @@ function player:load(loveframes, lx, ly)
 		local div = 2
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
-		local s = spectro_up(sound, soundData, size*div/l)
-		if s then
-			spectre = s
+		if checkbox:GetChecked() then
+			spectre = spectro_up(sound, soundData, size*div/l)
+		else
+			s = spectro_up_mic(sound, soundData, size*div/l)
+			spectre = s or spectre
 		end
 
 		love.graphics.setCanvas(canvas)

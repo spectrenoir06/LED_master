@@ -22,7 +22,7 @@ while true do
 				controller:setArtnetLED(x, y, {r*255, g*255, b*255, w*255})
 			end
 		end
-		controller:send(1/fps, sync)
+		controller:send(0, sync)
 	end
 
 	local data = love.thread.getChannel('poll'):pop()

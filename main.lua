@@ -72,8 +72,8 @@ function love.load(arg)
 
 
 
-	canvas = love.graphics.newCanvas(lx, ly)
-	canvas_test = love.graphics.newCanvas(lx, ly)
+	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas:setFilter("nearest", "nearest")
 
 	shaders = {}
