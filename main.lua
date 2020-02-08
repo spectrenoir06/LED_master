@@ -44,14 +44,16 @@ function love.load(arg)
 
 	fps = 30
 	lx, ly = 40, 20
-	m = json.decode(love.filesystem.read("map/map_40x20.json"))
+	m = json.decode(love.filesystem.read("map/test.json"))
 	thread:start(
 		{
 			led_nb = lx*ly,
+			ip = "10.80.1.18",
 			protocol = "artnet",
-			debug = false,
+			debug = true,
 			map = m,
-			rgbw = true
+			rgbw = true,
+			leds_by_uni = 100
 		},
 		fps,
 		false
@@ -183,6 +185,7 @@ end
 
 function love.keypressed( key, scancode, isrepeat )
 	-- print(key)
+	loveframes.keypressed(key, unicode)
 	if key == "up" then
 		ly = ly + 1
 	elseif key == "down" and canvas:getHeight() > 1 then
@@ -191,11 +194,12 @@ function love.keypressed( key, scancode, isrepeat )
 		lx = lx - 1
 	elseif key == "right" then
 		lx = lx + 1
+	else
+		return
 	end
 	canvas = love.graphics.newCanvas(lx, ly)
 	canvas_test = love.graphics.newCanvas(lx, ly)
 	canvas:setFilter("nearest", "nearest")
-	loveframes.keypressed(key, unicode)
 end
 
 function love.keyreleased(key)

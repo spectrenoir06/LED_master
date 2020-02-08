@@ -5,7 +5,7 @@ local LEDsController = require "lib.LEDsController"
 
 
 local t, fps, sync = ...
--- print("thread start", t, fps, sync)
+print("thread start", t, fps, sync)
 
 controller = LEDsController:new(t)
 while true do
@@ -16,9 +16,9 @@ while true do
 			for y=0,data:getHeight()-1,1 do
 				local r,g,b = data:getPixel(x, y)
 				-- local w = (math.max(r,g,b) + math.min(r,g,b)) / 2
-				-- local w = math.min(r,g,b)
+				local w = math.min(r,g,b)
 				-- r,g,b = r-w, g-w, b-w
-				local w = 0
+				-- local w = 0
 				controller:setArtnetLED(x, y, {r*255, g*255, b*255, w*255})
 			end
 		end
