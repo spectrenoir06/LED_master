@@ -37,7 +37,7 @@ function network_scan:load(loveframes, lx, ly)
 	-- button:Center()
 	button.OnClick = function(object, x, y)
 		node_list:Clear()
-		controller:sendArtnetPoll()
+		love.thread.getChannel('poll'):push(true)
 	end
 
 	return node_list

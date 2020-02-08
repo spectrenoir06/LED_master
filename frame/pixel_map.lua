@@ -17,8 +17,8 @@ function pixel_map:load(loveframes)
 
 	local grid = loveframes.Create("grid", frame)
 	grid:SetPos(5, 30)
-	grid:SetRows(#controller.map[1])
-	grid:SetColumns(#controller.map)
+	grid:SetRows(#map[1])
+	grid:SetColumns(#map)
 	grid:SetCellWidth(40)
 	grid:SetCellHeight(30)
 	grid:SetCellPadding(2)
@@ -26,12 +26,12 @@ function pixel_map:load(loveframes)
 
 	local id = 1
 
-	local lx = #controller.map
-	local ly = #controller.map[1]
+	local lx = #map
+	local ly = #map[1]
 
 	for x=1, lx do
 		for y=1, ly do
-			local m = controller.map[x][y]
+			local m = map[x][y]
 			if m then
 				local ur,ug,ub = hslToRgb(m.uni/5,1,0.4)
 				local ir,ig,ib = hslToRgb(m.id/100,1,0.0)

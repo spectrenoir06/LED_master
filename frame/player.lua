@@ -59,6 +59,7 @@ function player:load(loveframes, lx, ly)
 	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
 	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
+	-- local soundData = love.sound.newSoundData("ressource/tecdream.mp3")
 	local sound = love.audio.newSource(soundData)
 
 	tabs:AddTab("Shader", panel_shader, nil)
@@ -198,7 +199,7 @@ function player:load(loveframes, lx, ly)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-			for i = 0, #spectre/div-1 do
+			for i = 0, #spectre/div/2-1 do
 				local v = 100*(spectre[i+1]:abs())
 				v = math.min(v,200)
 				local m = map(v, 0, 200, 0, 20)
@@ -210,7 +211,8 @@ function player:load(loveframes, lx, ly)
 				love.graphics.setColor(r,g,b)
 
 				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
-				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+				love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 			end
 			-- progressbar:SetValue(math.floor(sound:tell("seconds")))
 			-- self.value = math.floor(sound:tell("seconds"))
@@ -225,6 +227,7 @@ function player:load(loveframes, lx, ly)
 
 	local list = love.filesystem.getDirectoryItems("scripte/")
 	local scriptes = {}
+	print("Load scripts:")
 	for k,v in ipairs(list) do
 		print("    "..v)
 		scriptes[v] = require("scripte/"..v:gsub(".lua",""))
