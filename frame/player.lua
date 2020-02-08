@@ -5,7 +5,7 @@ local player = {}
 local abs = math.abs
 local new = complex.new
 
-function map(x,  in_min,  in_max,  out_min,  out_max)
+function f_map(x,  in_min,  in_max,  out_min,  out_max)
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 end
 
@@ -202,7 +202,7 @@ function player:load(loveframes, lx, ly)
 			for i = 0, #spectre/div/2-1 do
 				local v = 100*(spectre[i+1]:abs())
 				v = math.min(v,200)
-				local m = map(v, 0, 200, 0, 20)
+				local m = f_map(v, 0, 200, 0, 20)
 				t[i+1] = lerp(t[i+1] or 0, m, slider1:GetValue())
 
 				local x = i*lx --(i*lx + canvas:getWidth()/2)%canvas:getWidth()

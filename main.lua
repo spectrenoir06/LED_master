@@ -50,7 +50,8 @@ function love.load(arg)
 			led_nb = lx*ly,
 			protocol = "artnet",
 			debug = false,
-			map = m
+			map = m,
+			rgbw = true
 		},
 		fps,
 		false
@@ -93,7 +94,7 @@ function love.load(arg)
 
 	-- loveframes.SetActiveSkin("Orange")
 	-- loveframes.SetActiveSkin("Blue")
-	loveframes.SetActiveSkin("Default blue")
+	loveframes.SetActiveSkin("Default red")
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes, lx, ly)
