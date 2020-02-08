@@ -17,19 +17,26 @@ function spectro_up(obj, sdata, size)
 	local MusicPos = obj:tell("samples")
 	local MusicSize = sdata:getSampleCount()
 
-	local List = {}
-	for i= MusicPos, MusicPos + (size-1) do
-		CopyPos = i
-		if i + 2048 > MusicSize then i = MusicSize/2 end
-
-		if sdata:getChannelCount()==1 then
-			List[#List+1] = new(sdata:getSample(i), 0)
-		else
-			List[#List+1] = new(sdata:getSample(i*2), 0)
+	if mic:getSampleCount() > size then
+		local List = {}
+		local data = mic:getData()
+		for i= 0, size-1 do
+			List[#List+1] = new(data:getSample(i), 0)
 		end
-
+		return fft(List, false)
 	end
-	return fft(List, false)
+
+		-- for i= MusicPos, MusicPos + (size-1) do
+		-- 	CopyPos = i
+		-- 	if i + 2048 > MusicSize then i = MusicSize/2 end
+		--
+		-- 	if sdata:getChannelCount()==1 then
+		-- 		List[#List+1] = new(sdata:getSample(i), 0)
+		-- 	else
+		-- 		List[#List+1] = new(sdata:getSample(i*2), 0)
+		-- 	end
+		-- end
+	-- return fft(List, false)
 end
 
 function player:load(loveframes, lx, ly)
@@ -61,6 +68,16 @@ function player:load(loveframes, lx, ly)
 	-- local soundData = love.sound.newSoundData("ressource/8bit.mp3")
 	local soundData = love.sound.newSoundData("ressource/tecdream.mp3")
 	local sound = love.audio.newSource(soundData)
+
+	local list = love.audio.getRecordingDevices()
+
+	for k,v in ipairs(list) do
+		print(k,v:getName())
+	end
+
+	mic = list[1]
+	mic:start(200, 16000)
+	spectre = {}
 
 	tabs:AddTab("Shader", panel_shader, nil)
 	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
@@ -190,7 +207,10 @@ function player:load(loveframes, lx, ly)
 		local div = 2
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
-		local spectre = spectro_up(sound, soundData, size*div/l)
+		local s = spectro_up(sound, soundData, size*div/l)
+		if s then
+			spectre = s
+		end
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
@@ -199,7 +219,7 @@ function player:load(loveframes, lx, ly)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-			for i = 0, #spectre/div/2-1 do
+			for i = 0, #spectre/div-1 do
 				local v = 100*(spectre[i+1]:abs())
 				v = math.min(v,200)
 				local m = f_map(v, 0, 200, 0, 20)
@@ -212,7 +232,7 @@ function player:load(loveframes, lx, ly)
 
 				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
-				love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 			end
 			-- progressbar:SetValue(math.floor(sound:tell("seconds")))
 			-- self.value = math.floor(sound:tell("seconds"))
