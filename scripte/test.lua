@@ -3,7 +3,7 @@ local test = {}
 local font = love.graphics.newFont("ressource/Code_8x8.ttf",8)
 font:setFilter("nearest","nearest")
 
-function test:update(dt)
+function test:update(dt, lx, ly)
 	love.graphics.setFont(font)
 	love.graphics.clear(0,0,0,1)
 	for x=0,3 do
