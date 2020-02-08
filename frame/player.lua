@@ -47,8 +47,6 @@ function player:load(loveframes, lx, ly)
 
 	frame:SetDockable(true)
 
-	local img = love.graphics.newImage("ressource/42.png")
-
 	local tabs = loveframes.Create("tabs", frame)
 	tabs:SetPos(4, 30)
 	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
@@ -62,9 +60,6 @@ function player:load(loveframes, lx, ly)
 	local video_source = video:getSource()
 	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
 	local sound = love.audio.newSource(soundData)
-
-	local font = love.graphics.newFont("ressource/Code_8x8.ttf",8)
-	font:setFilter("nearest","nearest")
 
 	tabs:AddTab("Shader", panel_shader, nil)
 	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
@@ -224,21 +219,27 @@ function player:load(loveframes, lx, ly)
 
 ---------------------------- Test ----------------------------------------------
 
+	local choice_test = loveframes.Create("multichoice", panel_test)
+	choice_test:SetPos(8, 8)
+	choice_test:SetSize(panel_test:GetWidth()-16, 25)
+
+	local list = love.filesystem.getDirectoryItems("test/")
+	local tests = {}
+	for k,v in ipairs(list) do
+		print("    "..v)
+		tests[v] = require("test/"..v:gsub(".lua",""))
+		tests[v].name = v
+	end
+
+	for k,v in pairs(tests) do
+		choice_test:AddChoice(v.name)
+	end
+	choice_test:SelectChoice("test.lua")
+
+
 	panel_test.Update = function(object, dt)
 		love.graphics.setCanvas(canvas)
-		love.graphics.setFont(font)
-			love.graphics.clear(0,0,0,1)
-			for x=0,3 do
-				for y=0,1 do
-					local r,g,b = hslToRgb((x+y*4)/8,1,0.2)
-					love.graphics.setColor(r,g,b)
-					love.graphics.rectangle("fill", x*10, y*10, 10, 10)
-					love.graphics.setColor(1,1,1)
-					love.graphics.print(x+y*4, x*10+1, y*10)
-				end
-			end
-			-- love.graphics.setColor(1,0,0)
-			-- love.graphics.rectangle("fill", 5, 5, 10, 10)
+		tests[choice_test:GetChoice()]:update(dt)
 		love.graphics.setCanvas()
 	end
 
