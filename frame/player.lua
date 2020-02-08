@@ -47,6 +47,8 @@ function player:load(loveframes, lx, ly)
 
 	frame:SetDockable(true)
 
+	local img = love.graphics.newImage("ressource/42.png")
+
 	local tabs = loveframes.Create("tabs", frame)
 	tabs:SetPos(4, 30)
 	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
@@ -54,15 +56,20 @@ function player:load(loveframes, lx, ly)
 	local panel_video = loveframes.Create("panel")
 	local panel_shader = loveframes.Create("panel")
 	local panel_music = loveframes.Create("panel")
+	local panel_test = loveframes.Create("panel")
 
 	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
 	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
 	local sound = love.audio.newSource(soundData)
 
+	local font = love.graphics.newFont("ressource/Code_8x8.ttf",8)
+	font:setFilter("nearest","nearest")
+
 	tabs:AddTab("Shader", panel_shader, nil)
 	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
 	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
+	tabs:AddTab("Test", panel_test)
 
 ---------------------------- Video ---------------------------------------------
 
@@ -87,12 +94,9 @@ function player:load(loveframes, lx, ly)
 
 	panel_video.Update = function(object, dt)
 		love.graphics.setCanvas(canvas)
-		-- love.graphics.clear(0,0,0,1)
-		-- love.graphics.setColor(1,0,0)
-		-- love.graphics.rectangle("fill", 5, 5, 10, 10)
-		love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
+			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
+			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
 		love.graphics.setCanvas()
-		video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
 	end
 
 ---------------------------- Shader --------------------------------------------
@@ -138,7 +142,7 @@ function player:load(loveframes, lx, ly)
 	panel_shader.Update = function(object, dt)
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
-			-- love.graphics.setColor(0.5, 0.5, 0.5)
+			-- love.graphics.setColor(0.2, 0.2, 0.2)
 			love.graphics.setShader(shaders[shader_nb].shader)
 				love.graphics.draw(canvas_test,0,0)
 			love.graphics.setShader()
@@ -218,7 +222,27 @@ function player:load(loveframes, lx, ly)
 		love.graphics.setCanvas()
 	end
 
---------------------------------------------------------------------------------
+---------------------------- Test ----------------------------------------------
+
+	panel_test.Update = function(object, dt)
+		love.graphics.setCanvas(canvas)
+		love.graphics.setFont(font)
+			love.graphics.clear(0,0,0,1)
+			for x=0,3 do
+				for y=0,1 do
+					local r,g,b = hslToRgb((x+y*4)/8,1,0.2)
+					love.graphics.setColor(r,g,b)
+					love.graphics.rectangle("fill", x*10, y*10, 10, 10)
+					love.graphics.setColor(1,1,1)
+					love.graphics.print(x+y*4, x*10+1, y*10)
+				end
+			end
+			-- love.graphics.setColor(1,0,0)
+			-- love.graphics.rectangle("fill", 5, 5, 10, 10)
+		love.graphics.setCanvas()
+	end
+
+-------------------------------------------------------------------------------
 
 end
 

@@ -33,9 +33,9 @@ function love.load(arg)
 		love.graphics.newQuad( 16, 0, 16, 20, mario_anim:getDimensions()),
 	}
 
-	lx, ly = 20, 20
+	lx, ly = 40, 20
 	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
-	controller:loadMap(json.decode(love.filesystem.read("map/map_20x20.json")))
+	controller:loadMap(json.decode(love.filesystem.read("map/test.json")))
 	controller.rgbw = true
 	controller.leds_by_uni = 100
 
