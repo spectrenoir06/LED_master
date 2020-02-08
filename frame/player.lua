@@ -58,14 +58,14 @@ function player:load(loveframes, lx, ly)
 
 	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
-	local soundData = love.sound.newSoundData("ressource/8bit.mp3")
-	-- local soundData = love.sound.newSoundData("ressource/tecdream.mp3")
+	-- local soundData = love.sound.newSoundData("ressource/8bit.mp3")
+	local soundData = love.sound.newSoundData("ressource/tecdream.mp3")
 	local sound = love.audio.newSource(soundData)
 
 	tabs:AddTab("Shader", panel_shader, nil)
 	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
 	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
-	tabs:AddTab("Scripte", panel_scripte)
+	tabs:AddTab("Script", panel_scripte)
 
 ---------------------------- Video ---------------------------------------------
 
