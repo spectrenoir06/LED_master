@@ -3,12 +3,12 @@ local network_scan = {}
 function network_scan:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Network Discovery")
-	frame:SetPos(0, 300)
-	frame:SetSize(600, 300)
+	frame:SetPos(900, 0)
+	frame:SetSize(900, 300)
 
 	frame:SetResizable(true)
-	frame:SetMaxWidth(1000)
-	frame:SetMaxHeight(1000)
+	-- frame:SetMaxWidth(1000)
+	-- frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
 

@@ -36,7 +36,7 @@ function player:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Player")
 	frame:SetSize(300, 300)
-	frame:SetPos(300,0)
+	frame:SetPos(600,0)
 	frame:SetAlwaysUpdate(true)
 
 	frame:SetResizable(true)
