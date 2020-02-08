@@ -35,7 +35,7 @@ function love.load(arg)
 
 	lx, ly = 40, 20
 	controller = LEDsController:new(lx*ly, "artnet", "10.80.1.18")
-	controller:loadMap(json.decode(love.filesystem.read("map/test.json")))
+	controller:loadMap(json.decode(love.filesystem.read("map/map_40x20.json")))
 	controller.rgbw = true
 	controller.leds_by_uni = 100
 
