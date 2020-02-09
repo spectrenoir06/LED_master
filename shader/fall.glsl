@@ -1,6 +1,6 @@
-uniform float iTime;
+uniform highp float iTime;
 uniform vec3 iResolution;
-uniform float density;
+uniform highp float density;
 
 
 #define FALLING_SPEED  0.25
@@ -24,7 +24,7 @@ vec4 effect( vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
     //pixellize uv
     vec2 clamped_uv = (floor(screen_coords / density) * density) / iResolution.xy;
     //get pseudo-random value for stripe height
-    float value = fract(sin(clamped_uv.x) * 43758.5453123);
+    highp float value = fract(sin(clamped_uv.x) * 43758.5453123);
     //create stripes
     vec3 col = vec3(1.0 - mod(uv.y * 0.5 - (iTime * (FALLING_SPEED + value / 5.0)) + value, 0.5));
     //add color

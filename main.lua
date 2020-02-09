@@ -25,7 +25,7 @@ function love.load(arg)
 
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
-
+	love.graphics.setDefaultFilter("nearest", "nearest",0)
 	-- fps = 60
 	-- -- lx, ly = 64, 64
 	-- lx, ly = 64, 8
@@ -42,7 +42,7 @@ function love.load(arg)
 	-- 	true
 	-- )
 
-	fps = 30
+	fps = 40
 	lx, ly = 40, 20
 	m = json.decode(love.filesystem.read("map/map_40x20.json"))
 	thread:start(
@@ -101,7 +101,7 @@ function love.load(arg)
 
 	frame_animation:load(loveframes, lx, ly)
 	node_list = frame_network_scan:load(loveframes)
-	frame_pixel_map:load(loveframes)
+	-- frame_pixel_map:load(loveframes)
 	-- frame_network_map:load(loveframes)
 	frame_player:load(loveframes)
 
@@ -122,7 +122,18 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 	loveframes.draw()
-	-- love.graphics.print(love.timer.getFPS(), 10, 10)
+
+	-- local width, height = love.window.getDesktopDimensions(1)
+	-- local tx, ty =love.window.getMode()
+	-- local pixelwidth, pixelheight = love.graphics.getPixelDimensions()
+	-- local gx, gy = love.graphics.getDimensions()
+	-- local x,y,sx, sy = love.window.getSafeArea()
+	--
+	-- love.graphics.print("getDesktopDimensions: "..width.."x"..height, 10, 50)
+	-- love.graphics.print("getMode: "..tx.."x"..ty, 10, 70)
+	-- love.graphics.print("getPixelDimensions: "..pixelwidth.."x"..pixelheight, 10, 90)
+	-- love.graphics.print("getDimensions: "..gx.."x"..gy, 10, 110)
+	-- love.graphics.print("getSafeArea: "..x.."x"..y..", "..sx.."x"..sy, 10, 130)
 end
 
 
@@ -197,8 +208,8 @@ function love.keypressed( key, scancode, isrepeat )
 	else
 		return
 	end
-	canvas = love.graphics.newCanvas(lx, ly)
-	canvas_test = love.graphics.newCanvas(lx, ly)
+	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas:setFilter("nearest", "nearest")
 end
 

@@ -1,5 +1,5 @@
-uniform float density;
-uniform float iTime;
+uniform highp float density;
+uniform highp float iTime;
 uniform vec3 iResolution;
 
 vec3 hsb2rgb( in vec3 c ){
@@ -13,12 +13,12 @@ vec3 hsb2rgb( in vec3 c ){
 
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
-    float PI = 3.1415926;
+    highp float PI = 3.1415926;
     vec2 st = texture_coords;
 
     vec2 toCenter = vec2(0.5)-st;
-    float radius = length(toCenter)*2.0;
-    float angle = iTime + atan(toCenter.y,toCenter.x)*density;
+    highp float radius = length(toCenter)*2.0;
+    highp float angle = iTime + atan(toCenter.y,toCenter.x)*density;
     vec3 c = vec3((angle/(2.0*PI)),1.0,1.0);
 
     return vec4(hsb2rgb(c), 1.0) * color;

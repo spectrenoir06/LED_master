@@ -1,4 +1,4 @@
-uniform float iTime;
+uniform highp float iTime;
 uniform vec3 iResolution;
 
 vec3 hsb2rgb( in vec3 c ){
