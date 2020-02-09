@@ -35,9 +35,9 @@
     - [x] Art-net
     - [ ] ?
   - Animation
-    - [] Loader
-    - [] Editor
-    - [] Saver
+    - [ ] Loader
+    - [ ] Editor
+    - [ ] Saver
   - Compatibility ( need test )
     - [x] Linux
     - [ ] Windows
