@@ -145,7 +145,7 @@ function player:load(loveframes, lx, ly)
 	tabs:AddTab("Music", panel_music, nil, nil, function() if sound then sound:play() end end, function() if sound then sound:pause() end end)
 	slider_lerp:SetPos(100, 70)
 	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
-	slider_lerp:SetMinMax(0.05, 1)
+	slider_lerp:SetMinMax(0.01, 1)
 	slider_lerp:SetValue(0.3)
 
 	local text1 = loveframes.Create("text", panel_music)
@@ -264,10 +264,10 @@ function player:load(loveframes, lx, ly)
 
 
 	panel_music.Update = function(object, dt)
+		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		timer = timer + dt
 		local l = 1
-		local div = 4
-		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
+		local div = 8
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
 			s = spectro_up_mic(sound, soundData, size*div/l, mic)
@@ -279,7 +279,6 @@ function player:load(loveframes, lx, ly)
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
 			local lx = (canvas:getWidth() / size) * l
-			-- local ly = (canvas:getHeight() / 20)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
@@ -299,9 +298,11 @@ function player:load(loveframes, lx, ly)
 
 
 				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]))
-				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
-				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+
 				-- love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[i+1])/2, lx, -math.floor(t[i+1]))
+
+				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]))
+				-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]))
 			end
 			-- progressbar:SetValue(math.floor(sound:tell("seconds")))
 			-- self.value = math.floor(sound:tell("seconds"))
