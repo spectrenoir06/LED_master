@@ -224,11 +224,6 @@ function player:load(loveframes, lx, ly)
 		end
 	end
 
-	love.filesystem.createDirectory("test")
-
-	for k,v in ipairs(love.filesystem.getDirectoryItems("/")) do print(k,v) end
-
-
 	local choice_mic = loveframes.Create("multichoice", panel_music)
 	choice_mic:SetPos(130, 125)
 	choice_mic:SetSize(panel_music:GetWidth()-130-8, 25)
