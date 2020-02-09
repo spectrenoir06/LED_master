@@ -46,19 +46,19 @@ function love.load(arg)
 	-- lx, ly = 216, 64
 	lx, ly = 40, 20
 	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
-	thread:start(
-		{
-			led_nb = lx*ly,
-			ip = "10.80.1.18",
-			protocol = "artnet",
-			debug = false,
-			map = m,
-			rgbw = true,
-			leds_by_uni = 100
-		},
-		fps,
-		false
-	)
+	-- thread:start(
+	-- 	{
+	-- 		led_nb = lx*ly,
+	-- 		ip = "10.80.1.18",
+	-- 		protocol = "artnet",
+	-- 		debug = false,
+	-- 		map = m,
+	-- 		rgbw = true,
+	-- 		leds_by_uni = 100
+	-- 	},
+	-- 	fps,
+	-- 	false
+	-- )
 
 
 
