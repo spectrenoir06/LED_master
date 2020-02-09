@@ -239,7 +239,7 @@ function player:load(loveframes, lx, ly)
 		for k,v in ipairs(record_list) do
 			if v:getName() == choice then
 				mic = v
-				mic:start(735, 44100, 16, 1)
+				mic:start(735, 44100*8, 16, 1)
 				break
 			end
 		end
