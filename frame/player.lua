@@ -48,6 +48,7 @@ function player:load(loveframes, lx, ly)
 	frame:SetSize(411, 300)
 	frame:SetPos(0,330)
 	frame:SetAlwaysUpdate(true)
+	frame:SetScreenLocked(true)
 
 	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
@@ -135,10 +136,6 @@ function player:load(loveframes, lx, ly)
 	-- local soundData = love.sound.newSoundData("ressource/music/8bit.mp3")
 
 	local record_list = love.audio.getRecordingDevices()
-
-	for k,v in ipairs(record_list) do
-		print(k,v:getName())
-	end
 
 	local mic = record_list[1]
 	mic:start(735, 44100, 16, 1)
@@ -230,7 +227,7 @@ function player:load(loveframes, lx, ly)
 
 	print("Load audio in:")
 	for k,v in ipairs(record_list) do
-		print("",v:getName())
+		print("    "..v:getName())
 		choice_mic:AddChoice(v:getName())
 		choice_mic:SelectChoice(v:getName())
 	end
