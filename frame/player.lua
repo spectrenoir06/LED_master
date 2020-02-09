@@ -67,7 +67,7 @@ function player:load(loveframes, lx, ly)
 	local panel_music = loveframes.Create("panel")
 	local panel_script = loveframes.Create("panel")
 
-	local video = love.graphics.newVideo("ressource/video/dog_meme.ogv", {audio=true})
+	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
 
 
@@ -136,9 +136,9 @@ function player:load(loveframes, lx, ly)
 	-- local soundData = love.sound.newSoundData("ressource/music/8bit.mp3")
 
 	local record_list = love.audio.getRecordingDevices()
-
 	local mic = record_list[1]
-	mic:start(735, 44100, 16, 1)
+
+	mic:start(2081, 48000, 8, 1)
 
 
 	local slider_lerp = loveframes.Create("slider", panel_music)
@@ -301,6 +301,7 @@ function player:load(loveframes, lx, ly)
 				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]))
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+				-- love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[i+1])/2, lx, -math.floor(t[i+1]))
 			end
 			-- progressbar:SetValue(math.floor(sound:tell("seconds")))
 			-- self.value = math.floor(sound:tell("seconds"))

@@ -20,6 +20,7 @@
     - [x] FFT visualization
     - [x] Microphone In
     - [x] Aux In
+    - [ ] Drag and drop
   - Video
     - [x] Video Loader
   - Script
