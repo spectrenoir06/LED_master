@@ -29,7 +29,7 @@ function love.load(arg)
 	-- fps = 60
 	-- -- lx, ly = 64, 64
 	-- lx, ly = 64, 8
-	-- m = json.decode(love.filesystem.read("map/map_hat_bis.json"))
+	-- m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
 	-- thread:start(
 	-- 	{
 	-- 		led_nb = lx*ly,
@@ -42,9 +42,9 @@ function love.load(arg)
 	-- 	true
 	-- )
 
-	fps = 40
-	lx, ly = 108, 100
-	m = json.decode(love.filesystem.read("map/map_40x20.json"))
+	fps = 60
+	lx, ly = 216, 64
+	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
 	thread:start(
 		{
 			led_nb = lx*ly,
@@ -83,12 +83,12 @@ function love.load(arg)
 	}
 	shader_nb = 1
 
-	local list = love.filesystem.getDirectoryItems("shader/")
+	local list = love.filesystem.getDirectoryItems("ressource/shader/")
 	print("Compile shader:")
 	for k,v in ipairs(list) do
 		print("    "..v)
 		shaders[k] = {}
-		shaders[k].shader = love.graphics.newShader("shader/"..v)
+		shaders[k].shader = love.graphics.newShader("ressource/shader/"..v)
 		shaders[k].name = v
 	end
 
@@ -105,7 +105,7 @@ function love.load(arg)
 	-- frame_network_map:load(loveframes)
 	frame_player:load(loveframes)
 
-	local image = love.graphics.newImage("ressource/bg.png")
+	local image = love.graphics.newImage("ressource/image/bg.png")
 	image:setWrap("repeat", "repeat")
 	local width = love.graphics.getWidth()
 	local height = love.graphics.getHeight()

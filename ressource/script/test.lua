@@ -1,6 +1,6 @@
 local test = {}
 
-local font = love.graphics.newFont("ressource/Code_8x8.ttf",16)
+local font = love.graphics.newFont("ressource/font/Code_8x8.ttf",16)
 font:setFilter("nearest","nearest")
 
 

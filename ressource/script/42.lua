@@ -1,6 +1,6 @@
 local forty_two = {}
 
-local img = love.graphics.newImage("ressource/42_2.png")
+local img = love.graphics.newImage("ressource/image/42_2.png")
 
 function forty_two:update(dt, lx, ly)
 	-- love.graphics.clear(0,0,0,1)
