@@ -23,6 +23,12 @@ require("lib/color")
 
 function love.load(arg)
 
+	local os = love.system.getOS()
+	if os == "Android" or  os == "iOS" then
+		love.window.setMode( 411, 838, {resizable = false} )
+	end
+
+
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
 	love.graphics.setDefaultFilter("nearest", "nearest",0)
