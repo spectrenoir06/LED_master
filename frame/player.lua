@@ -67,7 +67,7 @@ function player:load(loveframes, lx, ly)
 	local panel_music = loveframes.Create("panel")
 	local panel_script = loveframes.Create("panel")
 
-	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
+	local video = love.graphics.newVideo("ressource/video/dog_meme.ogv", {audio=true})
 	local video_source = video:getSource()
 
 
@@ -197,6 +197,7 @@ function player:load(loveframes, lx, ly)
 	local musics = {}
 
 	choice_music.OnChoiceSelected = function(object, choice)
+		print("choice_music", choice)
 		sound:stop()
 
 		soundData = musics[choice].soundData
@@ -213,11 +214,12 @@ function player:load(loveframes, lx, ly)
 		musics[v].sound = love.audio.newSource(musics[v].soundData)
 		-- scripts[v] = require("ressource/mu/"..v:gsub(".lua",""))
 		musics[v].name = v
-		soundData = musics[v].soundData
-		sound = musics[v].sound
 		choice_music:AddChoice(v)
-		if #musics == 1 then
+		if k == 1 then
+			soundData = musics[v].soundData
+			sound = musics[v].sound
 			choice_music:SelectChoice(v)
+			sound:stop()
 		end
 	end
 
