@@ -13,7 +13,7 @@ function lerp(a, b, t)
 	return a + (b - a) * t
 end
 
-function spectro_up_mic(obj, sdata, size)
+function spectro_up_mic(obj, sdata, size, mic)
 	if mic:getSampleCount() > size then
 		local List = {}
 		local data = mic:getData()
@@ -68,55 +68,11 @@ function player:load(loveframes, lx, ly)
 
 	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
-	-- local soundData = love.sound.newSoundData("ressource/music/8bit.mp3")
-	local soundData = love.sound.newSoundData("ressource/music/tecdream.mp3")
-	local sound = love.audio.newSource(soundData)
 
-	local list = love.audio.getRecordingDevices()
-
-	for k,v in ipairs(list) do
-		print(k,v:getName())
-	end
-
-	mic = list[1]
-	mic:start(735, 44100, 16, 1)
-	spectre = {}
-
-	tabs:AddTab("Shader", panel_shader, nil)
-	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
-	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
-	tabs:AddTab("Script", panel_script)
-
----------------------------- Video ---------------------------------------------
-
-	local video_progressbar = loveframes.Create("progressbar", panel_video)
-	video_progressbar:SetPos(68, 8)
-	video_progressbar:SetWidth(210)
-	video_progressbar:SetMinMax(0, math.floor(video_source:getDuration()))
-
-	local video_button = loveframes.Create("button", panel_video)
-	video_button:SetPos(8, 8)
-	video_button:SetSize(50, 25)
-	video_button:SetText("Pause")
-	video_button.OnClick = function(object, x, y)
-		if video:isPlaying() then
-			video:pause()
-			object:SetText("Play")
-		else
-			video:play()
-			object:SetText("Pause")
-		end
-	end
-
-	panel_video.Update = function(object, dt)
-		love.graphics.setCanvas(canvas)
-			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
-			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
-		love.graphics.setCanvas()
-	end
 
 ---------------------------- Shader --------------------------------------------
 
+	tabs:AddTab("Shader", panel_shader, nil)
 	local choice_shader = loveframes.Create("multichoice", panel_shader)
 	choice_shader:SetPos(8, 8)
 	choice_shader:SetSize(panel_shader:GetWidth()-16, 25)
@@ -176,14 +132,27 @@ function player:load(loveframes, lx, ly)
 
 ---------------------------- Music ---------------------------------------------
 
+	-- local soundData = love.sound.newSoundData("ressource/music/8bit.mp3")
+
+	local record_list = love.audio.getRecordingDevices()
+
+	for k,v in ipairs(record_list) do
+		print(k,v:getName())
+	end
+
+	local mic = record_list[1]
+	mic:start(735, 44100, 16, 1)
+
+
 	local slider_lerp = loveframes.Create("slider", panel_music)
-	slider_lerp:SetPos(100, 8)
+	tabs:AddTab("Music", panel_music, nil, nil, function() if sound then sound:play() end end, function() if sound then sound:pause() end end)
+	slider_lerp:SetPos(100, 70)
 	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
 	slider_lerp:SetMinMax(0.05, 1)
-	slider_lerp:SetValue(0.4)
+	slider_lerp:SetValue(0.3)
 
 	local text1 = loveframes.Create("text", panel_music)
-	text1:SetPos(8, 9)
+	text1:SetPos(8, 70)
 	text1:SetText("Lerp: "..slider_lerp:GetValue())
 
 	slider_lerp.OnValueChanged = function(object)
@@ -195,7 +164,7 @@ function player:load(loveframes, lx, ly)
 	slider_amp:SetPos(100, 100)
 	slider_amp:SetWidth(panel_music:GetWidth()-100-8)
 	slider_amp:SetMinMax(0.01, 100)
-	slider_amp:SetValue(4)
+	slider_amp:SetValue(40)
 
 	local text2 = loveframes.Create("text", panel_music)
 	text2:SetPos(8, 100)
@@ -206,9 +175,8 @@ function player:load(loveframes, lx, ly)
 	end
 
 	local progressbar = loveframes.Create("slider", panel_music)
-	progressbar:SetPos(8, 34)
-	progressbar:SetWidth(panel_music:GetWidth()-16)
-	progressbar:SetMinMax(0, math.floor(sound:getDuration()))
+	progressbar:SetPos(100, 40)
+	progressbar:SetWidth(panel_music:GetWidth()-100-8)
 
 	progressbar.OnValueChanged = function(object)
 		-- progressbar:SetValue(math.floor(sound:tell("seconds")))
@@ -217,11 +185,89 @@ function player:load(loveframes, lx, ly)
 	end
 
 	local checkbox = loveframes.Create("checkbox", panel_music)
-	checkbox:SetText("Use mic")
-	checkbox:SetPos(8, 70)
+	checkbox:SetText("Use audio in")
+	checkbox:SetPos(8, 130)
+
 	local t = {}
 	local timer = 0
-	spectre = {}
+	local spectre = {}
+
+	local choice_music = loveframes.Create("multichoice", panel_music)
+	choice_music:SetPos(8, 8)
+	choice_music:SetSize(panel_music:GetWidth()-16, 25)
+
+	local list = love.filesystem.getDirectoryItems("ressource/music/")
+	local musics = {}
+
+	choice_music.OnChoiceSelected = function(object, choice)
+		sound:stop()
+
+		soundData = musics[choice].soundData
+		sound = musics[choice].sound
+		sound:play()
+		progressbar:SetMinMax(0, math.floor(sound:getDuration()))
+	end
+
+	print("Load music:")
+	for k,v in ipairs(list) do
+		print("    "..v)
+		musics[v] = {}
+		musics[v].soundData = love.sound.newSoundData("ressource/music/"..v)
+		musics[v].sound = love.audio.newSource(musics[v].soundData)
+		-- scripts[v] = require("ressource/mu/"..v:gsub(".lua",""))
+		musics[v].name = v
+		soundData = musics[v].soundData
+		sound = musics[v].sound
+		choice_music:AddChoice(v)
+		if #musics == 1 then
+			choice_music:SelectChoice(v)
+		end
+	end
+
+	love.filesystem.createDirectory("test")
+
+	for k,v in ipairs(love.filesystem.getDirectoryItems("/")) do print(k,v) end
+
+
+	local choice_mic = loveframes.Create("multichoice", panel_music)
+	choice_mic:SetPos(130, 125)
+	choice_mic:SetSize(panel_music:GetWidth()-130-8, 25)
+
+	print("Load audio in:")
+	for k,v in ipairs(record_list) do
+		print("",v:getName())
+		choice_mic:AddChoice(v:getName())
+		choice_mic:SelectChoice(v:getName())
+	end
+
+	choice_mic.OnChoiceSelected = function(object, choice)
+		mic:stop()
+		for k,v in ipairs(record_list) do
+			if v:getName() == choice then
+				mic = v
+				mic:start(735, 44100, 16, 1)
+				break
+			end
+		end
+	end
+
+
+
+	local music_button = loveframes.Create("button", panel_music)
+	music_button:SetPos(8, 40)
+	music_button:SetSize(50, 25)
+	music_button:SetText("Pause")
+	music_button.OnClick = function(object, x, y)
+		if sound:isPlaying() then
+			sound:pause()
+			object:SetText("Play")
+		else
+			sound:play()
+			object:SetText("Pause")
+		end
+	end
+
+
 
 	panel_music.Update = function(object, dt)
 		timer = timer + dt
@@ -230,7 +276,7 @@ function player:load(loveframes, lx, ly)
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
-			s = spectro_up_mic(sound, soundData, size*div/l)
+			s = spectro_up_mic(sound, soundData, size*div/l, mic)
 			spectre = s or spectre
 		else
 			spectre = spectro_up(sound, soundData, size*div/l)
@@ -267,8 +313,38 @@ function player:load(loveframes, lx, ly)
 		love.graphics.setCanvas()
 	end
 
----------------------------- Test ----------------------------------------------
+---------------------------- Video ---------------------------------------------
 
+	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
+	local video_progressbar = loveframes.Create("progressbar", panel_video)
+	video_progressbar:SetPos(68, 8)
+	video_progressbar:SetWidth(210)
+	video_progressbar:SetMinMax(0, math.floor(video_source:getDuration()))
+
+	local video_button = loveframes.Create("button", panel_video)
+	video_button:SetPos(8, 8)
+	video_button:SetSize(50, 25)
+	video_button:SetText("Pause")
+	video_button.OnClick = function(object, x, y)
+		if video:isPlaying() then
+			video:pause()
+			object:SetText("Play")
+		else
+			video:play()
+			object:SetText("Pause")
+		end
+	end
+
+	panel_video.Update = function(object, dt)
+		love.graphics.setCanvas(canvas)
+			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
+			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
+		love.graphics.setCanvas()
+	end
+
+---------------------------- Script --------------------------------------------
+
+	tabs:AddTab("Script", panel_script)
 	local choice_script = loveframes.Create("multichoice", panel_script)
 	choice_script:SetPos(8, 8)
 	choice_script:SetSize(panel_script:GetWidth()-16, 25)
