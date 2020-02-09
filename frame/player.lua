@@ -66,10 +66,10 @@ function player:load(loveframes, lx, ly)
 	local panel_music = loveframes.Create("panel")
 	local panel_script = loveframes.Create("panel")
 
-	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
+	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
-	-- local soundData = love.sound.newSoundData("ressource/8bit.mp3")
-	local soundData = love.sound.newSoundData("ressource/tecdream.mp3")
+	-- local soundData = love.sound.newSoundData("ressource/music/8bit.mp3")
+	local soundData = love.sound.newSoundData("ressource/music/tecdream.mp3")
 	local sound = love.audio.newSource(soundData)
 
 	local list = love.audio.getRecordingDevices()
@@ -176,18 +176,33 @@ function player:load(loveframes, lx, ly)
 
 ---------------------------- Music ---------------------------------------------
 
-	local slider1 = loveframes.Create("slider", panel_music)
-	slider1:SetPos(100, 8)
-	slider1:SetWidth(panel_music:GetWidth()-100-8)
-	slider1:SetMinMax(0.05, 1)
-	slider1:SetValue(0.4)
+	local slider_lerp = loveframes.Create("slider", panel_music)
+	slider_lerp:SetPos(100, 8)
+	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
+	slider_lerp:SetMinMax(0.05, 1)
+	slider_lerp:SetValue(0.4)
 
 	local text1 = loveframes.Create("text", panel_music)
 	text1:SetPos(8, 9)
-	text1:SetText("Lerp: "..slider1:GetValue())
+	text1:SetText("Lerp: "..slider_lerp:GetValue())
 
-	slider1.OnValueChanged = function(object)
-		text1:SetText("Lerp: "..slider1:GetValue())
+	slider_lerp.OnValueChanged = function(object)
+		text1:SetText("Lerp: "..slider_lerp:GetValue())
+	end
+
+	local slider_amp = loveframes.Create("slider", panel_music)
+
+	slider_amp:SetPos(100, 100)
+	slider_amp:SetWidth(panel_music:GetWidth()-100-8)
+	slider_amp:SetMinMax(0.01, 100)
+	slider_amp:SetValue(4)
+
+	local text2 = loveframes.Create("text", panel_music)
+	text2:SetPos(8, 100)
+	text2:SetText("Amp: "..slider_amp:GetValue())
+
+	slider_amp.OnValueChanged = function(object)
+		text2:SetText("Amp: "..math.floor(slider_amp:GetValue()*100)/100)
 	end
 
 	local progressbar = loveframes.Create("slider", panel_music)
@@ -211,7 +226,7 @@ function player:load(loveframes, lx, ly)
 	panel_music.Update = function(object, dt)
 		timer = timer + dt
 		local l = 1
-		local div = 2
+		local div = 4
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
@@ -224,22 +239,26 @@ function player:load(loveframes, lx, ly)
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
 			local lx = (canvas:getWidth() / size) * l
-			local ly = (canvas:getHeight() / 20)
+			-- local ly = (canvas:getHeight() / 20)
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
 			for i = 0, #spectre/div-1 do
 				local v = 100*(spectre[i+1]:abs())
-				v = math.min(v,200)
-				local m = f_map(v, 0, 200, 0, 20)
-				t[i+1] = lerp(t[i+1] or 0, m, slider1:GetValue())
+				-- v = math.min(v,200)
+				local m = v/slider_amp:GetValue()--f_map(v, 0, 200, 0, 20)
+				t[i+1] = lerp(t[i+1] or 0, m, slider_lerp:GetValue())
 
 				local x = i*lx --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
+
 				local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
-				-- local r,g,b = hslToRgb((i/50)%1,1,0.5)
 				love.graphics.setColor(r,g,b)
 
-				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
+				-- local color = math.min(t[i+1],canvas:getHeight())/canvas:getHeight()
+				-- love.graphics.setColor(1,1-color,0)
+
+
+				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]))
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 				-- love.graphics.rectangle("fill", canvas:getWidth()-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]*ly))
 			end
@@ -254,12 +273,12 @@ function player:load(loveframes, lx, ly)
 	choice_script:SetPos(8, 8)
 	choice_script:SetSize(panel_script:GetWidth()-16, 25)
 
-	local list = love.filesystem.getDirectoryItems("script/")
+	local list = love.filesystem.getDirectoryItems("ressource/script/")
 	local scripts = {}
 	print("Load scripts:")
 	for k,v in ipairs(list) do
 		print("    "..v)
-		scripts[v] = require("script/"..v:gsub(".lua",""))
+		scripts[v] = require("ressource/script/"..v:gsub(".lua",""))
 		scripts[v].name = v
 	end
 
