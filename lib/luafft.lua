@@ -52,8 +52,8 @@ function next_possible_size(n)
   while (1) do
     m = n
     while m%2 == 0 do m = m/2 end
-    while m%3 == 0 do m = m/3 end
-    while m%5 == 0 do m = m/5 end
+    -- while m%3 == 0 do m = m/3 end
+    -- while m%5 == 0 do m = m/5 end
 	if m <= 1 then break end
     n = n + 1
   end
@@ -77,7 +77,7 @@ function fft(input, inverse)
 
 	-- assert(#input == next_possible_size(#input), string.format("The size of your input is not correct. For your size=%i, use a table of size=%i with zeros at the end.", #input, next_possible_size(#input)))
 	local n = next_possible_size(num_points)
-
+	print(n,num_points)
 	if n ~= num_points then
 		for i=1, n-num_points do
 			table.insert(input, 0)

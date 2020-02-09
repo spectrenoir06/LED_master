@@ -28,24 +28,24 @@ function love.load(arg)
 	love.graphics.setDefaultFilter("nearest", "nearest",0)
 	fps = 60
 	-- lx, ly = 64, 64
-	-- lx, ly = 64, 8
-	-- m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
-	-- thread:start(
-	-- 	{
-	-- 		led_nb = lx*ly,
-	-- 		protocol = "BRO888",
-	-- 		ip = "192.168.1.210",
-	-- 		debug = false,
-	-- 		map = m
-	-- 	},
-	-- 	fps,
-	-- 	true
-	-- )
+	lx, ly = 64, 8
+	m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
+	thread:start(
+		{
+			led_nb = lx*ly,
+			protocol = "RGB888",
+			ip = "192.168.1.210",
+			debug = false,
+			map = m
+		},
+		fps,
+		true
+	)
 
 	-- fps = 30
-	lx, ly = 216, 64
+	-- lx, ly = 216, 64
 	-- lx, ly = 40, 20
-	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	-- m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
 	-- thread:start(
 	-- 	{
 	-- 		led_nb = lx*ly,
