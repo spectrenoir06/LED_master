@@ -43,7 +43,7 @@ function love.load(arg)
 	-- )
 
 	fps = 40
-	lx, ly = 40, 20
+	lx, ly = 108, 100
 	m = json.decode(love.filesystem.read("map/map_40x20.json"))
 	thread:start(
 		{
