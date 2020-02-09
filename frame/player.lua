@@ -64,7 +64,7 @@ function player:load(loveframes, lx, ly)
 	local panel_video = loveframes.Create("panel")
 	local panel_shader = loveframes.Create("panel")
 	local panel_music = loveframes.Create("panel")
-	local panel_scripte = loveframes.Create("panel")
+	local panel_script = loveframes.Create("panel")
 
 	local video = love.graphics.newVideo("ressource/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
@@ -85,7 +85,7 @@ function player:load(loveframes, lx, ly)
 	tabs:AddTab("Shader", panel_shader, nil)
 	tabs:AddTab("Music", panel_music, nil, nil, function() sound:play() end, function() sound:pause() end)
 	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
-	tabs:AddTab("Script", panel_scripte)
+	tabs:AddTab("Script", panel_script)
 
 ---------------------------- Video ---------------------------------------------
 
@@ -250,28 +250,28 @@ function player:load(loveframes, lx, ly)
 
 ---------------------------- Test ----------------------------------------------
 
-	local choice_scripte = loveframes.Create("multichoice", panel_scripte)
-	choice_scripte:SetPos(8, 8)
-	choice_scripte:SetSize(panel_scripte:GetWidth()-16, 25)
+	local choice_script = loveframes.Create("multichoice", panel_script)
+	choice_script:SetPos(8, 8)
+	choice_script:SetSize(panel_script:GetWidth()-16, 25)
 
-	local list = love.filesystem.getDirectoryItems("scripte/")
-	local scriptes = {}
+	local list = love.filesystem.getDirectoryItems("script/")
+	local scripts = {}
 	print("Load scripts:")
 	for k,v in ipairs(list) do
 		print("    "..v)
-		scriptes[v] = require("scripte/"..v:gsub(".lua",""))
-		scriptes[v].name = v
+		scripts[v] = require("script/"..v:gsub(".lua",""))
+		scripts[v].name = v
 	end
 
-	for k,v in pairs(scriptes) do
-		choice_scripte:AddChoice(v.name)
+	for k,v in pairs(scripts) do
+		choice_script:AddChoice(v.name)
 	end
-	choice_scripte:SelectChoice("42.lua")
+	choice_script:SelectChoice("42.lua")
 
 
-	panel_scripte.Update = function(object, dt)
+	panel_script.Update = function(object, dt)
 		love.graphics.setCanvas(canvas)
-		scriptes[choice_scripte:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
+		scripts[choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
 		love.graphics.setCanvas()
 	end
 
