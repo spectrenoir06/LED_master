@@ -1,5 +1,5 @@
-uniform float iTime;
-uniform float density;
+uniform highp float iTime;
+uniform highp float density;
 uniform vec3 iResolution;
 
 vec3 hsb2rgb( in vec3 c ){

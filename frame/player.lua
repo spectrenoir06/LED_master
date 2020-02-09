@@ -45,8 +45,8 @@ end
 function player:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Player")
-	frame:SetSize(300, 300)
-	frame:SetPos(600,0)
+	frame:SetSize(411, 300)
+	frame:SetPos(0,330)
 	frame:SetAlwaysUpdate(true)
 
 	frame:SetResizable(true)
@@ -79,7 +79,7 @@ function player:load(loveframes, lx, ly)
 	end
 
 	mic = list[1]
-	mic:start(200, 8000)
+	mic:start(735, 44100, 16, 1)
 	spectre = {}
 
 	tabs:AddTab("Shader", panel_shader, nil)
@@ -202,8 +202,8 @@ function player:load(loveframes, lx, ly)
 	end
 
 	local checkbox = loveframes.Create("checkbox", panel_music)
-	checkbox:SetText("Checkbox")
-	checkbox:SetPos(5, 100)
+	checkbox:SetText("Use mic")
+	checkbox:SetPos(8, 70)
 	local t = {}
 	local timer = 0
 	spectre = {}
@@ -215,10 +215,10 @@ function player:load(loveframes, lx, ly)
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
-			spectre = spectro_up(sound, soundData, size*div/l)
-		else
 			s = spectro_up_mic(sound, soundData, size*div/l)
 			spectre = s or spectre
+		else
+			spectre = spectro_up(sound, soundData, size*div/l)
 		end
 
 		love.graphics.setCanvas(canvas)
@@ -266,7 +266,7 @@ function player:load(loveframes, lx, ly)
 	for k,v in pairs(scriptes) do
 		choice_scripte:AddChoice(v.name)
 	end
-	choice_scripte:SelectChoice("test.lua")
+	choice_scripte:SelectChoice("42.lua")
 
 
 	panel_scripte.Update = function(object, dt)
