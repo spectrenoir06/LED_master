@@ -32,50 +32,49 @@ function love.load(arg)
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
 	love.graphics.setDefaultFilter("nearest", "nearest",0)
-	fps = 60
+	-- fps = 60
 	-- local lx, ly = 64, 64
-	local lx, ly = 64, 8
-	m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
-	thread:start(
-		{
-			led_nb = lx*ly,
-			protocol = "BRO888",
-			ip = "192.168.4.1",
-			debug = true,
-			map = m
-		},
-		fps,
-		true
-	)
-
-	-- local lx, ly = 40, 20
-	-- local lx, ly = 216, 64
-	-- fps = 30
-	-- m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	-- local lx, ly = 64, 8
+	-- m = json.decode(love.filesystem.read("ressource/map/map_hat.json"))
 	-- thread:start(
 	-- 	{
 	-- 		led_nb = lx*ly,
-	-- 		ip = "10.80.1.18",
-	-- 		protocol = "artnet",
-	-- 		debug = false,
-	-- 		map = m,
-	-- 		rgbw = true,
-	-- 		leds_by_uni = 100
+	-- 		protocol = "BRO888",
+	-- 		ip = "192.168.4.1",
+	-- 		debug = true,
+	-- 		map = m
 	-- 	},
 	-- 	fps,
-	-- 	false
+	-- 	true
 	-- )
-	--
+
+	local lx, ly = 40, 20
+	-- local lx, ly = 216, 64
+	fps = 30
+	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	thread:start(
+		{
+			led_nb = lx*ly,
+			ip = "10.80.1.18",
+			protocol = "artnet",
+			debug = false,
+			map = m,
+			rgbw = true,
+			leds_by_uni = 100
+		},
+		fps,
+		false
+	)
 
 
-	map = {}
-	for k,v in ipairs(m) do
-		if map[v.x+1] == nil then map[v.x+1]={} end
-		map[v.x+1][v.y+1] = {
-			uni = v.uni,
-			id = v.id
-		}
-	end
+	-- map = {}
+	-- for k,v in ipairs(m) do
+	-- 	if map[v.x+1] == nil then map[v.x+1]={} end
+	-- 	map[v.x+1][v.y+1] = {
+	-- 		uni = v.uni,
+	-- 		id = v.id
+	-- 	}
+	-- end
 
 
 
