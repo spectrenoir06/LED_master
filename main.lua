@@ -41,7 +41,7 @@ function love.load(arg)
 			led_nb = lx*ly,
 			protocol = "BRO888",
 			ip = "192.168.4.1",
-			debug = false,
+			debug = true,
 			map = m
 		},
 		fps,
