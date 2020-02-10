@@ -33,39 +33,39 @@ function love.load(arg)
 
 	love.graphics.setDefaultFilter("nearest", "nearest",0)
 	fps = 60
-	-- lx, ly = 64, 64
-	-- lx, ly = 64, 8
-	-- m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
-	-- thread:start(
-	-- 	{
-	-- 		led_nb = lx*ly,
-	-- 		protocol = "BRO888",
-	-- 		ip = "192.168.1.210",
-	-- 		debug = false,
-	-- 		map = m
-	-- 	},
-	-- 	fps,
-	-- 	true
-	-- )
-
-	-- lx, ly = 216, 64
-	lx, ly = 40, 20
-	fps = 30
-	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	-- local lx, ly = 64, 64
+	local lx, ly = 64, 8
+	m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
 	thread:start(
 		{
 			led_nb = lx*ly,
-			ip = "10.80.1.18",
-			protocol = "artnet",
+			protocol = "BRO888",
+			ip = "192.168.4.1",
 			debug = false,
-			map = m,
-			rgbw = true,
-			leds_by_uni = 100
+			map = m
 		},
 		fps,
-		false
+		true
 	)
 
+	-- local lx, ly = 40, 20
+	-- local lx, ly = 216, 64
+	-- fps = 30
+	-- m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	-- thread:start(
+	-- 	{
+	-- 		led_nb = lx*ly,
+	-- 		ip = "10.80.1.18",
+	-- 		protocol = "artnet",
+	-- 		debug = false,
+	-- 		map = m,
+	-- 		rgbw = true,
+	-- 		leds_by_uni = 100
+	-- 	},
+	-- 	fps,
+	-- 	false
+	-- )
+	--
 
 
 	map = {}
@@ -82,6 +82,7 @@ function love.load(arg)
 	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas:setFilter("nearest", "nearest")
+	canvas_test:setFilter("nearest", "nearest")
 
 	shaders = {}
 	shaders_param = {
@@ -157,6 +158,7 @@ function love.update(dt)
 
 	if shaders[shader_nb] then
 		if shaders[shader_nb].shader:hasUniform('iResolution') then
+			local lx, ly = canvas:getDimensions()
 			shaders[shader_nb].shader:send('iResolution', { lx, ly, 1 })
 		end
 		if shaders[shader_nb].shader:hasUniform('iTime') then
@@ -164,6 +166,7 @@ function love.update(dt)
 		end
 		if shaders[shader_nb].shader:hasUniform('iMouse') then
 			local lx, ly = love.graphics.getDimensions()
+			local lx, ly = canvas:getDimensions()
 			shaders[shader_nb].shader:send('iMouse', { lx/love.mouse.getX(), ly/love.mouse.getY()})
 		end
 		for k,v in pairs(shaders_param) do
@@ -203,6 +206,7 @@ end
 
 function love.keypressed( key, scancode, isrepeat )
 	-- print(key)
+	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
 	if key == "up" then
 		ly = ly + 1
@@ -215,8 +219,8 @@ function love.keypressed( key, scancode, isrepeat )
 	else
 		return
 	end
-	canvas = love.graphics.newCanvas(lx, ly, {dpiscale =  love.window.getDPIScale(), mipmaps = "none"})
-	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale =  love.window.getDPIScale(), mipmaps = "none"})
+	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas:setFilter("nearest", "nearest")
 	canvas_test:setFilter("nearest", "nearest")
 end
@@ -231,4 +235,8 @@ end
 
 function love.resize(w, h)
 	bgquad = love.graphics.newQuad(0, 0, w, h, bgimage:getWidth(), bgimage:getHeight())
+end
+
+function love.textinput(text)
+	loveframes.textinput(text)
 end

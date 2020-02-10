@@ -71,6 +71,7 @@ function player:load(loveframes, lx, ly)
 	local panel_shader = loveframes.Create("panel")
 	local panel_music = loveframes.Create("panel")
 	local panel_script = loveframes.Create("panel")
+	local panel_setting = loveframes.Create("panel")
 
 	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
@@ -378,6 +379,51 @@ function player:load(loveframes, lx, ly)
 	panel_script.Update = function(object, dt)
 		love.graphics.setCanvas(canvas)
 		scripts[choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
+		love.graphics.setCanvas()
+	end
+
+---------------------------- Setting -------------------------------------------
+
+
+	local font = love.graphics.newFont("ressource/font/Code_8x8.ttf", 8, "normal")
+	font:setFilter("nearest","nearest")
+	local lx, ly = canvas:getDimensions()
+
+	tabs:AddTab("Setting", panel_setting, nil, nil, function() love.keyboard.setTextInput(true) end, function() love.keyboard.setTextInput(false) end)
+	local numberbox_x = loveframes.Create("numberbox", panel_setting)
+	numberbox_x:SetPos(5, 5)
+	numberbox_x:SetSize(200, 25)
+	numberbox_x:SetMinMax(1, 512)
+	numberbox_x:SetValue(lx)
+
+	numberbox_x.OnValueChanged = function(object, value)
+		canvas = love.graphics.newCanvas(value, canvas:getHeight(), {dpiscale = 1, mipmaps = "none"})
+		canvas_test = love.graphics.newCanvas(value, canvas:getHeight(), {dpiscale = 1, mipmaps = "none"})
+		canvas:setFilter("nearest", "nearest")
+		canvas_test:setFilter("nearest", "nearest")
+	end
+
+
+	local numberbox_y = loveframes.Create("numberbox", panel_setting)
+	numberbox_y:SetPos(5, 40)
+	numberbox_y:SetSize(200, 25)
+	numberbox_y:SetMinMax(1, 512)
+	numberbox_y:SetValue(ly)
+
+	numberbox_y.OnValueChanged = function(object, value)
+		canvas = love.graphics.newCanvas(canvas:getWidth(), value, {dpiscale = 1, mipmaps = "none"})
+		canvas_test = love.graphics.newCanvas(canvas:getWidth(), value, {dpiscale = 1, mipmaps = "none"})
+		canvas:setFilter("nearest", "nearest")
+		canvas_test:setFilter("nearest", "nearest")
+	end
+
+	panel_setting.Update = function(object, dt)
+		love.graphics.setCanvas(canvas)
+			love.graphics.setFont(font)
+			love.graphics.clear(0,0,0,1)
+				local lx, ly = canvas:getDimensions()
+				love.graphics.print("x "..lx, 0, 0)
+				love.graphics.print("y "..ly, 0, 10)
 		love.graphics.setCanvas()
 	end
 
