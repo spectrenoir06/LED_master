@@ -77,7 +77,7 @@ function fft(input, inverse)
 
 	-- assert(#input == next_possible_size(#input), string.format("The size of your input is not correct. For your size=%i, use a table of size=%i with zeros at the end.", #input, next_possible_size(#input)))
 	local n = next_possible_size(num_points)
-	print(n,num_points)
+	-- print(n,num_points)
 	if n ~= num_points then
 		for i=1, n-num_points do
 			table.insert(input, 0)
