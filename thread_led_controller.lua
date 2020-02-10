@@ -32,7 +32,7 @@ while true do
 
 	local data, ip, port = controller.udp:receivefrom()
 	if data then
-		print(data,ip,port)
+		-- print(ip,port)
 		local type, info = controller:receiveArtnet(data, ip, port)
 		if type == "reply" then
 			-- for i=0,20 do
