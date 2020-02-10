@@ -1,3 +1,5 @@
+#pragma language glsl3
+
 uniform highp float density;
 uniform highp float iTime;
 uniform vec3 iResolution;
