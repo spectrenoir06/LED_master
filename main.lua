@@ -35,7 +35,7 @@ function love.load(arg)
 	fps = 60
 	-- lx, ly = 64, 64
 	-- lx, ly = 64, 8
-	m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
+	-- m = json.decode(love.filesystem.read("ressource/map/map_hat_bis.json"))
 	-- thread:start(
 	-- 	{
 	-- 		led_nb = lx*ly,
@@ -48,23 +48,23 @@ function love.load(arg)
 	-- 	true
 	-- )
 
-	-- fps = 30
 	-- lx, ly = 216, 64
 	lx, ly = 40, 20
-	-- m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
-	-- thread:start(
-	-- 	{
-	-- 		led_nb = lx*ly,
-	-- 		ip = "10.80.1.18",
-	-- 		protocol = "artnet",
-	-- 		debug = false,
-	-- 		map = m,
-	-- 		rgbw = true,
-	-- 		leds_by_uni = 100
-	-- 	},
-	-- 	fps,
-	-- 	false
-	-- )
+	fps = 30
+	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
+	thread:start(
+		{
+			led_nb = lx*ly,
+			ip = "10.80.1.18",
+			protocol = "artnet",
+			debug = false,
+			map = m,
+			rgbw = true,
+			leds_by_uni = 100
+		},
+		fps,
+		false
+	)
 
 
 
@@ -215,9 +215,10 @@ function love.keypressed( key, scancode, isrepeat )
 	else
 		return
 	end
-	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
-	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas = love.graphics.newCanvas(lx, ly, {dpiscale =  love.window.getDPIScale(), mipmaps = "none"})
+	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale =  love.window.getDPIScale(), mipmaps = "none"})
 	canvas:setFilter("nearest", "nearest")
+	canvas_test:setFilter("nearest", "nearest")
 end
 
 function love.keyreleased(key)

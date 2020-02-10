@@ -50,8 +50,8 @@ end
 function player:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Player")
-	frame:SetSize(411, 300)
-	frame:SetPos(0,330)
+	frame:SetSize(411, 230)
+	frame:SetPos(0,280)
 	frame:SetAlwaysUpdate(true)
 	frame:SetScreenLocked(true)
 
