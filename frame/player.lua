@@ -269,7 +269,7 @@ function player:load(loveframes, lx, ly)
 	panel_music.Update = function(object, dt)
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		timer = timer + dt
-		local div = 1
+		local div = 2
 		local l = 1
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
@@ -300,7 +300,7 @@ function player:load(loveframes, lx, ly)
 				end
 				sum = sum
 
-				t[pos] = lerp(t[pos] or 0, sum, slider_lerp:GetValue())
+				t[pos+1] = lerp(t[pos+1] or 0, sum, slider_lerp:GetValue())
 
 
 				local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
@@ -312,9 +312,9 @@ function player:load(loveframes, lx, ly)
 				-- love.graphics.setColor(1,1-color,0)
 
 
-				love.graphics.rectangle("fill", x, canvas:getHeight(), l, -math.floor(t[pos]))
+				-- love.graphics.rectangle("fill", x, canvas:getHeight(), l, -math.floor(t[pos+1]))
 
-				-- love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[i+1])/2, lx, -math.floor(t[i+1]))
+				love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[pos+1])/2, l, -math.floor(t[pos+1]))
 
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]))
 				-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]))
