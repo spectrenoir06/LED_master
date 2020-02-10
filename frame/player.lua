@@ -5,6 +5,11 @@ local player = {}
 local abs = math.abs
 local new = complex.new
 
+local mic_sample_size = 2081
+local mic_sample_rate = 48000
+local mic_depth = 8
+local fft_bin = 1024
+
 function f_map(x,  in_min,  in_max,  out_min,  out_max)
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 end
@@ -31,7 +36,7 @@ function spectro_up(obj, sdata, size)
 
 	for i= MusicPos, MusicPos + (size-1) do
 		CopyPos = i
-		if i + 2048 > MusicSize then i = MusicSize/2 end
+		if i + fft_bin > MusicSize then i = MusicSize/2 end
 
 		if sdata:getChannelCount()==1 then
 			List[#List+1] = new(sdata:getSample(i), 0)
@@ -138,9 +143,6 @@ function player:load(loveframes, lx, ly)
 	local record_list = love.audio.getRecordingDevices()
 	local mic = record_list[1]
 
-	mic:start(2081, 48000, 8, 1)
-
-
 	local slider_lerp = loveframes.Create("slider", panel_music)
 	tabs:AddTab("Music", panel_music, nil, nil, function() if sound then sound:play() end end, function() if sound then sound:pause() end end)
 	slider_lerp:SetPos(100, 70)
@@ -160,8 +162,8 @@ function player:load(loveframes, lx, ly)
 
 	slider_amp:SetPos(100, 100)
 	slider_amp:SetWidth(panel_music:GetWidth()-100-8)
-	slider_amp:SetMinMax(0.01, 100)
-	slider_amp:SetValue(40)
+	slider_amp:SetMinMax(0.1, 100)
+	slider_amp:SetValue(1)
 
 	local text2 = loveframes.Create("text", panel_music)
 	text2:SetPos(8, 100)
@@ -239,7 +241,8 @@ function player:load(loveframes, lx, ly)
 		for k,v in ipairs(record_list) do
 			if v:getName() == choice then
 				mic = v
-				mic:start(735, 44100*8, 16, 1)
+				print("mic start")
+				mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
 				break
 			end
 		end
@@ -266,29 +269,41 @@ function player:load(loveframes, lx, ly)
 	panel_music.Update = function(object, dt)
 		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 		timer = timer + dt
+		local div = 1
 		local l = 1
-		local div = 8
 		local size = canvas:getWidth()
 		if checkbox:GetChecked() then
-			s = spectro_up_mic(sound, soundData, size*div/l, mic)
+			if not mic:isRecording() then
+				local test = mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+				assert(test)
+			end
+			s = spectro_up_mic(sound, soundData, fft_bin, mic)
 			spectre = s or spectre
 		else
-			spectre = spectro_up(sound, soundData, size*div/l)
+			spectre = spectro_up(sound, soundData, fft_bin)
 		end
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
-			local lx = (canvas:getWidth() / size) * l
+			-- local lx = (canvas:getWidth() / size) * l
 			love.graphics.setColor(0, 0, 0)
 			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
 
-			for i = 0, #spectre/div-1 do
-				local v = 100*(spectre[i+1]:abs())
-				-- v = math.min(v,200)
-				local m = v/slider_amp:GetValue()--f_map(v, 0, 200, 0, 20)
-				t[i+1] = lerp(t[i+1] or 0, m, slider_lerp:GetValue())
+			local band_size = math.max(math.floor(fft_bin / canvas:getWidth() / 2 * l), 1)
+			for i = 0, canvas:getWidth()/l-1 do
+				local pos = math.floor(band_size * i / div)
+				-- print(band_size, pos)
 
-				local x = i*lx --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
+				local sum = 0
+				for j=1, band_size do
+					sum = sum + spectre[pos+j]:abs() * slider_amp:GetValue() / 1000 * canvas:getHeight()
+				end
+				sum = sum
+
+				t[pos] = lerp(t[pos] or 0, sum, slider_lerp:GetValue())
+
+
+				local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
 
 				local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
 				love.graphics.setColor(r,g,b)
@@ -297,7 +312,7 @@ function player:load(loveframes, lx, ly)
 				-- love.graphics.setColor(1,1-color,0)
 
 
-				love.graphics.rectangle("fill", x, canvas:getHeight(), lx, -math.floor(t[i+1]))
+				love.graphics.rectangle("fill", x, canvas:getHeight(), l, -math.floor(t[pos]))
 
 				-- love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[i+1])/2, lx, -math.floor(t[i+1]))
 
