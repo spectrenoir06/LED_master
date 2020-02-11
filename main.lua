@@ -104,7 +104,8 @@ function love.load(arg)
 	-- for k,v in pairs(loveframes.skins) do print(k,v) end
 
 	-- loveframes.SetActiveSkin("Orange")
-	loveframes.SetActiveSkin("Blue")
+	loveframes.SetActiveSkin("Spectre")
+	-- loveframes.SetActiveSkin("Blue")
 	-- loveframes.SetActiveSkin("Default red")
 	-- loveframes.SetActiveSkin("Dark red")
 

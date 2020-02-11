@@ -1,7 +1,10 @@
 # LED_Master
 
-runs serveur with Love ( gui mode ) work on android and IOS
-love .
+## dependencies
+
+- You need to install [Löve](https://love2d.org/wiki/Getting_Started
+
+## Roadmap
 
 - Work
   - Protocol
@@ -38,14 +41,18 @@ love .
   - Network discovery
     - [x] Art-net
     - [ ] ?
+  - Setting
+    - [x] Canvas size
+    - [x] Brightness
+    - [ ] White mode
   - Animation
     - [ ] Loader
     - [ ] Editor
     - [ ] Saver
   - Compatibility ( need test )
     - [x] Linux
-    - [ ] Windows
-    - [ ] OSX
+    - [x] Windows
+    - [x] OSX
     - [x] Android
     - [ ] iOS
     - [x] Raspberry Pi
