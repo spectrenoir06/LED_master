@@ -20,6 +20,9 @@ function network_scan:load(loveframes, lx, ly)
 
 	frame:SetDockable(true)
 
+	frame:SetIcon("ressource/icons/network-ethernet.png")
+
+
 	local node_list = loveframes.Create("columnlist", frame)
 	node_list:SetPos(5, 60)
 	node_list:SetSize(frame:GetWidth()-10, frame:GetHeight()-60-5)
@@ -37,9 +40,12 @@ function network_scan:load(loveframes, lx, ly)
 	end
 
 	local button = loveframes.Create("button", frame)
-	button:SetWidth(200)
+	button:SetWidth(130)
+	button:SetText("   Scan network")
+	button:SetImage("ressource/icons/binocular.png")
 	button:SetPos(5, 30)
-	button:SetText("Scan network")
+	button.groupIndex = 1
+
 	-- button:Center()
 	button.OnClick = function(object, x, y)
 		node_list:Clear()

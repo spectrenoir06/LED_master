@@ -69,6 +69,8 @@ function player:load(loveframes)
 
 	frame:SetDockable(true)
 
+	frame:SetIcon("ressource/icons/remote-control.png")
+
 	local tabs = loveframes.Create("tabs", frame)
 	tabs:SetPos(4, 30)
 	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
@@ -85,10 +87,13 @@ function player:load(loveframes)
 	local video = love.graphics.newVideo("ressource/video/bebop.ogv", {audio=true})
 	local video_source = video:getSource()
 
+	local icons_play = love.graphics.newImage("ressource/icons/control.png")
+	local icons_pause = love.graphics.newImage("ressource/icons/control-pause.png")
+
 
 ---------------------------- Shader --------------------------------------------
 
-	tabs:AddTab("Shader", panel_shader, nil)
+	tabs:AddTab("Shader", panel_shader, nil, "ressource/icons/spectrum.png")
 	local choice_shader = loveframes.Create("multichoice", panel_shader)
 	choice_shader:SetPos(8, 8)
 	choice_shader:SetSize(panel_shader:GetWidth()-16, 25)
@@ -175,7 +180,7 @@ function player:load(loveframes)
 	local mic = record_list[1]
 
 	local slider_lerp = loveframes.Create("slider", panel_music)
-	tabs:AddTab("Music", panel_music, nil, nil, function() if sound then sound:play() end end, function() if sound then sound:pause() end end)
+	tabs:AddTab("Music", panel_music, nil, "ressource/icons/music.png", function() if sound then sound:play() end end, function() if sound then sound:pause() end end)
 	slider_lerp:SetPos(100, 70)
 	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
 	slider_lerp:SetMinMax(0.01, 1)
@@ -316,8 +321,10 @@ function player:load(loveframes)
 
 		if sound:isPlaying() then
 			music_button:SetText("Pause")
+			music_button:SetImage(icons_pause)
 		else
 			music_button:SetText("Play")
+			music_button:SetImage(icons_play)
 		end
 
 		timer = timer + dt
@@ -373,7 +380,7 @@ function player:load(loveframes)
 
 ---------------------------- Video ---------------------------------------------
 
-	tabs:AddTab("Video", panel_video, nil, nil, function() video:play() end, function() video:pause() end)
+	tabs:AddTab("Video", panel_video, nil, "ressource/icons/film.png", function() video:play() end, function() video:pause() end)
 	local video_progressbar = loveframes.Create("progressbar", panel_video)
 	video_progressbar:SetPos(68, 8)
 	video_progressbar:SetWidth(210)
@@ -381,8 +388,9 @@ function player:load(loveframes)
 
 	local video_button = loveframes.Create("button", panel_video)
 	video_button:SetPos(8, 8)
-	video_button:SetSize(50, 25)
+	video_button:SetSize(55, 25)
 	video_button:SetText("Pause")
+	video_button:SetImage(icons_play)
 	video_button.OnClick = function(object, x, y)
 		if video:isPlaying() then
 			video:pause()
@@ -397,8 +405,10 @@ function player:load(loveframes)
 
 		if video:isPlaying() then
 			video_button:SetText("Pause")
+			video_button:SetImage(icons_pause)
 		else
 			video_button:SetText("Play")
+			video_button:SetImage(icons_play)
 		end
 
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
@@ -413,7 +423,7 @@ function player:load(loveframes)
 
 ---------------------------- Script --------------------------------------------
 
-	tabs:AddTab("Script", panel_script)
+	tabs:AddTab("Script", panel_script, nil, "ressource/icons/script-code.png")
 	local choice_script = loveframes.Create("multichoice", panel_script)
 	choice_script:SetPos(8, 8)
 	choice_script:SetSize(panel_script:GetWidth()-16, 25)
@@ -438,7 +448,8 @@ function player:load(loveframes)
 		choice_script:SetWidth(object:GetWidth()-16)
 
 		love.graphics.setCanvas(canvas)
-		scripts[choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
+			love.graphics.setColor(1,1,1,1)
+			scripts[choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
 		love.graphics.setCanvas()
 	end
 
@@ -449,7 +460,7 @@ function player:load(loveframes)
 	font:setFilter("nearest","nearest")
 	local lx, ly = canvas:getDimensions()
 
-	tabs:AddTab("Setting", panel_setting, nil, nil, function() love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight()) end, function() love.keyboard.setTextInput(false) end)
+	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png", function() love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight()) end, function() love.keyboard.setTextInput(false) end)
 	local numberbox_x = loveframes.Create("numberbox", panel_setting)
 	numberbox_x:SetPos(5, 5)
 	numberbox_x:SetSize(200, 25)
