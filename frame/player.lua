@@ -394,6 +394,13 @@ function player:load(loveframes)
 	end
 
 	panel_video.Update = function(object, dt)
+
+		if video:isPlaying() then
+			video_button:SetText("Pause")
+		else
+			video_button:SetText("Play")
+		end
+
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 		video_progressbar:SetWidth(object:GetWidth()-8-68)
 
@@ -480,8 +487,8 @@ function player:load(loveframes)
 			love.graphics.clear(0,0,0,1)
 			love.graphics.setColor(1,1,1,1)
 				local lx, ly = canvas:getDimensions()
-				love.graphics.print("x "..lx, 0, 0)
-				love.graphics.print("y "..ly, 0, 10)
+				love.graphics.print("x "..lx, 1, 0)
+				love.graphics.print("y "..ly, 1, 10)
 		love.graphics.setCanvas()
 	end
 
