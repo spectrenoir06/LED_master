@@ -18,6 +18,7 @@ local counter = 0
 
 local time = 0
 
+
 local json = require "lib.json"
 require("lib/color")
 
@@ -86,7 +87,8 @@ function love.load(arg)
 	shaders = {}
 	shaders_param = {
 		speed = 1,
-		density = 1
+		density = 1,
+		bright = 1
 	}
 	shader_nb = 1
 
@@ -101,9 +103,9 @@ function love.load(arg)
 
 	-- for k,v in pairs(loveframes.skins) do print(k,v) end
 
-	-- loveframes.SetActiveSkin("Orange")
+	loveframes.SetActiveSkin("Orange")
 	-- loveframes.SetActiveSkin("Blue")
-	loveframes.SetActiveSkin("Default red")
+	-- loveframes.SetActiveSkin("Default red")
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes, lx, ly)
@@ -135,12 +137,13 @@ function love.draw()
 	-- local pixelwidth, pixelheight = love.graphics.getPixelDimensions()
 	-- local gx, gy = love.graphics.getDimensions()
 	-- local x,y,sx, sy = love.window.getSafeArea()
-	--
+	-- --
 	-- love.graphics.print("getDesktopDimensions: "..width.."x"..height, 10, 50)
 	-- love.graphics.print("getMode: "..tx.."x"..ty, 10, 70)
 	-- love.graphics.print("getPixelDimensions: "..pixelwidth.."x"..pixelheight, 10, 90)
 	-- love.graphics.print("getDimensions: "..gx.."x"..gy, 10, 110)
 	-- love.graphics.print("getSafeArea: "..x.."x"..y..", "..sx.."x"..sy, 10, 130)
+	-- love.graphics.print("getDPIScale: "..love.graphics.getDPIScale(), 10, 150)
 end
 
 
