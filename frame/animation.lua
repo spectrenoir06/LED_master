@@ -22,6 +22,8 @@ function animation:load(loveframes, lx, ly)
 
 	frame:SetDockable(true)
 
+	frame:SetIcon("ressource/icons/television-test.png")
+
 	local panel = loveframes.Create("panel", frame)
 	panel:SetPos(4, 28)
 	panel:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
