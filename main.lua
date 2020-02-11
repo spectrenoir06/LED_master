@@ -103,8 +103,8 @@ function love.load(arg)
 
 	-- for k,v in pairs(loveframes.skins) do print(k,v) end
 
-	loveframes.SetActiveSkin("Orange")
-	-- loveframes.SetActiveSkin("Blue")
+	-- loveframes.SetActiveSkin("Orange")
+	loveframes.SetActiveSkin("Blue")
 	-- loveframes.SetActiveSkin("Default red")
 	-- loveframes.SetActiveSkin("Dark red")
 
@@ -113,6 +113,11 @@ function love.load(arg)
 	-- frame_pixel_map:load(loveframes)
 	-- frame_network_map:load(loveframes)
 	frame_player:load(loveframes)
+
+	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
+	spectre_img:setFilter("linear", "linear")
+	logo_font = love.graphics.newFont("ressource/font/jd_led3.ttf", 150)
+	-- logo_font:setFilter("nearest", "nearest")
 
 	local image = love.graphics.newImage("ressource/image/bg.png")
 	image:setWrap("repeat", "repeat")
@@ -130,6 +135,21 @@ end
 function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
+
+	local r,g,b = hslToRgb(time/4%1,1,0.9)
+	love.graphics.setColor(r,g,b)
+
+	local lx,ly = love.graphics.getDimensions()
+	local sx,sy = spectre_img:getDimensions()
+	local k = lx / (sx*2)
+	sx, sy = sx*k, sy*k
+	love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
+	love.graphics.setFont(logo_font)
+	local sx = logo_font:getWidth("LED Master")
+	local k = lx / (sx*1.2)
+	sx = sx * k
+	love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
+
 	loveframes.draw()
 
 	-- local width, height = love.window.getDesktopDimensions(1)

@@ -27,7 +27,9 @@ function animation:load(loveframes, lx, ly)
 	panel:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 
 	panel.Draw = function(object)
-		love.graphics.setColor(shaders_param.bright, shaders_param.bright, shaders_param.bright)
+		-- local b = 0.5 + shaders_param.bright / 2
+		local b = 1
+		love.graphics.setColor(b, b, b)
 		love.graphics.draw(
 			canvas,
 			object:GetX(),
