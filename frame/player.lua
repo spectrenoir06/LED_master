@@ -152,7 +152,6 @@ function player:load(loveframes)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
-			-- love.graphics.setColor(0.2, 0.2, 0.2)
 			love.graphics.setShader(shaders[shader_nb].shader)
 				love.graphics.draw(canvas_test,0,0)
 			love.graphics.setShader()
@@ -262,20 +261,30 @@ function player:load(loveframes)
 	choice_mic:SetSize(panel_music:GetWidth()-130-8, 25)
 
 	print("Load audio in:")
-	for k,v in ipairs(record_list) do
-		print("    "..v:getName())
-		choice_mic:AddChoice(v:getName())
-		choice_mic:SelectChoice(v:getName())
+	if #record_list == 0 then
+		choice_mic:AddChoice("No audio in")
+		choice_mic:SelectChoice("No audio in")
+		choice_mic:SetEnabled(false)
+		checkbox:SetEnabled(false)
+		checkbox:SetVisible(false)
+	else
+		for k,v in ipairs(record_list) do
+			print("    "..v:getName())
+			choice_mic:AddChoice(v:getName())
+			choice_mic:SelectChoice(v:getName())
+		end
 	end
 
 	choice_mic.OnChoiceSelected = function(object, choice)
-		mic:stop()
-		for k,v in ipairs(record_list) do
-			if v:getName() == choice then
-				mic = v
-				print("mic start")
-				mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
-				break
+		if mic then
+			mic:stop()
+			for k,v in ipairs(record_list) do
+				if v:getName() == choice then
+					mic = v
+					print("mic start")
+					mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+					break
+				end
 			end
 		end
 	end
@@ -315,10 +324,9 @@ function player:load(loveframes)
 		local div = 2
 		local l = 1
 		local size = canvas:getWidth()
-		if checkbox:GetChecked() then
+		if checkbox:GetChecked() and mic then
 			if not mic:isRecording() then
 				local test = mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
-				assert(test)
 			end
 			s = spectro_up_mic(sound, soundData, fft_bin, mic)
 			spectre = s or spectre
@@ -328,10 +336,6 @@ function player:load(loveframes)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
-			-- local lx = (canvas:getWidth() / size) * l
-			love.graphics.setColor(0, 0, 0)
-			-- love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
-
 			local band_size = math.max(math.floor(fft_bin / canvas:getWidth() / 2 * l), 1)
 			for i = 0, canvas:getWidth()/l-1 do
 				local pos = math.floor(band_size * i / div)
@@ -394,6 +398,7 @@ function player:load(loveframes)
 		video_progressbar:SetWidth(object:GetWidth()-8-68)
 
 		love.graphics.setCanvas(canvas)
+			love.graphics.setColor(1,1,1,1)
 			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
 			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
 		love.graphics.setCanvas()
@@ -473,6 +478,7 @@ function player:load(loveframes)
 		love.graphics.setCanvas(canvas)
 			love.graphics.setFont(font)
 			love.graphics.clear(0,0,0,1)
+			love.graphics.setColor(1,1,1,1)
 				local lx, ly = canvas:getDimensions()
 				love.graphics.print("x "..lx, 0, 0)
 				love.graphics.print("y "..ly, 0, 10)
