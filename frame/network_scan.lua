@@ -16,7 +16,7 @@ function network_scan:load(loveframes, lx, ly)
 	-- frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
-	frame:SetScreenLocked(true)
+	-- frame:SetScreenLocked(true)
 
 	frame:SetDockable(true)
 
