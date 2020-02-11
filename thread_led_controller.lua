@@ -11,15 +11,12 @@ controller = LEDsController:new(t)
 while true do
 	local data = love.thread.getChannel('img'):pop()
 	if data then
+		local lx, ly = data:getDimensions()
 		for k,v in ipairs(controller.map) do
-			local r,g,b = data:getPixel(v.x, v.y)
-
-			-- local w = (math.max(r,g,b) + math.min(r,g,b)) / 2
-			local w = math.min(r,g,b)
-			r,g,b = r-w, g-w, b-w
-			-- local w = 0
-
-			controller:setArtnetLED(v, {r*255, g*255, b*255, w*255})
+			if v.x >= 0 and v.x < lx and v.y >= 0 and v.y < ly then
+				local r,g,b = data:getPixel(v.x, v.y)
+				controller:setArtnetLED(v, r*255, g*255, b*255, 0)
+			end
 		end
 		controller:send(1/fps/2, sync)
 	end
@@ -27,6 +24,11 @@ while true do
 	local data = love.thread.getChannel('poll'):pop()
 	if data then
 		controller:sendArtnetPoll()
+	end
+
+	local data = love.thread.getChannel('bright'):pop()
+	if data then
+		LEDsController.bright = data
 	end
 
 	local data, ip, port = controller.udp:receivefrom()

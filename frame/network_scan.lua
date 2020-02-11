@@ -4,14 +4,19 @@ function network_scan:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Network Discovery")
 	frame:SetPos(0, 280+230)
-	frame:SetSize(411, 328+30)
+
+	local lx, ly = love.graphics.getDimensions()
+	if love.system.getOS() == "Android" then
+		lx, ly = ly, lx
+	end
+	frame:SetSize(lx, 328+30)
 
 	frame:SetResizable(true)
 	-- frame:SetMaxWidth(1000)
 	-- frame:SetMaxHeight(1000)
 	frame:SetMinWidth(200)
 	frame:SetMinHeight(200)
-	-- frame:SetScreenLocked(true)
+	frame:SetScreenLocked(true)
 
 	frame:SetDockable(true)
 

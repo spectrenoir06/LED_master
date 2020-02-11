@@ -47,25 +47,34 @@ function spectro_up(obj, sdata, size)
 	return fft(List, false)
 end
 
-function player:load(loveframes, lx, ly)
+function player:load(loveframes)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Player")
-	frame:SetSize(411, 230)
+
+	local lx, ly = love.graphics.getDimensions()
+	if love.system.getOS() == "Android" then
+		lx, ly = ly, lx
+	end
+	frame:SetSize(lx, 230)
+
 	frame:SetPos(0,280)
 	frame:SetAlwaysUpdate(true)
 	frame:SetScreenLocked(true)
 
 	frame:SetResizable(true)
 	frame:SetMaxWidth(1000)
-	frame:SetMaxHeight(1000)
+	frame:SetMaxHeight(230)
 	frame:SetMinWidth(200)
-	frame:SetMinHeight(200)
+	frame:SetMinHeight(230)
 
 	frame:SetDockable(true)
 
 	local tabs = loveframes.Create("tabs", frame)
 	tabs:SetPos(4, 30)
 	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
+	tabs.Update = function(object, dt)
+		tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
+	end
 
 	local panel_video = loveframes.Create("panel")
 	local panel_shader = loveframes.Create("panel")
@@ -114,11 +123,33 @@ function player:load(loveframes, lx, ly)
 		shaders_param.density = slider_density:GetValue()
 	end
 
+	local slider_bright = loveframes.Create("slider", panel_shader)
+	slider_bright:SetPos(100, 100)
+	slider_bright:SetWidth(panel_shader:GetWidth()-100-8)
+	slider_bright:SetMinMax(0.0, 1)
+	slider_bright:SetValue(1)
+
+	local text2 = loveframes.Create("text", panel_shader)
+	text2:SetPos(8, 100)
+	text2:SetText("Bright: "..slider_bright:GetValue())
+
+	slider_bright.OnValueChanged = function(object)
+		text2:SetText("Bright: "..math.floor(slider_bright:GetValue()*100)/100)
+		shaders_param.bright = slider_bright:GetValue()
+		love.thread.getChannel('bright'):push(slider_bright:GetValue())
+	end
+
 	for k,v in ipairs(shaders) do
 		choice_shader:AddChoice(v.name)
 	end
 
 	panel_shader.Update = function(object, dt)
+		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+		choice_shader:SetSize(panel_shader:GetWidth()-16, 25)
+		slider_speed:SetWidth(panel_shader:GetWidth()-100-8)
+		slider_density:SetWidth(panel_shader:GetWidth()-100-8)
+		slider_bright:SetWidth(panel_shader:GetWidth()-100-8)
+
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
 			-- love.graphics.setColor(0.2, 0.2, 0.2)
@@ -185,15 +216,15 @@ function player:load(loveframes, lx, ly)
 	end
 
 	local checkbox = loveframes.Create("checkbox", panel_music)
-	checkbox:SetText("Use audio in")
-	checkbox:SetPos(8, 130)
+	checkbox:SetText("Audio in")
+	checkbox:SetPos(8, 140)
 
 	local t = {}
 	local timer = 0
 	local spectre = {}
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
-	choice_music:SetPos(8, 8)
+	choice_music:SetPos(100, 8)
 	choice_music:SetSize(panel_music:GetWidth()-16, 25)
 
 	local list = love.filesystem.getDirectoryItems("ressource/music/")
@@ -227,7 +258,7 @@ function player:load(loveframes, lx, ly)
 	end
 
 	local choice_mic = loveframes.Create("multichoice", panel_music)
-	choice_mic:SetPos(130, 125)
+	choice_mic:SetPos(100, 135)
 	choice_mic:SetSize(panel_music:GetWidth()-130-8, 25)
 
 	print("Load audio in:")
@@ -252,8 +283,8 @@ function player:load(loveframes, lx, ly)
 
 
 	local music_button = loveframes.Create("button", panel_music)
-	music_button:SetPos(8, 40)
-	music_button:SetSize(50, 25)
+	music_button:SetPos(8, 8)
+	music_button:SetSize(75, 25)
 	music_button:SetText("Pause")
 	music_button.OnClick = function(object, x, y)
 		if sound:isPlaying() then
@@ -266,9 +297,20 @@ function player:load(loveframes, lx, ly)
 	end
 
 
-
 	panel_music.Update = function(object, dt)
-		--object:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
+		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+		choice_music:SetSize(panel_music:GetWidth()-8-100, 25)
+		progressbar:SetSize(panel_music:GetWidth()-8-100, 25)
+		slider_lerp:SetSize(panel_music:GetWidth()-8-100, 25)
+		slider_amp:SetSize(panel_music:GetWidth()-8-100, 25)
+		choice_mic:SetSize(panel_music:GetWidth()-8-100, 25)
+
+		if sound:isPlaying() then
+			music_button:SetText("Pause")
+		else
+			music_button:SetText("Play")
+		end
+
 		timer = timer + dt
 		local div = 2
 		local l = 1
@@ -348,6 +390,9 @@ function player:load(loveframes, lx, ly)
 	end
 
 	panel_video.Update = function(object, dt)
+		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+		video_progressbar:SetWidth(object:GetWidth()-8-68)
+
 		love.graphics.setCanvas(canvas)
 			love.graphics.draw(video, 0, 0, 0, canvas:getWidth()/video:getWidth(), canvas:getHeight()/video:getHeight())
 			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
@@ -377,6 +422,9 @@ function player:load(loveframes, lx, ly)
 
 
 	panel_script.Update = function(object, dt)
+		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+		choice_script:SetWidth(object:GetWidth()-16)
+
 		love.graphics.setCanvas(canvas)
 		scripts[choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
 		love.graphics.setCanvas()
@@ -389,7 +437,7 @@ function player:load(loveframes, lx, ly)
 	font:setFilter("nearest","nearest")
 	local lx, ly = canvas:getDimensions()
 
-	tabs:AddTab("Setting", panel_setting, nil, nil, function() love.keyboard.setTextInput(true) end, function() love.keyboard.setTextInput(false) end)
+	tabs:AddTab("Setting", panel_setting, nil, nil, function() love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight()) end, function() love.keyboard.setTextInput(false) end)
 	local numberbox_x = loveframes.Create("numberbox", panel_setting)
 	numberbox_x:SetPos(5, 5)
 	numberbox_x:SetSize(200, 25)
@@ -418,6 +466,10 @@ function player:load(loveframes, lx, ly)
 	end
 
 	panel_setting.Update = function(object, dt)
+		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+		numberbox_x:SetWidth(object:GetWidth()-10)
+		numberbox_y:SetWidth(object:GetWidth()-10)
+
 		love.graphics.setCanvas(canvas)
 			love.graphics.setFont(font)
 			love.graphics.clear(0,0,0,1)

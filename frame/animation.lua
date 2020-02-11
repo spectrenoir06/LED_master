@@ -3,7 +3,13 @@ local animation = {}
 function animation:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Animation")
-	frame:SetSize(411, 250)
+
+	local lx, ly = love.graphics.getDimensions()
+	if love.system.getOS() == "Android" then
+		lx, ly = ly, lx
+	end
+	frame:SetSize(lx, 250)
+
 	frame:SetPos(0, 30)
 	frame:SetScreenLocked(true)
 	frame:SetAlwaysUpdate(true)
@@ -21,7 +27,7 @@ function animation:load(loveframes, lx, ly)
 	panel:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
 
 	panel.Draw = function(object)
-		love.graphics.setColor(1, 1, 1)
+		love.graphics.setColor(shaders_param.bright, shaders_param.bright, shaders_param.bright)
 		love.graphics.draw(
 			canvas,
 			object:GetX(),

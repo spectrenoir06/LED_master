@@ -1,5 +1,8 @@
 # LED_Master
 
+runs serveur with Love ( gui mode ) work on android and IOS
+love .
+
 - Work
   - Protocol
     - [x] Art-net
@@ -8,8 +11,8 @@
     - [x] RLE888
     - [ ] RLE565
     - [x] BRO888 (brotli)
-    - [ ] Z888 (zlib)
-    - [ ] Z565 (zlib)
+    - [x] Z888 (zlib)
+    - [x] Z565 (zlib)
     - [ ] udpx
   - Shader
     - [x] Fragment Shader
