@@ -1,6 +1,6 @@
 local animation = {}
 
-function animation:load(loveframes, lx, ly)
+function animation:load(loveframes)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Animation")
 
