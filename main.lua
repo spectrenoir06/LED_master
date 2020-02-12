@@ -12,7 +12,7 @@ local frame_network_map  = require("frame.network_map")
 local frame_player       = require("frame.player")
 
 local timer = 0
-local debug = true
+local debug = false
 local sync = false
 local counter = 0
 
@@ -56,7 +56,7 @@ function love.load(arg)
 
 	thread:start(sync, debug)
 
-	local mapping = json.decode(love.filesystem.read("ressource/map/map_hat.json"))
+	local mapping = json.decode(love.filesystem.read("ressource/map/map_42.json"))
 	lx = mapping.lx
 	ly = mapping.ly
 	fps = mapping.fps
