@@ -30,6 +30,10 @@ function love.load(arg)
 		love.window.setMode( 411, 838, {resizable = false} )
 	end
 
+	love.filesystem.createDirectory("ressource/music")
+	love.filesystem.createDirectory("ressource/shader")
+	love.filesystem.createDirectory("ressource/script")
+	love.filesystem.createDirectory("ressource/video")
 
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
@@ -271,7 +275,7 @@ end
 
 function love.filedropped(file)
 	local path, filename, extention = file:getFilename():match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
-	print("Drop "..filename, extention)
+	print("Drop '"..path.."'  '"..filename.."'  "..extention)
 	if extention == "wav" or extention == "mp3" or extention == "ogg" or extention == "oga" or extention == "flac" then
 		print("load music")
 		file:open("r")
