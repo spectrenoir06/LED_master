@@ -20,7 +20,7 @@
   - Shader
     - [x] Fragment Shader
     - [x] External parameter
-    - [ ] FFT sound input
+    - [ ] FFT sound input ( FFT => canvas => shader:send )
   - Music
     - [x] Music Loader
     - [x] FFT visualization

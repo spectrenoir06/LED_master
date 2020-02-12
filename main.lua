@@ -18,6 +18,7 @@ local counter = 0
 
 local time = 0
 
+print(string.match("/media/spectre/Data/Music/My Hero Academia/01 You Say Run.mp3", "^(.-)([^\\/]-%.([^\\/%.]-))%.?$"))
 
 local json = require "lib.json"
 require("lib/color")
@@ -113,7 +114,7 @@ function love.load(arg)
 	node_list = frame_network_scan:load(loveframes)
 	-- frame_pixel_map:load(loveframes)
 	-- frame_network_map:load(loveframes)
-	frame_player:load(loveframes)
+	frame_player_frame = frame_player:load(loveframes)
 
 	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
 	spectre_img:setFilter("linear", "linear")
@@ -137,19 +138,19 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 
-	local r,g,b = hslToRgb(time/4%1,1,0.9)
-	love.graphics.setColor(r,g,b)
-
-	local lx,ly = love.graphics.getDimensions()
-	local sx,sy = spectre_img:getDimensions()
-	local k = lx / (sx*2)
-	sx, sy = sx*k, sy*k
-	love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
-	love.graphics.setFont(logo_font)
-	local sx = logo_font:getWidth("LED Master")
-	local k = lx / (sx*1.2)
-	sx = sx * k
-	love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
+	-- local r,g,b = hslToRgb(time/4%1,1,0.9)
+	-- love.graphics.setColor(r,g,b)
+	--
+	-- local lx,ly = love.graphics.getDimensions()
+	-- local sx,sy = spectre_img:getDimensions()
+	-- local k = lx / (sx*2)
+	-- sx, sy = sx*k, sy*k
+	-- love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
+	-- love.graphics.setFont(logo_font)
+	-- local sx = logo_font:getWidth("LED Master")
+	-- local k = lx / (sx*1.2)
+	-- sx = sx * k
+	-- love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
 
 	loveframes.draw()
 
@@ -167,6 +168,8 @@ function love.draw()
 	-- love.graphics.print("getDPIScale: "..love.graphics.getDPIScale(), 10, 150)
 end
 
+local channel_img = love.thread.getChannel('img')
+local last_id = nil
 
 function love.update(dt)
 	timer = timer + dt
@@ -175,7 +178,9 @@ function love.update(dt)
 
 	if timer > 1 / fps then
 		local data = canvas:newImageData()
-		love.thread.getChannel('img'):push(data)
+		if last_id then channel_img:hasRead(last_id) end
+		last_id = channel_img:push(data)
+
 		timer = 0
 	end
 
@@ -262,4 +267,23 @@ end
 
 function love.textinput(text)
 	loveframes.textinput(text)
+end
+
+function love.filedropped(file)
+	local path, filename, extention = file:getFilename():match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
+	print("Drop "..filename, extention)
+	if extention == "wav" or extention == "mp3" or extention == "ogg" or extention == "oga" or extention == "flac" then
+		print("load music")
+		file:open("r")
+		local data = file:read()
+		print(love.filesystem.write( "ressource/music/"..filename, data))
+		frame_player_frame:Remove()
+		frame_player_frame = frame_player:load(loveframes)
+	elseif extention == "glsl" then
+		print("load shader")
+	elseif extention == "lua" then
+		print("load script")
+	else
+		print("can't load "..extention.." file")
+	end
 end
