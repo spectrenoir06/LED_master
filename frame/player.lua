@@ -146,7 +146,7 @@ function player:load(loveframes)
 	slider_bright.OnValueChanged = function(object)
 		slider_bright_text:SetText("Bright: "..math.floor(slider_bright:GetValue()*100)/100)
 		shaders_param.bright = slider_bright:GetValue()
-		love.thread.getChannel('bright'):push(slider_bright:GetValue())
+		love.thread.getChannel('data'):push({ type = "bright", data = slider_bright:GetValue()})
 	end
 
 	for k,v in ipairs(shaders) do
@@ -385,12 +385,12 @@ function player:load(loveframes)
 				-- local color = math.min(t[i+1],canvas:getHeight())/canvas:getHeight()
 				-- love.graphics.setColor(1,1-color,0)
 
-
-				-- love.graphics.rectangle("fill", x, canvas:getHeight(), l, -math.floor(t[pos+1]))
-
 				local v = math.floor(t[pos+1])
-				love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, math.floor(v/2))
-				love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, -math.floor(v/2))
+
+				love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
+
+				-- love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, math.floor(v/2))
+				-- love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, -math.floor(v/2))
 				-- love.graphics.rectangle("fill", x, math.math.floor(x)(canvas:getHeight()/2-(v/2)), l, v)
 --
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]))

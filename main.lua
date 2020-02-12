@@ -1,26 +1,24 @@
 love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua")
 
 
-local LEDsController = require "lib.LEDsController"
-local loveframes = require("lib.loveframes")
+local LEDsController     = require("lib.LEDsController")
+local loveframes         = require("lib.loveframes")
+local json               = require("lib.json")
 
-local frame_animation = require("frame.animation")
+local frame_animation    = require("frame.animation")
 local frame_network_scan = require("frame.network_scan")
-local frame_pixel_map = require("frame.pixel_map")
--- local frame_network_map = require("frame.network_map")
-local frame_player = require("frame.player")
-
+local frame_pixel_map    = require("frame.pixel_map")
+local frame_network_map  = require("frame.network_map")
+local frame_player       = require("frame.player")
 
 local timer = 0
-local fps = 60
+local debug = true
 local sync = false
 local counter = 0
 
 local time = 0
 
-print(string.match("/media/spectre/Data/Music/My Hero Academia/01 You Say Run.mp3", "^(.-)([^\\/]-%.([^\\/%.]-))%.?$"))
 
-local json = require "lib.json"
 require("lib/color")
 
 function love.load(arg)
@@ -36,58 +34,6 @@ function love.load(arg)
 	love.filesystem.createDirectory("ressource/video")
 
 	local thread = love.thread.newThread("thread_led_controller.lua")
-
-	love.graphics.setDefaultFilter("nearest", "nearest",0)
-	-- fps = 60
-	-- local lx, ly = 64, 64
-	-- local lx, ly = 64, 8
-	-- m = json.decode(love.filesystem.read("ressource/map/map_hat.json"))
-	-- thread:start(
-	-- 	{
-	-- 		led_nb = lx*ly,
-	-- 		protocol = "BRO888",
-	-- 		ip = "192.168.4.1",
-	-- 		debug = true,
-	-- 		map = m
-	-- 	},
-	-- 	fps,
-	-- 	true
-	-- )
-
-	local lx, ly = 40, 20
-	-- local lx, ly = 216, 64
-	fps = 30
-	m = json.decode(love.filesystem.read("ressource/map/map_40x20.json"))
-	thread:start(
-		{
-			led_nb = lx*ly,
-			ip = "10.80.1.18",
-			protocol = "artnet",
-			debug = false,
-			map = m,
-			rgbw = true,
-			leds_by_uni = 100
-		},
-		fps,
-		false
-	)
-
-
-	-- map = {}
-	-- for k,v in ipairs(m) do
-	-- 	if map[v.x+1] == nil then map[v.x+1]={} end
-	-- 	map[v.x+1][v.y+1] = {
-	-- 		uni = v.uni,
-	-- 		id = v.id
-	-- 	}
-	-- end
-
-
-
-	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
-	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
-	canvas:setFilter("nearest", "nearest")
-	canvas_test:setFilter("nearest", "nearest")
 
 	shaders = {}
 	shaders_param = {
@@ -106,7 +52,19 @@ function love.load(arg)
 		shaders[k].name = v
 	end
 
-	-- for k,v in pairs(loveframes.skins) do print(k,v) end
+	love.graphics.setDefaultFilter("nearest", "nearest", 0)
+
+	thread:start(sync, debug)
+
+	local mapping = json.decode(love.filesystem.read("ressource/map/map_hat.json"))
+	lx = mapping.lx
+	ly = mapping.ly
+	fps = mapping.fps
+
+	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
+	canvas:setFilter("nearest", "nearest")
+	canvas_test:setFilter("nearest", "nearest")
 
 	-- loveframes.SetActiveSkin("Orange")
 	loveframes.SetActiveSkin("Spectre")
@@ -114,11 +72,28 @@ function love.load(arg)
 	-- loveframes.SetActiveSkin("Default red")
 	-- loveframes.SetActiveSkin("Dark red")
 
-	frame_animation:load(loveframes, lx, ly)
-	node_list = frame_network_scan:load(loveframes)
+	frame_animation:load(loveframes)
+	-- node_list = frame_network_scan:load(loveframes)
 	-- frame_pixel_map:load(loveframes)
-	-- frame_network_map:load(loveframes)
+	local frame_network_map_frame, network_map = frame_network_map:load(loveframes)
 	frame_player_frame = frame_player:load(loveframes)
+
+	love.thread.getChannel("data"):push({
+		type = "mapping",
+		data = mapping
+	})
+
+	for k,v in ipairs(mapping.nodes) do
+		network_map:AddRow(
+			v.net,
+			v.uni,
+			v.ip,
+			v.port,
+			v.protocol,
+			v.rgbw,
+			v.led_nb
+		)
+	end
 
 	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
 	spectre_img:setFilter("linear", "linear")
@@ -142,19 +117,21 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 
-	-- local r,g,b = hslToRgb(time/4%1,1,0.9)
-	-- love.graphics.setColor(r,g,b)
-	--
-	-- local lx,ly = love.graphics.getDimensions()
-	-- local sx,sy = spectre_img:getDimensions()
-	-- local k = lx / (sx*2)
-	-- sx, sy = sx*k, sy*k
-	-- love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
-	-- love.graphics.setFont(logo_font)
-	-- local sx = logo_font:getWidth("LED Master")
-	-- local k = lx / (sx*1.2)
-	-- sx = sx * k
-	-- love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
+	local r,g,b = hslToRgb(time/4%1,1,0.9)
+	love.graphics.setColor(r,g,b)
+	local lx,ly = love.graphics.getDimensions()
+	local sx,sy = spectre_img:getDimensions()
+	local kx = lx / (sx*1.5)
+	local ky = ly / (sy*1.5)
+	local k = math.min(kx,ky)
+	sx, sy = sx*k, sy*k
+	love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
+	love.graphics.setFont(logo_font)
+
+	local sx = logo_font:getWidth("LED Master")
+	local k = lx / (sx*1.5)
+	sx = sx * k
+	love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
 
 	loveframes.draw()
 

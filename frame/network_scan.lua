@@ -48,7 +48,7 @@ function network_scan:load(loveframes, lx, ly)
 	-- button:Center()
 	button.OnClick = function(object, x, y)
 		node_list:Clear()
-		love.thread.getChannel('poll'):push(true)
+		love.thread.getChannel("data"):push({type = "poll"})
 	end
 
 	return node_list
