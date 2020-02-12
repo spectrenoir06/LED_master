@@ -3,13 +3,13 @@ local network_scan = {}
 function network_scan:load(loveframes, lx, ly)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Network Discovery")
-	frame:SetPos(0, 280+230)
+	frame:SetPos(0, 290+230)
 
 	local lx, ly = love.graphics.getDimensions()
 	if love.system.getOS() == "Android" then
 		lx, ly = ly, lx
 	end
-	frame:SetSize(lx, 328+30)
+	frame:SetSize(lx, 318+30)
 
 	frame:SetResizable(true)
 	-- frame:SetMaxWidth(1000)
@@ -44,7 +44,6 @@ function network_scan:load(loveframes, lx, ly)
 	button:SetText("   Scan network")
 	button:SetImage("ressource/icons/binocular.png")
 	button:SetPos(5, 30)
-	button.groupIndex = 1
 
 	-- button:Center()
 	button.OnClick = function(object, x, y)
