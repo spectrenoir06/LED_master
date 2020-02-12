@@ -205,7 +205,7 @@ function player:load(loveframes)
 	slider_amp:SetPos(100, start_y+step_y*3)
 	slider_amp:SetWidth(panel_music:GetWidth()-100-8)
 	slider_amp:SetMinMax(0.1, 100)
-	slider_amp:SetValue(1)
+	slider_amp:SetValue(30)
 
 	local slider_amp_text = loveframes.Create("text", panel_music)
 	slider_amp_text:SetPos(8, start_y+step_y*3+4)
@@ -325,6 +325,7 @@ function player:load(loveframes)
 		end
 	end
 
+	canvas_fft = love.graphics.newCanvas( 512, height )
 
 	panel_music.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
@@ -387,8 +388,11 @@ function player:load(loveframes)
 
 				-- love.graphics.rectangle("fill", x, canvas:getHeight(), l, -math.floor(t[pos+1]))
 
-				love.graphics.rectangle("fill", x, canvas:getHeight()/2+math.floor(t[pos+1])/2, l, -math.floor(t[pos+1]))
-
+				local v = math.floor(t[pos+1])
+				love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, math.floor(v/2))
+				love.graphics.rectangle("fill", x, math.floor(canvas:getHeight()/2), l, -math.floor(v/2))
+				-- love.graphics.rectangle("fill", x, math.math.floor(x)(canvas:getHeight()/2-(v/2)), l, v)
+--
 				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -math.floor(t[i+1]))
 				-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -math.floor(t[i+1]))
 			end
@@ -514,7 +518,7 @@ function player:load(loveframes)
 
 	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png", function() love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight()) end, function() love.keyboard.setTextInput(false) end)
 	local numberbox_x = loveframes.Create("numberbox", panel_setting)
-	numberbox_x:SetPos(5, 5)
+	numberbox_x:SetPos(8, 8)
 	numberbox_x:SetSize(200, 25)
 	numberbox_x:SetMinMax(1, 512)
 	numberbox_x:SetValue(lx)
@@ -528,7 +532,7 @@ function player:load(loveframes)
 
 
 	local numberbox_y = loveframes.Create("numberbox", panel_setting)
-	numberbox_y:SetPos(5, 40)
+	numberbox_y:SetPos(8, 40)
 	numberbox_y:SetSize(200, 25)
 	numberbox_y:SetMinMax(1, 512)
 	numberbox_y:SetValue(ly)
@@ -542,8 +546,8 @@ function player:load(loveframes)
 
 	panel_setting.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
-		numberbox_x:SetWidth(object:GetWidth()-10)
-		numberbox_y:SetWidth(object:GetWidth()-10)
+		numberbox_x:SetWidth(object:GetWidth()-16)
+		numberbox_y:SetWidth(object:GetWidth()-16)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.setFont(font)
