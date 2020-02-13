@@ -43,6 +43,7 @@ while true do
 	local d = data_channel:pop()
 	if d then
 		if d.type == "nodes" then
+			nodes = {}
 			for k,v in ipairs(d.data) do
 				v.udp = udp
 				v.debug = debug
