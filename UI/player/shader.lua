@@ -43,23 +43,6 @@ function shader:load(loveframes, frame, tabs, start_y, step_y)
 		shaders_param.density = slider_density:GetValue()
 	end
 
-	local slider_bright = loveframes.Create("slider", panel_shader)
-	slider_bright:SetPos(100, start_y+step_y*3)
-	slider_bright:SetWidth(panel_shader:GetWidth()-100-8)
-	slider_bright:SetMinMax(0.0, 1)
-	slider_bright:SetValue(1)
-
-	local slider_bright_text = loveframes.Create("text", panel_shader)
-	slider_bright_text:SetPos(8, start_y+step_y*3+4)
-	slider_bright_text:SetText("Bright: "..slider_bright:GetValue())
-	slider_bright_text:SetFont(small_font)
-
-	slider_bright.OnValueChanged = function(object)
-		slider_bright_text:SetText("Bright: "..math.floor(slider_bright:GetValue()*100)/100)
-		shaders_param.bright = slider_bright:GetValue()
-		love.thread.getChannel('data'):push({ type = "bright", data = slider_bright:GetValue()})
-	end
-
 	for k,v in ipairs(shaders) do
 		choice_shader:AddChoice(v.name)
 	end
@@ -69,7 +52,6 @@ function shader:load(loveframes, frame, tabs, start_y, step_y)
 		choice_shader:SetSize(panel_shader:GetWidth()-16, 25)
 		slider_speed:SetWidth(panel_shader:GetWidth()-100-8)
 		slider_density:SetWidth(panel_shader:GetWidth()-100-8)
-		slider_bright:SetWidth(panel_shader:GetWidth()-100-8)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)

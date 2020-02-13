@@ -58,6 +58,10 @@ while true do
 			for k,v in ipairs(nodes) do
 				v.bright = d.data
 			end
+		elseif d.type == "rgbw" then
+			for k,v in ipairs(nodes) do
+				v.rgbw = d.data
+			end
 		end
 	end
 	--
