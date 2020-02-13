@@ -10,13 +10,13 @@ LED_Master
 2. Clone the submodules: `git submodule update --init --recursive`
 ### Run it
 #### Linux
-- `love .`
+`love .`
 #### OSX
-- `/Applications/love.app/Contents/MacOS/love .`
+`/Applications/love.app/Contents/MacOS/love .`
 #### Windows
-- `"C:\Program Files\LOVE\love.exe" --console`
+`"C:\Program Files\LOVE\love.exe" --console`
 #### More info
-= [Here](https://love2d.org/wiki/Getting_Started)
+[Here](https://love2d.org/wiki/Getting_Started)
 
 ## Roadmap
 
