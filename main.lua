@@ -7,7 +7,7 @@ local json               = require("lib.json")
 
 local frame_animation    = require("UI.animation.frame")
 local frame_player       = require("UI.player.frame")
-local frame_mapping       = require("UI.mapping.frame")
+local frame_settings     = require("UI.settings.frame")
 
 local timer = 0
 local debug = false
@@ -54,7 +54,16 @@ function love.load(arg)
 
 	thread:start(sync, debug)
 
-	mapping = json.decode(love.filesystem.read("ressource/map/map_42.json"))
+	local list = love.filesystem.getDirectoryItems("ressource/map/")
+	maps = {}
+	print("Load maps:")
+	for k,v in ipairs(list) do
+		print("    "..v)
+		maps[v] = json.decode(love.filesystem.read("ressource/map/"..v))
+		maps[v].name = v
+	end
+
+	mapping = maps["42.json"]
 	lx = mapping.lx
 	ly = mapping.ly
 	fps = mapping.fps
@@ -72,7 +81,7 @@ function love.load(arg)
 
 	frame_animation:load(loveframes)
 	frame_player_frame = frame_player:load(loveframes)
-	frame_mapping:load(loveframes)
+	frame_settings:load(loveframes)
 
 	local channel_data = love.thread.getChannel("data")
 
@@ -101,8 +110,8 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.draw(bgimage, bgquad, 0, 0)
 
-	local r,g,b = hslToRgb(time/4%1,1,0.9)
-	love.graphics.setColor(r,g,b)
+	-- local r,g,b = hslToRgb(time/4%1,1,0.9)
+	-- love.graphics.setColor(r,g,b)
 	local lx,ly = love.graphics.getDimensions()
 	local sx,sy = spectre_img:getDimensions()
 	local kx = lx / (sx*1.5)
