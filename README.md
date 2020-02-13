@@ -14,7 +14,7 @@ LED_Master
 #### OSX
 `/Applications/love.app/Contents/MacOS/love .`
 #### Windows
-`"C:\Program Files\LOVE\love.exe" --console`
+`"C:\Program Files\LOVE\love.exe" --console .`
 #### More info
 [Here](https://love2d.org/wiki/Getting_Started)
 
