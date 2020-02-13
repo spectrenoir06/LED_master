@@ -1,15 +1,16 @@
 {
 	"lx": 64,
 	"ly": 8,
-	"fps": 30,
+	"fps": 60,
 	"nodes":[
 		{
 			"net": 0,
 			"uni": 0,
-			"ip": "192.168.1.210",
+			"ip": "192.168.4.1",
 			"port": 6454,
 			"rgbw": false,
-			"protocol": "BRO888",
+			"protocol": "Z888",
+			"leds_by_uni": 170,
 			"led_nb": 512
 		}
 	],

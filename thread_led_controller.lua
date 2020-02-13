@@ -34,28 +34,29 @@ while true do
 			end
 		end
 		for k,v in ipairs(nodes) do
-			v:send(0, true, ctn)
+			v:send(1/60/4, true, ctn)
 			ctn = ctn + 1
 		end
 		-- if sync then controller:sendArtnetSync() end
 	end
 
-	local data = data_channel:pop()
-	if data then
-		if data.type == "mapping" then
-			for k,v in ipairs(data.data.nodes) do
+	local d = data_channel:pop()
+	if d then
+		if d.type == "nodes" then
+			for k,v in ipairs(d.data) do
 				v.udp = udp
 				v.debug = debug
 				local n = LEDsController:new(v)
 				table.insert(nodes, n)
 				nodes_map[v.net*256+v.uni] = n
 			end
-			pixel_map = data.data.map
-		elseif data.type == "poll" then
+		elseif d.type == "map" then
+			pixel_map = d.data
+		elseif d.type == "poll" then
 			controller:sendArtnetPoll()
-		elseif data.type == "bright" then
+		elseif d.type == "bright" then
 			for k,v in ipairs(nodes) do
-				v.bright = data.data
+				v.bright = d.data
 			end
 		end
 	end
@@ -64,13 +65,6 @@ while true do
 	if data then
 		local type, info = controller:receiveArtnet(data, ip, port)
 		if type == "reply" then
-			-- controller:addArtnetNode(
-			-- 	info.net,
-			-- 	info.subnet,
-			-- 	info.ip[1].."."..info.ip[2].."."..info.ip[3].."."..info.ip[4],
-			-- 	info.port,
-			-- 	nb
-			-- )
 			love.thread.getChannel('node'):push(info)
 		end
 	end

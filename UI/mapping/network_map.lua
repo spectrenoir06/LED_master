@@ -21,18 +21,21 @@ function network_map:load(loveframes, lx)
 
 	frame:SetDockable(true)
 
-	network_map = loveframes.Create("columnlist", frame)
-	network_map:SetPos(5, 30)
-	network_map:SetSize(frame:GetWidth()-10, frame:GetHeight()-30-5)
-	network_map:AddColumn("net")
-	network_map:AddColumn("subnet")
-	network_map:AddColumn("ip")
-	network_map:AddColumn("port")
-	network_map:AddColumn("protocol")
-	network_map:AddColumn("RGBW")
-	network_map:AddColumn("LEDs nb")
+	column = loveframes.Create("columnlist", frame)
+	column:SetPos(5, 30)
+	column:SetSize(frame:GetWidth()-10, frame:GetHeight()-30-5)
+	column:AddColumn("net")
+	column:AddColumn("subnet")
+	column:AddColumn("ip")
+	column:AddColumn("port")
+	column:AddColumn("protocol")
+	column:AddColumn("RGBW")
+	column:AddColumn("LEDs nb")
 
-	return frame, network_map
+	frame.Update = function(object, dt)
+		column:SetSize(frame:GetWidth()-10, frame:GetHeight()-30-5)
+	end
+	return frame, column
 end
 
 return network_map
