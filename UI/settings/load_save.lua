@@ -20,6 +20,18 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 		self.choice_file:SetWidth(object:GetWidth()-16)
 	end
+
+	self.choice_file.OnChoiceSelected = function(object, choice)
+		mapping = maps[choice]
+		local channel_data = love.thread.getChannel("data")
+		channel_data:push({type = "map", data = mapping.map})
+		channel_data:push({type = "nodes", data = mapping.nodes})
+
+		canvas = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
+		canvas_test = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
+		canvas:setFilter("nearest", "nearest")
+		canvas_test:setFilter("nearest", "nearest")
+	end
 end
 
 return load_save
