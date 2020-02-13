@@ -5,7 +5,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	local panel_setting = loveframes.Create("panel")
 	local small_font = love.graphics.newFont(10)
 
-	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png", function() love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight()) end, function() love.keyboard.setTextInput(false) end)
+	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png")
 	self.numberbox_x = loveframes.Create("numberbox", panel_setting)
 	self.numberbox_x:SetPos(8+100, start_y)
 	self.numberbox_x:SetWidth(panel_setting:GetWidth()-16-100)
@@ -25,6 +25,15 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		canvas_test:setFilter("nearest", "nearest")
 	end
 
+	self.numberbox_x:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.numberbox_x:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+
 
 	self.numberbox_y = loveframes.Create("numberbox", panel_setting)
 	self.numberbox_y:SetPos(8+100, start_y+step_y*1)
@@ -37,6 +46,14 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.numberbox_y_text:SetPos(8, start_y+step_y*0+6)
 	self.numberbox_y_text:SetText("Canvas Y size")
 	self.numberbox_y_text:SetFont(small_font)
+
+	self.numberbox_y:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.numberbox_y:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
 
 
 	self.numberbox_y.OnValueChanged = function(object, value)
