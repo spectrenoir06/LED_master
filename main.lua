@@ -5,11 +5,11 @@ local LEDsController     = require("lib.LEDsController")
 local loveframes         = require("lib.loveframes")
 local json               = require("lib.json")
 
-local frame_animation    = require("frame.animation")
-local frame_network_scan = require("frame.network_scan")
-local frame_pixel_map    = require("frame.pixel_map")
-local frame_network_map  = require("frame.network_map")
-local frame_player       = require("frame.player")
+-- local frame_network_scan = require("frame.network_scan")
+-- local frame_pixel_map    = require("frame.pixel_map")
+-- local frame_network_map  = require("frame.network_map")
+local frame_animation    = require("UI.animation.frame")
+local frame_player       = require("UI.player.frame")
 
 local timer = 0
 local debug = false
@@ -75,25 +75,26 @@ function love.load(arg)
 	frame_animation:load(loveframes)
 	-- node_list = frame_network_scan:load(loveframes)
 	-- frame_pixel_map:load(loveframes)
-	local frame_network_map_frame, network_map = frame_network_map:load(loveframes)
+	-- local frame_network_map_frame, network_map = frame_network_map:load(loveframes)
 	frame_player_frame = frame_player:load(loveframes)
 
-	love.thread.getChannel("data"):push({
-		type = "mapping",
-		data = mapping
-	})
+	local channel_data = love.thread.getChannel("data")
 
-	for k,v in ipairs(mapping.nodes) do
-		network_map:AddRow(
-			v.net,
-			v.uni,
-			v.ip,
-			v.port,
-			v.protocol,
-			v.rgbw,
-			v.led_nb
-		)
-	end
+	channel_data:push({type = "map", data = mapping.map})
+	channel_data:push({type = "nodes", data = mapping.nodes})
+
+
+	-- for k,v in ipairs(mapping.nodes) do
+	-- 	network_map:AddRow(
+	-- 		v.net,
+	-- 		v.uni,
+	-- 		v.ip,
+	-- 		v.port,
+	-- 		v.protocol,
+	-- 		v.rgbw,
+	-- 		v.led_nb
+	-- 	)
+	-- end
 
 	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
 	spectre_img:setFilter("linear", "linear")
@@ -260,10 +261,27 @@ function love.filedropped(file)
 		print(love.filesystem.write( "ressource/music/"..filename, data))
 		frame_player_frame:Remove()
 		frame_player_frame = frame_player:load(loveframes)
+	elseif extention == "ogv" then
+		print("load video")
+		file:open("r")
+		local data = file:read()
+		print(love.filesystem.write( "ressource/video/"..filename, data))
+		frame_player_frame:Remove()
+		frame_player_frame = frame_player:load(loveframes)
 	elseif extention == "glsl" then
 		print("load shader")
+		file:open("r")
+		local data = file:read()
+		print(love.filesystem.write( "ressource/shader/"..filename, data))
+		frame_player_frame:Remove()
+		frame_player_frame = frame_player:load(loveframes)
 	elseif extention == "lua" then
 		print("load script")
+		file:open("r")
+		local data = file:read()
+		print(love.filesystem.write( "ressource/script/"..filename, data))
+		frame_player_frame:Remove()
+		frame_player_frame = frame_player:load(loveframes)
 	else
 		print("can't load "..extention.." file")
 	end
