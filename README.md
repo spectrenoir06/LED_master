@@ -1,8 +1,22 @@
-# LED_Master
+LED_Master
+============
 
-## dependencies
+## Dependencies
+ - You need to install [Löve](https://love2d.org/#download)
 
-- You need to install [Löve](https://love2d.org/wiki/Getting_Started
+## Usage
+### Get the code.
+1. Clone the repository. `git clone git@github.com:spectrenoir06/LED_master.git`
+2. Clone the submodules: `git submodule update --init --recursive`
+### Run it
+#### Linux
+- `love .`
+#### OSX
+- `/Applications/love.app/Contents/MacOS/love .`
+#### Windows
+- `"C:\Program Files\LOVE\love.exe" --console`
+#### More info
+= [Here](https://love2d.org/wiki/Getting_Started)
 
 ## Roadmap
 
@@ -12,25 +26,25 @@
     - [x] RGB888
     - [x] RGB565
     - [x] RLE888
-    - [ ] RLE565
     - [x] BRO888 (brotli)
     - [x] Z888 (zlib)
-    - [x] Z565 (zlib)
     - [ ] udpx
   - Shader
     - [x] Fragment Shader
     - [x] External parameter
     - [ ] FFT sound input ( FFT => canvas => shader:send )
+    - [x] Drag and drop
   - Music
     - [x] Music Loader
     - [x] FFT visualization
     - [x] Microphone In
     - [x] Aux In
-    - [ ] Drag and drop
+    - [x] Drag and drop
   - Video
     - [x] Video Loader
   - Script
     - [x] Custom script loader
+    - [x] Drag and drop
     - [ ] Doc
   - Pixel mapping
     - [x] Viewer
@@ -56,7 +70,6 @@
     - [x] Android
     - [ ] iOS
     - [x] Raspberry Pi
-    - [ ] Web
     - [ ] Nintendo Switch
   - Ideas
     - Screen grabber
