@@ -5,11 +5,9 @@ local LEDsController     = require("lib.LEDsController")
 local loveframes         = require("lib.loveframes")
 local json               = require("lib.json")
 
--- local frame_network_scan = require("frame.network_scan")
--- local frame_pixel_map    = require("frame.pixel_map")
--- local frame_network_map  = require("frame.network_map")
 local frame_animation    = require("UI.animation.frame")
 local frame_player       = require("UI.player.frame")
+local frame_mapping       = require("UI.mapping.frame")
 
 local timer = 0
 local debug = false
@@ -56,7 +54,7 @@ function love.load(arg)
 
 	thread:start(sync, debug)
 
-	local mapping = json.decode(love.filesystem.read("ressource/map/map_42.json"))
+	mapping = json.decode(love.filesystem.read("ressource/map/map_42.json"))
 	lx = mapping.lx
 	ly = mapping.ly
 	fps = mapping.fps
@@ -73,28 +71,13 @@ function love.load(arg)
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes)
-	-- node_list = frame_network_scan:load(loveframes)
-	-- frame_pixel_map:load(loveframes)
-	-- local frame_network_map_frame, network_map = frame_network_map:load(loveframes)
 	frame_player_frame = frame_player:load(loveframes)
+	frame_mapping:load(loveframes)
 
 	local channel_data = love.thread.getChannel("data")
 
 	channel_data:push({type = "map", data = mapping.map})
 	channel_data:push({type = "nodes", data = mapping.nodes})
-
-
-	-- for k,v in ipairs(mapping.nodes) do
-	-- 	network_map:AddRow(
-	-- 		v.net,
-	-- 		v.uni,
-	-- 		v.ip,
-	-- 		v.port,
-	-- 		v.protocol,
-	-- 		v.rgbw,
-	-- 		v.led_nb
-	-- 	)
-	-- end
 
 	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
 	spectre_img:setFilter("linear", "linear")
@@ -186,22 +169,6 @@ function love.update(dt)
 		end
 	end
 
-	local info = love.thread.getChannel('node'):pop()
-	if info then
-		node_list:AddRow(
-		info.short_name,
-		info.ip[1].."."..info.ip[2].."."..info.ip[3].."."..info.ip[4],
-		info.port,
-		info.net,
-		info.subnet,
-		info.nb_port,
-		info.bindIndex,
-		info.status
-	)
-	end
-
-
-	--
 	loveframes.update(dt)
 end
 
