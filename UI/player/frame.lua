@@ -2,7 +2,6 @@ local music = require "UI.player.music"
 local shader = require "UI.player.shader"
 local video = require "UI.player.video"
 local script = require "UI.player.script"
-local setting = require "UI.player.setting"
 
 
 local player = {}
@@ -45,8 +44,6 @@ function player:load(loveframes)
 	music:load(loveframes, frame, tabs, start_y, step_y)
 	video:load(loveframes, frame, tabs, start_y, step_y)
 	script:load(loveframes, frame, tabs, start_y, step_y)
-	setting:load(loveframes, frame, tabs, start_y, step_y)
-
 
 	frame.OnClose = function(object)
 		print("The frame Player was closed.")

@@ -2,6 +2,7 @@ local node_scan = require "UI.settings.node_scan"
 local node_map  = require "UI.settings.node_map"
 local pixel_map = require "UI.settings.pixel_map"
 local load_save = require "UI.settings.load_save"
+local canva_set = require "UI.settings.setting"
 
 local player = {}
 
@@ -43,6 +44,7 @@ function player:load(loveframes)
 	node_map:load(loveframes, frame, tabs, start_y, step_y)
 	pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 	load_save:load(loveframes, frame, tabs, start_y, step_y)
+	canva_set:load(loveframes, frame, tabs, start_y, step_y)
 
 
 

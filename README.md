@@ -29,40 +29,44 @@ LED_Master
     - [x] BRO888 (brotli)
     - [x] Z888 (zlib)
     - [ ] udpx
-  - Shader
-    - [x] Fragment Shader
-    - [x] External parameter
-    - [ ] FFT sound input ( FFT => canvas => shader:send )
-    - [x] Drag and drop
-  - Music
-    - [x] Music Loader
-    - [x] FFT visualization
-    - [x] Microphone In
-    - [x] Aux In
-    - [x] Drag and drop
-  - Video
-    - [x] Video Loader
-  - Script
-    - [x] Custom script loader
-    - [x] Drag and drop
-    - [ ] Doc
-  - Pixel mapping
-    - [x] Viewer
-    - [ ] Editor
-  - Network mapping
-    - [x] Viewer
-    - [ ] Editor
-  - Network discovery
-    - [x] Art-net
-    - [ ] ?
-  - Setting
-    - [x] Canvas size
-    - [x] Brightness
-    - [ ] White mode
+  - Player
+    - Shader
+      - [x] Fragment Shader
+      - [x] External parameter
+      - [ ] FFT sound input ( FFT => canvas => shader:send )
+      - [x] Drag and drop
+    - Music
+      - [x] Music Loader
+      - [x] FFT visualization
+      - [x] Microphone In
+      - [x] Aux In
+      - [x] Drag and drop
+    - Video
+      - [x] Video Loader
+      - [x] Drag and drop
+    - Script
+      - [x] Custom script loader
+      - [x] Drag and drop
+      - [ ] Doc
+  - Settings
+    - Pixel mapping
+      - [x] Viewer
+      - [ ] Editor
+    - Network mapping
+      - [x] Viewer
+      - [ ] Editor
+    - Network discovery
+      - [x] Art-net
+      - [ ] ?
+    - Canvas
+      - [x] Canvas size
+      - [x] Brightness
+      - [x] White mode
   - Animation
     - [ ] Loader
     - [ ] Editor
     - [ ] Saver
+    - [ ] FTP Upload
   - Compatibility ( need test )
     - [x] Linux
     - [x] Windows
