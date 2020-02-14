@@ -51,7 +51,7 @@ LED_Master
   - Settings
     - Scan Node
       - [x] Art-net
-      - [ ] ?
+      - [ ] Octo-LED ()
     - Node map
       - [x] Viewer
       - [ ] Editor

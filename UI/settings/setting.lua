@@ -14,7 +14,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.numberbox_x:SetValue(canvas:getWidth())
 
 	self.numberbox_x_text = loveframes.Create("text", panel_setting)
-	self.numberbox_x_text:SetPos(8, start_y+step_y*1+6)
+	self.numberbox_x_text:SetPos(8, start_y+step_y*0+6)
 	self.numberbox_x_text:SetText("Canvas X size")
 	self.numberbox_x_text:SetFont(small_font)
 
@@ -41,7 +41,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.numberbox_y:SetValue(canvas:getHeight())
 
 	self.numberbox_y_text = loveframes.Create("text", panel_setting)
-	self.numberbox_y_text:SetPos(8, start_y+step_y*0+6)
+	self.numberbox_y_text:SetPos(8, start_y+step_y*1+6)
 	self.numberbox_y_text:SetText("Canvas Y size")
 	self.numberbox_y_text:SetFont(small_font)
 
