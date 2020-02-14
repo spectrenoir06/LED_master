@@ -1,8 +1,3 @@
-local node_scan = require "UI.settings.node_scan"
-local node_map  = require "UI.settings.node_map"
-local pixel_map = require "UI.settings.pixel_map"
-local load_save = require "UI.settings.load_save"
-local canva_set = require "UI.settings.setting"
 
 local player = {}
 
@@ -40,18 +35,20 @@ function player:load(loveframes)
 	local start_y = 8
 	local step_y = 34
 
-	node_scan:load(loveframes, frame, tabs, start_y, step_y)
-	node_map:load(loveframes, frame, tabs, start_y, step_y)
-	pixel_map:load(loveframes, frame, tabs, start_y, step_y)
-	load_save:load(loveframes, frame, tabs, start_y, step_y)
-	canva_set:load(loveframes, frame, tabs, start_y, step_y)
+	self.node_scan = require "UI.settings.node_scan"
+	self.node_map  = require "UI.settings.node_map"
+	self.pixel_map = require "UI.settings.pixel_map"
+	self.load_save = require "UI.settings.load_save"
+	self.canva_set = require "UI.settings.setting"
 
+	self.node_scan:load(loveframes, frame, tabs, start_y, step_y)
+	self.node_map:load(loveframes, frame, tabs, start_y, step_y)
+	self.pixel_map:load(loveframes, frame, tabs, start_y, step_y)
+	self.load_save:load(loveframes, frame, tabs, start_y, step_y)
+	self.canva_set:load(loveframes, frame, tabs, start_y, step_y)
 
 
 	return frame
-
--------------------------------------------------------------------------------
-
 end
 
 return player

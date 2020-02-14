@@ -30,6 +30,7 @@ function love.load(arg)
 	love.filesystem.createDirectory("ressource/shader")
 	love.filesystem.createDirectory("ressource/script")
 	love.filesystem.createDirectory("ressource/video")
+	love.filesystem.createDirectory("ressource/map")
 
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
@@ -258,6 +259,12 @@ function love.filedropped(file)
 		print(love.filesystem.write( "ressource/script/"..filename, data))
 		frame_player_frame:Remove()
 		frame_player_frame = frame_player:load(loveframes)
+	elseif extention == "json" then
+		print("load map")
+		file:open("r")
+		local data = file:read()
+		print(love.filesystem.write( "ressource/map/"..filename, data))
+		frame_settings.load_save.choice_file:SelectChoice(filename)
 	else
 		print("can't load "..extention.." file")
 	end

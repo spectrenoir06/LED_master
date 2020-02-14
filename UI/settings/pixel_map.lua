@@ -39,8 +39,8 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 end
 
 function pixel_map:reload()
-	self.small_font = love.graphics.newFont(10)
-	love.graphics.setFont(self.small_font)
+	local small_font = love.graphics.newFont(10)
+	love.graphics.setFont(small_font)
 	self.cv = love.graphics.newCanvas(24*mapping.lx, 24*mapping.ly)
 	love.graphics.setCanvas(self.cv)
 	for k,v in ipairs(mapping.map) do
@@ -61,7 +61,7 @@ function pixel_map:reload()
 		love.graphics.setColor(0,0,0,1)
 		love.graphics.rectangle("line", v.x*24, v.y*24, 24, 24)
 		-- love.graphics.setColor(ir, ig, ib)
-		love.graphics.print(v.id, v.x*24-self.small_font:getWidth(v.id)/2+12, v.y*24+5)
+		love.graphics.print(v.id, v.x*24-small_font:getWidth(v.id)/2+12, v.y*24+5)
 	end
 	love.graphics.setCanvas()
 end

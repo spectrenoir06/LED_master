@@ -49,16 +49,20 @@ LED_Master
       - [x] Drag and drop
       - [ ] Doc
   - Settings
+    - Scan Node
+      - [x] Art-net
+      - [ ] ?
+    - Node map
+      - [x] Viewer
+      - [ ] Editor
     - Pixel mapping
       - [x] Viewer
       - [ ] Editor
-    - Network mapping
-      - [x] Viewer
-      - [ ] Editor
-    - Network discovery
-      - [x] Art-net
-      - [ ] ?
-    - Canvas
+    - Load/save Json
+      - [x] Load
+      - [ ] Save
+      - [x] Drag and drop
+    - Canvas setting
       - [x] Canvas size
       - [x] Brightness
       - [x] White mode
