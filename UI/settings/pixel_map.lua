@@ -44,7 +44,7 @@ function pixel_map:reload()
 	self.cv = love.graphics.newCanvas(24*mapping.lx, 24*mapping.ly)
 	love.graphics.setCanvas(self.cv)
 	for k,v in ipairs(mapping.map) do
-		local ur,ug,ub = hslToRgb((v.uni/7)%1,1,0.6)
+		local ur,ug,ub = hslToRgb((v.uni/7)%1,1,0.75-(v.id%170/(170*2)))
 		local ir,ig,ib = hslToRgb(v.id/100,1,0.4)
 		-- local text = {
 		-- 	{color = {ur, ug, ub}, font = small_font},

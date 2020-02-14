@@ -101,7 +101,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	end
 
 	progressbar.OnRelease = function(object)
-		print("The slider button has been released.")
+		-- print("The slider button has been released.")
 		sound:play()
 	end
 
@@ -125,7 +125,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local musics = {}
 
 	choice_music.OnChoiceSelected = function(object, choice)
-		print("choice_music", choice)
+		-- print("choice_music", choice)
 		if sound then sound:stop() end
 
 		soundData = love.sound.newSoundData("ressource/music/"..choice)
