@@ -5,13 +5,13 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	local panel_setting = loveframes.Create("panel")
 	local small_font = love.graphics.newFont(10)
 
-	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png")
+	tabs:AddTab("Setting", panel_setting, nil, "ressource/icons/wrench.png", function() self:reload()end)
 	self.numberbox_x = loveframes.Create("numberbox", panel_setting)
 	self.numberbox_x:SetPos(8+100, start_y)
 	self.numberbox_x:SetWidth(panel_setting:GetWidth()-16-100)
 	self.numberbox_x:SetSize(100, 25)
 	self.numberbox_x:SetMinMax(1, 2048)
-	self.numberbox_x:SetValue(lx)
+	self.numberbox_x:SetValue(canvas:getWidth())
 
 	self.numberbox_x_text = loveframes.Create("text", panel_setting)
 	self.numberbox_x_text:SetPos(8, start_y+step_y*1+6)
@@ -33,14 +33,12 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		love.keyboard.setTextInput(false)
 	end
 
-
-
 	self.numberbox_y = loveframes.Create("numberbox", panel_setting)
 	self.numberbox_y:SetPos(8+100, start_y+step_y*1)
 	self.numberbox_y:SetSize(100, 25)
 	self.numberbox_y:SetWidth(panel_setting:GetWidth()-16-100)
 	self.numberbox_y:SetMinMax(1, 2048)
-	self.numberbox_y:SetValue(ly)
+	self.numberbox_y:SetValue(canvas:getHeight())
 
 	self.numberbox_y_text = loveframes.Create("text", panel_setting)
 	self.numberbox_y_text:SetPos(8, start_y+step_y*0+6)
@@ -112,7 +110,11 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		if choice == "Mode 3" then v = 3 end
 		love.thread.getChannel('data'):push({ type = "rgbw", data = v})
 	end
+end
 
+function setting:reload()
+	self.numberbox_x:SetValue(canvas:getWidth())
+	self.numberbox_y:SetValue(canvas:getHeight())
 end
 
 return setting

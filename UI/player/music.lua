@@ -116,7 +116,6 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 	local t = {}
 	local timer = 0
-	local spectre = {}
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
 	choice_music:SetPos(100, start_y+step_y*0)
@@ -230,47 +229,48 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 			end
 			s = spectro_up_mic(sound, soundData, fft_bin, mic)
 			spectre = s or spectre
-		else
+		elseif sound:isPlaying() then
 			spectre = spectro_up(sound, soundData, fft_bin)
+			-- spectre[1] = new(0, 0)
 		end
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
-			local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2 * l), 1)
-			for i = 0, canvas:getWidth()/l-1 do
-				local pos = floor(band_size * i / div)
-				-- print(band_size, pos)
+			if spectre then
+				local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2 * l), 1)
+				for i = 0, canvas:getWidth()/l-1 do
+					local pos = floor(band_size * i / div)
+					-- print(band_size, pos)
 
-				local sum = 0
-				for j=1, band_size do
-					sum = sum + spectre[pos+j]:abs() * slider_amp:GetValue() / 1000 * canvas:getHeight()
+					local sum = 0
+					for j=1, band_size do
+						sum = sum + spectre[pos+j]:abs() * slider_amp:GetValue() / 1000 * canvas:getHeight()
+					end
+					sum = sum
+
+					t[pos+1] = lerp(t[pos+1] or 0, sum, slider_lerp:GetValue())
+
+
+					local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
+
+					local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
+					love.graphics.setColor(r,g,b)
+
+					-- local color = math.min(t[i+1],canvas:getHeight())/canvas:getHeight()
+					-- love.graphics.setColor(1,1-color,0)
+
+					local v = floor(t[pos+1])
+
+					love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
+
+					-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, floor(v/2))
+					-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, -floor(v/2))
+					-- love.graphics.rectangle("fill", x, floor(x)(canvas:getHeight()/2-(v/2)), l, v)
+
+					-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -floor(t[i+1]))
+					-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -floor(t[i+1]))
 				end
-				sum = sum
-
-				t[pos+1] = lerp(t[pos+1] or 0, sum, slider_lerp:GetValue())
-
-
-				local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
-
-				local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
-				love.graphics.setColor(r,g,b)
-
-				-- local color = math.min(t[i+1],canvas:getHeight())/canvas:getHeight()
-				-- love.graphics.setColor(1,1-color,0)
-
-				local v = floor(t[pos+1])
-
-				love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
-
-				-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, floor(v/2))
-				-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, -floor(v/2))
-				-- love.graphics.rectangle("fill", x, floor(x)(canvas:getHeight()/2-(v/2)), l, v)
---
-				-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -floor(t[i+1]))
-				-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -floor(t[i+1]))
 			end
-			-- progressbar:SetValue(floor(sound:tell("seconds")))
-			-- self.value = floor(sound:tell("seconds"))
 		love.graphics.setCanvas()
 	end
 end
