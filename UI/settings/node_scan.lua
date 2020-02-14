@@ -8,14 +8,14 @@ function node_scan:load(loveframes, frame, tabs, start_y, step_y)
 	self.node_list = loveframes.Create("columnlist", self.panel_scan)
 	self.node_list:SetPos(0, start_y+step_y)
 	self.node_list:SetSize(self.panel_scan:GetWidth(), self.panel_scan:GetHeight()-start_y-step_y)
-	self.node_list:AddColumn("Name")
-	self.node_list:AddColumn("ip")
-	self.node_list:AddColumn("port")
-	self.node_list:AddColumn("net")
-	self.node_list:AddColumn("subnet")
-	self.node_list:AddColumn("nb_port")
-	self.node_list:AddColumn("bindIndex")
-	self.node_list:AddColumn("status")
+	self.node_list:AddColumn("Name").children[1].width = 80
+	self.node_list:AddColumn("ip").children[2].width = 80
+	self.node_list:AddColumn("port").children[3].width = 40
+	self.node_list:AddColumn("net").children[4].width = 30
+	self.node_list:AddColumn("sub").children[5].width = 30
+	self.node_list:AddColumn("ports").children[6].width = 30
+	self.node_list:AddColumn("id").children[7].width = 30
+	self.node_list:AddColumn("status").children[8].width = 100
 
 	self.panel_scan:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 
