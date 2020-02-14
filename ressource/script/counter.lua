@@ -8,7 +8,7 @@ local ctn = 0
 function counter:update(dt, lx, ly)
 	love.graphics.setFont(font)
 	love.graphics.clear(0,0,0,1)
-	love.graphics.print(math.floor(ctn), 1, ly/4)
+	love.graphics.print(math.floor(ctn), 1, -1)
 	ctn = ctn + dt * 100
 end
 

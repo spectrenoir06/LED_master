@@ -18,11 +18,11 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 	video_button:SetText("Pause")
 	video_button:SetImage(icons_play)
 	video_button.OnClick = function(object, x, y)
-		if video_stream:isPlaying() then
-			video_stream:pause()
+		if self.video_stream:isPlaying() then
+			self.video_stream:pause()
 			object:SetText("Play")
 		else
-			video_stream:play()
+			self.video_stream:play()
 			object:SetText("Pause")
 		end
 	end
@@ -35,13 +35,13 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 	local videos = {}
 
 	choice_video.OnChoiceSelected = function(object, choice)
-		print("choice_video", choice)
-		if video_stream then video_stream:pause() end
+		-- print("choice_video", choice)
+		if self.video_stream then self.video_stream:pause() end
 
 
 		video_source = videos[choice].source
-		video_stream = videos[choice].video
-		video_stream:play()
+		self.video_stream = videos[choice].video
+		self.video_stream:play()
 		video_progressbar:SetMinMax(0, math.floor(video_source:getDuration()))
 	end
 
@@ -55,13 +55,13 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 		choice_video:AddChoice(v)
 		if k == 1 then
 			choice_video:SelectChoice(v)
-			video_stream:pause()
+			self.video_stream:pause()
 		end
 	end
 
 	panel_video.Update = function(object, dt)
 
-		if video_stream:isPlaying() then
+		if self.video_stream:isPlaying() then
 			video_button:SetText("Pause")
 			video_button:SetImage(icons_pause)
 		else
@@ -75,7 +75,7 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
-			love.graphics.draw(video_stream, 0, 0, 0, canvas:getWidth()/video_stream:getWidth(), canvas:getHeight()/video_stream:getHeight())
+			love.graphics.draw(self.video_stream, 0, 0, 0, canvas:getWidth()/self.video_stream:getWidth(), canvas:getHeight()/self.video_stream:getHeight())
 			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
 		love.graphics.setCanvas()
 	end

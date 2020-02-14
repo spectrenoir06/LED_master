@@ -1,6 +1,6 @@
 local node_map = {}
 
-function node_map:load(loveframes, frame, tabs, start_y, step_y)
+function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.panel_node_map = loveframes.Create("panel")
 
 	tabs:AddTab("Node map", self.panel_node_map, nil, "ressource/icons/node.png", function() self:reload() end)
@@ -24,6 +24,12 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y)
 	self.button_add:SetPos(8, 8)
 
 	self.panel_node_map:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
+
+	self.button_add.OnClick = function()
+		tabs:SetVisible(false)
+		parent.new_node:reload()
+		parent.new_node.panel_node_new:SetVisible(true)
+	end
 
 	self.panel_node_map.Update = function(object)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)

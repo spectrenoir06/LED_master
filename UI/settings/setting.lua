@@ -70,11 +70,11 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 
 	self.slider_bright_text = loveframes.Create("text", panel_setting)
 	self.slider_bright_text:SetPos(8, start_y+step_y*2+4)
-	self.slider_bright_text:SetText("Bright: "..self.slider_bright:GetValue())
+	self.slider_bright_text:SetText("Bright: "..(self.slider_bright:GetValue()*100).." %")
 	self.slider_bright_text:SetFont(small_font)
 
 	self.slider_bright.OnValueChanged = function(object)
-		self.slider_bright_text:SetText("Bright: "..math.floor(self.slider_bright:GetValue()*100)/100)
+		self.slider_bright_text:SetText("Bright: "..(math.floor(self.slider_bright:GetValue()*100)/100*100).." %")
 		shaders_param.bright = self.slider_bright:GetValue()
 		love.thread.getChannel('data'):push({ type = "bright", data = self.slider_bright:GetValue()})
 	end

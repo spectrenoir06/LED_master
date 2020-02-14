@@ -1,7 +1,7 @@
 
-local player = {}
+local settings = {}
 
-function player:load(loveframes)
+function settings:load(loveframes)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Settings")
 
@@ -40,15 +40,17 @@ function player:load(loveframes)
 	self.pixel_map = require "UI.settings.pixel_map"
 	self.load_save = require "UI.settings.load_save"
 	self.canva_set = require "UI.settings.setting"
+	self.new_node  = require "UI.settings.new_node"
 
-	self.node_scan:load(loveframes, frame, tabs, start_y, step_y)
-	self.node_map:load(loveframes, frame, tabs, start_y, step_y)
-	self.pixel_map:load(loveframes, frame, tabs, start_y, step_y)
-	self.load_save:load(loveframes, frame, tabs, start_y, step_y)
-	self.canva_set:load(loveframes, frame, tabs, start_y, step_y)
+	self.node_scan:load(loveframes, frame, tabs, start_y, step_y, self)
+	self.node_map:load( loveframes, frame, tabs, start_y, step_y, self)
+	self.pixel_map:load(loveframes, frame, tabs, start_y, step_y, self)
+	self.load_save:load(loveframes, frame, tabs, start_y, step_y, self)
+	self.canva_set:load(loveframes, frame, tabs, start_y, step_y, self)
+	self.new_node:load( loveframes, frame, tabs, start_y, step_y, self):SetVisible(false)
 
 
 	return frame
 end
 
-return player
+return settings

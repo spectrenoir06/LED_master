@@ -47,7 +47,8 @@ function player:load(loveframes)
 
 	frame.OnClose = function(object)
 		print("The frame Player was closed.")
-		if video then video:pause() end
+		print(video)
+		if video.video_stream then video.video_stream:pause() end
 		if sound then sound:pause() end
 		if mic then mic:stop() end
 	end
