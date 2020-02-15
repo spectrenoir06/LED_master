@@ -87,7 +87,7 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	local add_button = loveframes.Create("button", panel_node_new)
 	add_button:SetPos(lx/4, start_y+step_y*8)
-	add_button:SetText("Add node")
+	add_button:SetText("Save node")
 	add_button:SetImage("ressource/icons/node-insert-next.png")
 
 	local cancel_button = loveframes.Create("button", panel_node_new)
@@ -100,6 +100,8 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 		tabs:SetVisible(true)
 	end
 
+	self.edit = 0
+
 	add_button.OnClick = function()
 		local t = {}
 		t.net = self.numberbox_net:GetValue()
@@ -110,7 +112,12 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 		t.protocol = self.choice_protocol:GetChoice()
 		t.led_nb = self.numberbox_LED_nb:GetValue()
 
-		table.insert(mapping.nodes, t)
+		if self.edit == 0 then
+			table.insert(mapping.nodes, t)
+		else
+			mapping.nodes[self.edit] = t
+		end
+
 		parent.node_map:reload()
 		panel_node_new:SetVisible(false)
 		tabs:SetVisible(true)

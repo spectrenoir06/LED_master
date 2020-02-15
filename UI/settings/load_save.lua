@@ -12,7 +12,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	for k,v in pairs(maps) do
 		self.choice_file:AddChoice(v.name)
 	end
-	self.choice_file:SelectChoice("42.lua")
+	self.choice_file:SelectChoice("42.json")
 
 	self.panel_load_save:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 
