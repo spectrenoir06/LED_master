@@ -48,7 +48,6 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	local function remove_node()
 		local d = self.node_list:GetSelectedRows()[1]
-		print(d:GetColumnData()[8])
 		table.remove(mapping.nodes, d:GetColumnData()[8])
 		self:reload()
 	end
