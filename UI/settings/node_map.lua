@@ -37,18 +37,26 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 		local net, sub, ip, port, protocol, rgbw, led_nb = data[1], data[2], data[3], data[4], data[5], data[6], data[7]
 		parent.new_node:reload(net, sub, ip, port, protocol, rgbw, led_nb)
 		parent.new_node.panel_node_new:SetVisible(true)
-		-- print(self.node_list:GetSelectedRows()[1]:GetColorIndex())
 		for k,v in ipairs(self.node_list.internals[1].children) do
 			if v == self.node_list:GetSelectedRows()[1] then
 				parent.new_node.edit = k
+				parent.node_map:reload()
+				return
 			end
 		end
-
 	end
+
+	local function remove_node()
+		local d = self.node_list:GetSelectedRows()[1]
+		print(d:GetColumnData()[8])
+		table.remove(mapping.nodes, d:GetColumnData()[8])
+		self:reload()
+	end
+
 
 	local menu = loveframes.Create("menu")
 	menu:AddOption("Edit node", "ressource/icons/node-design.png", edit_node)
-	menu:AddOption("Remove node", "ressource/icons/node-delete-next.png", function() end)
+	menu:AddOption("Remove node", "ressource/icons/node-delete-next.png", remove_node)
 	menu:SetVisible(false)
 
 	self.node_list.OnRowClicked = function(parent, row, data)
@@ -74,7 +82,8 @@ function node_map:reload()
 			v.port,
 			v.protocol,
 			v.rgbw,
-			v.led_nb
+			v.led_nb,
+			k
 		)
 	end
 end
