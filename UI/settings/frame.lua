@@ -15,7 +15,7 @@ function settings:load(loveframes)
 
 	frame:SetResizable(true)
 	frame:SetMinWidth(200)
-	frame:SetMinHeight(200)
+	frame:SetMinHeight(318+30)
 	frame:SetMaxWidth(5000)
 	frame:SetMaxHeight(5000)
 	frame:SetScreenLocked(true)

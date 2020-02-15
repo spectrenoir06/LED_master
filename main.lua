@@ -113,19 +113,20 @@ function love.draw()
 
 	-- local r,g,b = hslToRgb(time/4%1,1,0.9)
 	-- love.graphics.setColor(r,g,b)
-	local lx,ly = love.graphics.getDimensions()
-	local sx,sy = spectre_img:getDimensions()
-	local kx = lx / (sx*1.5)
-	local ky = ly / (sy*1.5)
-	local k = math.min(kx,ky)
-	sx, sy = sx*k, sy*k
-	love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
-	love.graphics.setFont(logo_font)
 
-	local sx = logo_font:getWidth("LED Master")
-	local k = lx / (sx*1.5)
-	sx = sx * k
-	love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
+	-- local lx,ly = love.graphics.getDimensions()
+	-- local sx,sy = spectre_img:getDimensions()
+	-- local kx = lx / (sx*1.5)
+	-- local ky = ly / (sy*1.5)
+	-- local k = math.min(kx,ky)
+	-- sx, sy = sx*k, sy*k
+	-- love.graphics.draw(spectre_img, lx/2-sx/2, ly/3-sy/2, 0, k, k)
+	-- love.graphics.setFont(logo_font)
+	--
+	-- local sx = logo_font:getWidth("LED Master")
+	-- local k = lx / (sx*1.5)
+	-- sx = sx * k
+	-- love.graphics.print("LED Master", lx/2-sx/2, ly/3 + sy/2, 0, k, k)
 
 	loveframes.draw()
 

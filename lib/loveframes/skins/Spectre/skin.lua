@@ -35,11 +35,14 @@ skin.controls.radiobutton_text_font                 = smallfont
 
 
 -- columnlistrow
-skin.controls.columnlistrow_body_selected_color     = {1, 0.6, 0, 1}
-skin.controls.columnlistrow_body_hover_color        = {1, 0.68, 0.2, 1}
+skin.controls.columnlistrow_body_selected_color     = {.6,.6,.6, 1}
+skin.controls.columnlistrow_body_hover_color        = {.7,.7,.7,1}
 
 -- menuoption
 skin.controls.menuoption_body_hover_color           = {1, 0.6, 0, 1}
+
+skin.controls.menuoption_body_hover_color = {.6,.6,.6}
+skin.controls.menuoption_text_color = {0.40, 0.40, 0.40, 1}
 
 -- register the skin
 loveframes.RegisterSkin(skin)
