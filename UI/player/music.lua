@@ -254,7 +254,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 					local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
 
-					local r,g,b = hslToRgb((timer+(x/canvas:getWidth()))%1,1,0.5)
+					local r,g,b = hslToRgb((timer/4+(x/canvas:getWidth()))%1,1,0.5)
 					love.graphics.setColor(r,g,b)
 
 					-- local color = math.min(t[i+1],canvas:getHeight())/canvas:getHeight()
