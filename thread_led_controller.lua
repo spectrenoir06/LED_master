@@ -34,7 +34,7 @@ while true do
 			end
 		end
 		for k,v in ipairs(nodes) do
-			v:send(1/60/4, true, ctn)
+			v:send(0, true, ctn)
 			ctn = ctn + 1
 		end
 		-- if sync then controller:sendArtnetSync() end
@@ -61,7 +61,7 @@ while true do
 			end
 		elseif d.type == "rgbw" then
 			for k,v in ipairs(nodes) do
-				v.rgbw = d.data
+				v.rgbw_mode = d.data
 			end
 		end
 	end

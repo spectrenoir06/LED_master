@@ -152,7 +152,7 @@ function love.update(dt)
 	time = time + (dt * shaders_param.speed)
 	-- print(1/dt)
 
-	if timer > 1 / fps then
+	if timer > 1 / mapping.fps then
 		local data = canvas:newImageData()
 		if last_id then channel_img:hasRead(last_id) end
 		last_id = channel_img:push(data)
