@@ -17,7 +17,12 @@ local sync, debug = ...
 local img_channel = love.thread.getChannel("img")
 local data_channel = love.thread.getChannel("data")
 
-local controller = LEDsController:new({led_nb = 0})
+local controller
+local status, err = pcall(function() controller = LEDsController:new({led_nb = 0}) end)
+if not status then
+	error(err)
+end
+
 local udp = controller.udp
 
 while true do
