@@ -113,6 +113,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local mic_checkbox = loveframes.Create("checkbox", panel_music)
 	mic_checkbox:SetPos(8, start_y+step_y*4+4)
 	mic_checkbox:SetText("Audio in")
+	mic_checkbox:SetFont(small_font)
 
 	local t = {}
 	local timer = 0

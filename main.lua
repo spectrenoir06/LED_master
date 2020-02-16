@@ -21,10 +21,10 @@ require("lib/color")
 
 function love.load(arg)
 
-	local os = love.system.getOS()
-	if os == "Android" or  os == "iOS" then
-		love.window.setMode( 411, 838, {resizable = false} )
-	end
+	-- local os = love.system.getOS()
+	-- if os == "Android" or  os == "iOS" then
+	-- 	love.window.setMode( 411, 838, {resizable = false} )
+	-- end
 
 	love.filesystem.createDirectory("ressource/music")
 	love.filesystem.createDirectory("ressource/shader")

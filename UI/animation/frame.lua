@@ -5,9 +5,7 @@ function animation:load(loveframes)
 	frame:SetName("Animation")
 
 	local lx, ly = love.graphics.getDimensions()
-	-- if love.system.getOS() == "Android" then
-	-- 	lx, ly = ly, lx
-	-- end
+
 	frame:SetSize(lx, 250)
 
 	frame:SetPos(0, 30)
