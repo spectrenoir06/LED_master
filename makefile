@@ -12,21 +12,25 @@ build/game-aligned-debugSigned.apk: build/game.apk
 clean:
 	rm -f build/*.apk build/*.love
 
-install_apk: build/game-aligned-debugSigned.apk
+apk_install: build/game-aligned-debugSigned.apk
 	adb install build/game-aligned-debugSigned.apk
 
-run_apk: install_apk
+apk_run: apk_install
 	adb shell am force-stop org.spectre.ledmaster
 	adb shell am start -n org.spectre.ledmaster/.GameActivity
+
+apk_log:
+	adb logcat --pid=`adb shell pidof -s org.spectre.ledmaster`
 
 debug_install:
 	~/dev/git/adb-sync/adb-sync main.lua ressource UI conf.lua lib frame thread_led_controller.lua /sdcard/lovegame
 
-debug_launch: debug_install
+debug_run: debug_install
 	adb shell am force-stop org.love2d.android
 	adb shell am start -n org.love2d.android/.GameActivity
 
 debug_log:
 	adb logcat --pid=`adb shell pidof -s org.love2d.android`
 
-.PHONY: clean debug install_apk debug_launch debug_log
+
+.PHONY: clean debug apk_install apk_run apk_log debug_install debug_run debug_log

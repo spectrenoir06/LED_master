@@ -100,6 +100,8 @@ function love.load(arg)
 	local height = love.graphics.getHeight()
 	bgquad = love.graphics.newQuad(0, 0, width, height, image:getWidth(), image:getHeight())
 	bgimage = image
+
+	print("Save dir:",love.filesystem.getSaveDirectory())
 end
 
 function love.joystickpressed( joystick, button )
