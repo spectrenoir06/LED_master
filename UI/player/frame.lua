@@ -11,9 +11,7 @@ function player:load(loveframes)
 	frame:SetName("Player")
 
 	local lx, ly = love.graphics.getDimensions()
-	-- if love.system.getOS() == "Android" then
-	-- 	lx, ly = ly, lx
-	-- end
+
 	frame:SetSize(lx, 240)
 
 	frame:SetPos(0,280)

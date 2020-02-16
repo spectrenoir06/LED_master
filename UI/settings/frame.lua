@@ -6,9 +6,6 @@ function settings:load(loveframes)
 	frame:SetName("Settings")
 
 	local lx, ly = love.graphics.getDimensions()
-	-- if love.system.getOS() == "Android" then
-	-- 	lx, ly = ly, lx
-	-- end
 
 	frame:SetPos(0, 290+230)
 	frame:SetSize(lx, 318+30)
