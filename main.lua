@@ -1,7 +1,8 @@
 love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua")
-
+local socket = require("socket")
 
 local LEDsController     = require("lib.LEDsController")
+-- local Yeelight           = require("lib.Yeelight")
 local loveframes         = require("lib.loveframes")
 local json               = require("lib.json")
 
@@ -25,6 +26,22 @@ function love.load(arg)
 	-- if os == "Android" or  os == "iOS" then
 	-- 	love.window.setMode( 411, 838, {resizable = false} )
 	-- end
+
+	-- light1 = Yeelight:new{ip = "192.168.1.219"}
+	-- light2 = Yeelight:new{ip = "192.168.1.141"}
+
+	-- light1:setRGB(1,0,1, 500)
+	-- light1:setPower("off", 2000)
+	-- light2:setPower("off", 2000)
+
+	-- light1:setRGB(0,255,0)
+	-- light1:setHSV(1,10)
+	-- light1:setBright(100)
+	-- light2:setBright(100)
+
+	-- light1:setCT(3500)
+	-- light2:setCT(3500)
+
 
 	love.filesystem.createDirectory("ressource/music")
 	love.filesystem.createDirectory("ressource/shader")
@@ -194,7 +211,7 @@ function love.mousereleased(x, y, button)
 	loveframes.mousereleased(x, y, button)
 end
 
-function love.keypressed( key, scancode, isrepeat )
+function love.keypressed( key, scancode, isretest_timer = 0peat )
 	-- print(key)
 	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
@@ -271,4 +288,9 @@ function love.filedropped(file)
 	else
 		print("can't load "..extention.." file")
 	end
+end
+
+function love.quit()
+	-- light1:setPower("on", 2000)
+	-- light2:setPower("on", 2000)
 end

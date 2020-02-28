@@ -1,3 +1,6 @@
 [submodule "lib/LEDsController"]
 	path = lib/LEDsController
 	url = git@github.com:spectrenoir06/LEDsController.git
+[submodule "lib/Yeelight"]
+	path = lib/Yeelight
+	url = git@github.com:spectrenoir06/Yeelight.git
