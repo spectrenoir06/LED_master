@@ -211,7 +211,7 @@ function love.mousereleased(x, y, button)
 	loveframes.mousereleased(x, y, button)
 end
 
-function love.keypressed( key, scancode, isretest_timer = 0peat )
+function love.keypressed( key, scancode, isrepeat )
 	-- print(key)
 	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
