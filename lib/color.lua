@@ -121,7 +121,7 @@ end
 function hsvToRgb(h, s, v, a)
   local r, g, b
 
-  local i = Math.floor(h * 6);
+  local i = math.floor(h * 6);
   local f = h * 6 - i;
   local p = v * (1 - s);
   local q = v * (1 - f * s);
