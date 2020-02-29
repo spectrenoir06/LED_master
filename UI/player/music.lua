@@ -120,10 +120,19 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
 	choice_music:SetPos(100, start_y+step_y*0)
-	choice_music:SetSize(panel_music:GetWidth()-8-100, 25)
+	choice_music:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 
 	local list = love.filesystem.getDirectoryItems("ressource/music/")
 	local musics = {}
+
+	local choice_render = loveframes.Create("multichoice", panel_music)
+	choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y+step_y*0)
+	choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
+
+	for i=1, 2 do
+		choice_render:AddChoice(tostring(i))
+	end
+	choice_render:SelectChoice("1")
 
 	choice_music.OnChoiceSelected = function(object, choice)
 		-- print("choice_music", choice)
@@ -202,7 +211,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 	panel_music.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
-		choice_music:SetSize(panel_music:GetWidth()-8-100, 25)
+		choice_music:SetSize((panel_music:GetWidth()-8-100)/2, 25)
+		choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 		progressbar:SetSize(panel_music:GetWidth()-8-100, 25)
 		slider_lerp:SetSize(panel_music:GetWidth()-8-100, 25)
 		slider_amp:SetSize(panel_music:GetWidth()-8-100, 25)
@@ -261,15 +271,14 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 					-- love.graphics.setColor(1,1-color,0)
 
 					local v = floor(t[pos+1])
+					local choice = choice_render:GetChoice()
+					if choice == "1" then
+						love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
+					elseif choice == "2" then
+						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, floor(v/2))
+						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, -floor(v/2))
+					end
 
-					love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
-
-					-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, floor(v/2))
-					-- love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, -floor(v/2))
-					-- love.graphics.rectangle("fill", x, floor(x)(canvas:getHeight()/2-(v/2)), l, v)
-
-					-- love.graphics.rectangle("fill", (x+canvas:getWidth()/2)%canvas:getWidth(), canvas:getHeight(), lx, -floor(t[i+1]))
-					-- love.graphics.rectangle("fill", canvas:getWidth()/2-(i+1)*lx, canvas:getHeight(), lx, -floor(t[i+1]))
 				end
 			end
 		love.graphics.setCanvas()

@@ -54,8 +54,7 @@ function love.load(arg)
 	shaders = {}
 	shaders_param = {
 		speed = 1,
-		density = 1,
-		bright = 1
+		density = 1
 	}
 	shader_nb = 1
 

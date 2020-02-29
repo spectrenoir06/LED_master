@@ -6,7 +6,7 @@
 		{
 			"net": 0,
 			"uni": 0,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.106",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -15,7 +15,7 @@
 		{
 			"net": 0,
 			"uni": 1,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.106",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -24,7 +24,7 @@
 		{
 			"net": 0,
 			"uni": 2,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.106",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -33,7 +33,7 @@
 		{
 			"net": 0,
 			"uni": 3,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.106",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -42,7 +42,7 @@
 		{
 			"net": 0,
 			"uni": 4,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.104",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -51,7 +51,7 @@
 		{
 			"net": 0,
 			"uni": 5,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.104",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -60,7 +60,7 @@
 		{
 			"net": 0,
 			"uni": 6,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.104",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
@@ -69,7 +69,7 @@
 		{
 			"net": 0,
 			"uni": 7,
-			"ip": "10.0.0.18",
+			"ip": "10.0.0.104",
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
