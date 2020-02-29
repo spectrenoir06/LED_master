@@ -10,7 +10,7 @@
 			"port": 6454,
 			"rgbw": true,
 			"protocol": "artnet",
-			"led_nb": 100
+			"led_nb": 100,
 		},
 		{
 			"net": 0,

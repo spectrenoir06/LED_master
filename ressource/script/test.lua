@@ -7,7 +7,7 @@ font:setFilter("nearest","nearest")
 function test:update(dt, lx, ly)
 	love.graphics.setFont(font)
 	love.graphics.clear(0,0,0,1)
-	for x=0,3 do
+	for x=0,6 do
 		for y=0,1 do
 			local r,g,b = hslToRgb((x+y*4)/8,1,0.2)
 			love.graphics.setColor(r,g,b)
