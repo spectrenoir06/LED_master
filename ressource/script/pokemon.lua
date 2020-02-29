@@ -6,7 +6,7 @@ function pokemon:update(dt, lx, ly)
 	-- local k = ly / img:getHeight()
 	local k = 1
 	local y = ly/2 - img:getHeight()/2
-	x = x - dt * 20
+	x = x - dt * 10
 	-- love.graphics.clear(0,0,0,1)
 	love.graphics.setColor(0.7, 0.7, 0.7)
 	love.graphics.setShader(shaders[shader_nb].shader)

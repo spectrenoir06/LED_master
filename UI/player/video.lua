@@ -69,8 +69,9 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 			video_button:SetText("Play")
 			video_button:SetImage(icons_play)
 			if self.video_stream:tell() == 0 then
-				self.video_stream:rewind()
+				-- self.video_stream:rewind()
 				self.video_stream:play()
+				self.video_stream:seek(0)
 			end
 		end
 
