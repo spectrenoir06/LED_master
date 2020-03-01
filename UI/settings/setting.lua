@@ -66,7 +66,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.slider_bright:SetPos(100, start_y+step_y*2)
 	self.slider_bright:SetWidth(panel_setting:GetWidth()-100-8)
 	self.slider_bright:SetMinMax(0.0, 1)
-	self.slider_bright:SetValue(1)
+	self.slider_bright:SetValue(0.1)
 
 	self.slider_bright_text = loveframes.Create("text", panel_setting)
 	self.slider_bright_text:SetPos(8, start_y+step_y*2+4)
