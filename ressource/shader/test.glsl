@@ -12,7 +12,7 @@ uniform vec3 iResolution;
 vec4 effect( vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = (screen_coords-iResolution.xy*.5/**sin(iTime*.5)*-.5+.5*/)/iResolution.y+.5;
+    vec2 uv = texture_coords-vec2(0.5,0.0);//(screen_coords-iResolution.xy*.5/**sin(iTime*.5)*-.5+.5*/)/iResolution.y+.5;
 	vec2 gv = vec2(uv.x * 5., -.25+uv.y * 5.);
     float rad = .25;
     float dist = length(gv)-rad;

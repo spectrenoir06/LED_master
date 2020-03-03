@@ -15,7 +15,7 @@ local function lerp(a, b, t)
 	return a + (b - a) * t
 end
 
-local function spectro_up_mic(obj, sdata, size, mic)
+function music:spectro_up_mic(obj, sdata, size, mic)
 	if mic:getSampleCount() > size then
 		local List = {}
 		local data = mic:getData()
@@ -26,7 +26,7 @@ local function spectro_up_mic(obj, sdata, size, mic)
 	end
 end
 
-local function spectro_up(obj, sdata, size)
+function music:spectro_up(obj, sdata, size)
 	local MusicPos = obj:tell("samples")
 	local MusicSize = sdata:getSampleCount()
 	local List = {}
@@ -51,14 +51,18 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local icons_play = love.graphics.newImage("ressource/icons/control.png")
 	local icons_pause = love.graphics.newImage("ressource/icons/control-pause.png")
 
+	local fft_canvas = love.graphics.newCanvas(512, 1)
+
 
 	local panel_music = loveframes.Create("panel")
+	panel_music:SetAlwaysUpdate(true)
 
 	local record_list = love.audio.getRecordingDevices()
 	local mic = record_list[1]
 
 	local slider_lerp = loveframes.Create("slider", panel_music)
 	tabs:AddTab("Music", panel_music, nil, "ressource/icons/music.png")
+	tabs:SetAlwaysUpdate(true)
 	slider_lerp:SetPos(100, start_y+step_y*2)
 	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
 	slider_lerp:SetMinMax(0.01, 1)
@@ -116,6 +120,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	mic_checkbox:SetFont(small_font)
 
 	local t = {}
+	local t_canvas = {}
 	local timer = 0
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
@@ -238,16 +243,32 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 			if not mic:isRecording() then
 				local test = mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
 			end
-			s = spectro_up_mic(sound, soundData, fft_bin, mic)
+			s = self:spectro_up_mic(sound, soundData, fft_bin, mic)
 			spectre = s or spectre
 		elseif sound:isPlaying() then
-			spectre = spectro_up(sound, soundData, fft_bin)
+			spectre = self:spectro_up(sound, soundData, fft_bin)
 			-- spectre[1] = new(0, 0)
 		end
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
 			if spectre then
+				if shaders[shader_nb] then
+					if shaders[shader_nb].shader:hasUniform('fft') then
+						fft_canvas:renderTo(function()
+							love.graphics.clear(0,0,0,0)
+							for i = 0, fft_canvas:getWidth()-1 do
+								local c = spectre[i+1]:abs() * slider_amp:GetValue() / 255
+								t_canvas[i+1] = lerp(t_canvas[i+1] or 0, c, slider_lerp:GetValue())
+								love.graphics.setColor(t_canvas[i+1],t_canvas[i+1],t_canvas[i+1])
+								love.graphics.points(i+0.5,0.5)
+							end
+						end)
+						shaders[shader_nb].shader:send('fft', fft_canvas)
+					end
+				end
+
+
 				local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2 * l), 1)
 				for i = 0, canvas:getWidth()/l-1 do
 					local pos = floor(band_size * i / div)
@@ -260,7 +281,6 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 					sum = sum
 
 					t[pos+1] = lerp(t[pos+1] or 0, sum, slider_lerp:GetValue())
-
 
 					local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
 
@@ -281,6 +301,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 				end
 			end
+		-- love.graphics.setColor(1,1,1,1)
+		-- love.graphics.draw(fft_canvas, 0, 0, 0, 1, 100)
 		love.graphics.setCanvas()
 	end
 end

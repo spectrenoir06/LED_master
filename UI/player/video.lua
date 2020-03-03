@@ -39,11 +39,11 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 		if self.video_stream then self.video_stream:pause() end
 
 
-		video_source = videos[choice].source
+		self.video_source = videos[choice].source
 		self.video_stream = videos[choice].video
 		self.video_stream:play()
 		self.video_stream:seek(0)
-		video_progressbar:SetMinMax(0, math.floor(video_source:getDuration()))
+		video_progressbar:SetMinMax(0, math.floor(self.video_source:getDuration()))
 	end
 
 	print("Load Video:")
@@ -82,7 +82,7 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
 			love.graphics.draw(self.video_stream, 0, 0, 0, canvas:getWidth()/self.video_stream:getWidth(), canvas:getHeight()/self.video_stream:getHeight())
-			video_progressbar:SetValue(math.floor(video_source:tell("seconds")))
+			video_progressbar:SetValue(math.floor(self.video_source:tell("seconds")))
 		love.graphics.setCanvas()
 	end
 
