@@ -19,7 +19,7 @@ function script:update(dt, lx, ly)
 	timer = timer + dt
 	local x = (-timer*15)%font:getWidth(text)
 
-	love.graphics.print(text, x, 5)
+	love.graphics.print(text, x, 0)
 	love.graphics.print(text, x-font:getWidth(text), 0)
 
 	-- love.graphics.rectangle("line", -1, 1, lx+2, ly-1)
