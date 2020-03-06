@@ -44,6 +44,34 @@ function music:spectro_up(obj, sdata, size)
 	return fft(List, false)
 end
 
+function music:fft()
+	if self.mic_checkbox:GetChecked() and self.mic then
+		if not self.mic:isRecording() then
+			local test = self.mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+		end
+		s = self:spectro_up_mic(sound, soundData, fft_bin, self.mic)
+		spectre = s or spectre
+	elseif sound:isPlaying() then
+		spectre = self:spectro_up(sound, soundData, fft_bin)
+		-- spectre[1] = new(0, 0)
+	end
+	if spectre then
+		if shaders[shader_nb] then
+			if shaders[shader_nb].shader:hasUniform('fft') then
+				self.fft_canvas:renderTo(function()
+					love.graphics.clear(0,0,0,0)
+					for i = 0, self.fft_canvas:getWidth()-1 do
+						local c = spectre[i+1]:abs() * self.slider_amp:GetValue() / 255
+						self.t_canvas[i+1] = lerp(self.t_canvas[i+1] or 0, c, self.slider_lerp:GetValue())
+						love.graphics.setColor(self.t_canvas[i+1],self.t_canvas[i+1],self.t_canvas[i+1])
+						love.graphics.points(i+0.5,0.5)
+					end
+				end)
+				shaders[shader_nb].shader:send('fft', self.fft_canvas)
+			end
+		end
+	end
+end
 
 function music:load(loveframes, frame, tabs, start_y, step_y)
 
@@ -51,46 +79,44 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local icons_play = love.graphics.newImage("ressource/icons/control.png")
 	local icons_pause = love.graphics.newImage("ressource/icons/control-pause.png")
 
-	local fft_canvas = love.graphics.newCanvas(512, 1)
+	self.fft_canvas = love.graphics.newCanvas(512, 1)
 
 
 	local panel_music = loveframes.Create("panel")
-	panel_music:SetAlwaysUpdate(true)
 
 	local record_list = love.audio.getRecordingDevices()
-	local mic = record_list[1]
+	self.mic = record_list[1]
 
-	local slider_lerp = loveframes.Create("slider", panel_music)
+	self.slider_lerp = loveframes.Create("slider", panel_music)
 	tabs:AddTab("Music", panel_music, nil, "ressource/icons/music.png")
-	tabs:SetAlwaysUpdate(true)
-	slider_lerp:SetPos(100, start_y+step_y*2)
-	slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
-	slider_lerp:SetMinMax(0.01, 1)
-	slider_lerp:SetValue(0.3)
+	self.slider_lerp:SetPos(100, start_y+step_y*2)
+	self.slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
+	self.slider_lerp:SetMinMax(0.01, 1)
+	self.slider_lerp:SetValue(0.3)
 
-	local slider_lerp_text = loveframes.Create("text", panel_music)
-	slider_lerp_text:SetPos(8, start_y+step_y*2+4)
-	slider_lerp_text:SetText("Lerp: "..slider_lerp:GetValue())
-	slider_lerp_text:SetFont(small_font)
+	self.slider_lerp_text = loveframes.Create("text", panel_music)
+	self.slider_lerp_text:SetPos(8, start_y+step_y*2+4)
+	self.slider_lerp_text:SetText("Lerp: "..self.slider_lerp:GetValue())
+	self.slider_lerp_text:SetFont(small_font)
 
-	slider_lerp.OnValueChanged = function(object)
-		slider_lerp_text:SetText("Lerp: "..slider_lerp:GetValue())
+	self.slider_lerp.OnValueChanged = function(object)
+		self.slider_lerp_text:SetText("Lerp: "..self.slider_lerp:GetValue())
 	end
 
-	local slider_amp = loveframes.Create("slider", panel_music)
+	self.slider_amp = loveframes.Create("slider", panel_music)
 
-	slider_amp:SetPos(100, start_y+step_y*3)
-	slider_amp:SetWidth(panel_music:GetWidth()-100-8)
-	slider_amp:SetMinMax(0.1, 100)
-	slider_amp:SetValue(30)
+	self.slider_amp:SetPos(100, start_y+step_y*3)
+	self.slider_amp:SetWidth(panel_music:GetWidth()-100-8)
+	self.slider_amp:SetMinMax(0.1, 100)
+	self.slider_amp:SetValue(30)
 
-	local slider_amp_text = loveframes.Create("text", panel_music)
-	slider_amp_text:SetPos(8, start_y+step_y*3+4)
-	slider_amp_text:SetText("Amp: "..slider_amp:GetValue())
-	slider_amp_text:SetFont(small_font)
+	self.slider_amp_text = loveframes.Create("text", panel_music)
+	self.slider_amp_text:SetPos(8, start_y+step_y*3+4)
+	self.slider_amp_text:SetText("Amp: "..self.slider_amp:GetValue())
+	self.slider_amp_text:SetFont(small_font)
 
-	slider_amp.OnValueChanged = function(object)
-		slider_amp_text:SetText("Amp: "..floor(slider_amp:GetValue()*100)/100)
+	self.slider_amp.OnValueChanged = function(object)
+		self.slider_amp_text:SetText("Amp: "..floor(self.slider_amp:GetValue()*100)/100)
 	end
 
 	local progressbar = loveframes.Create("slider", panel_music)
@@ -114,13 +140,13 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	progressbar_text:SetText(progressbar:GetValue().."/0")
 	progressbar_text:SetFont(small_font)
 
-	local mic_checkbox = loveframes.Create("checkbox", panel_music)
-	mic_checkbox:SetPos(8, start_y+step_y*4+4)
-	mic_checkbox:SetText("Audio in")
-	mic_checkbox:SetFont(small_font)
+	self.mic_checkbox = loveframes.Create("checkbox", panel_music)
+	self.mic_checkbox:SetPos(8, start_y+step_y*4+4)
+	self.mic_checkbox:SetText("Audio in")
+	self.mic_checkbox:SetFont(small_font)
 
 	local t = {}
-	local t_canvas = {}
+	self.t_canvas = {}
 	local timer = 0
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
@@ -173,8 +199,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		choice_mic:AddChoice("No audio in")
 		choice_mic:SelectChoice("No audio in")
 		choice_mic:SetEnabled(false)
-		mic_checkbox:SetEnabled(false)
-		mic_checkbox:SetVisible(false)
+		self.mic_checkbox:SetEnabled(false)
+		self.mic_checkbox:SetVisible(false)
 	else
 		for k,v in ipairs(record_list) do
 			print("    "..v:getName())
@@ -184,13 +210,13 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	end
 
 	choice_mic.OnChoiceSelected = function(object, choice)
-		if mic then
-			mic:stop()
+		if self.mic then
+			self.mic:stop()
 			for k,v in ipairs(record_list) do
 				if v:getName() == choice then
-					mic = v
-					if mic_checkbox:GetChecked() then
-						mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+					self.mic = v
+					if self.mic_checkbox:GetChecked() then
+						self.mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
 					end
 					break
 				end
@@ -219,9 +245,11 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		choice_music:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 		choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 		progressbar:SetSize(panel_music:GetWidth()-8-100, 25)
-		slider_lerp:SetSize(panel_music:GetWidth()-8-100, 25)
-		slider_amp:SetSize(panel_music:GetWidth()-8-100, 25)
+		self.slider_lerp:SetSize(panel_music:GetWidth()-8-100, 25)
+		self.slider_amp:SetSize(panel_music:GetWidth()-8-100, 25)
 		choice_mic:SetSize(panel_music:GetWidth()-8-100, 25)
+
+		choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y)
 
 
 		progressbar_text:SetText(floor(sound:tell("seconds")).." / "..floor(sound:getDuration()))
@@ -239,36 +267,10 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		local div = 2
 		local l = 1
 		local size = canvas:getWidth()
-		if mic_checkbox:GetChecked() and mic then
-			if not mic:isRecording() then
-				local test = mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
-			end
-			s = self:spectro_up_mic(sound, soundData, fft_bin, mic)
-			spectre = s or spectre
-		elseif sound:isPlaying() then
-			spectre = self:spectro_up(sound, soundData, fft_bin)
-			-- spectre[1] = new(0, 0)
-		end
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.clear(0,0,0,1)
 			if spectre then
-				if shaders[shader_nb] then
-					if shaders[shader_nb].shader:hasUniform('fft') then
-						fft_canvas:renderTo(function()
-							love.graphics.clear(0,0,0,0)
-							for i = 0, fft_canvas:getWidth()-1 do
-								local c = spectre[i+1]:abs() * slider_amp:GetValue() / 255
-								t_canvas[i+1] = lerp(t_canvas[i+1] or 0, c, slider_lerp:GetValue())
-								love.graphics.setColor(t_canvas[i+1],t_canvas[i+1],t_canvas[i+1])
-								love.graphics.points(i+0.5,0.5)
-							end
-						end)
-						shaders[shader_nb].shader:send('fft', fft_canvas)
-					end
-				end
-
-
 				local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2 * l), 1)
 				for i = 0, canvas:getWidth()/l-1 do
 					local pos = floor(band_size * i / div)
@@ -276,11 +278,11 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 					local sum = 0
 					for j=1, band_size do
-						sum = sum + spectre[pos+j]:abs() * slider_amp:GetValue() / 1000 * canvas:getHeight()
+						sum = sum + spectre[pos+j]:abs() * self.slider_amp:GetValue() / 1000 * canvas:getHeight()
 					end
 					sum = sum
 
-					t[pos+1] = lerp(t[pos+1] or 0, sum, slider_lerp:GetValue())
+					t[pos+1] = lerp(t[pos+1] or 0, sum, self.slider_lerp:GetValue())
 
 					local x = i*l --(i*lx + canvas:getWidth()/2)%canvas:getWidth()
 
@@ -302,9 +304,10 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 				end
 			end
 		-- love.graphics.setColor(1,1,1,1)
-		-- love.graphics.draw(fft_canvas, 0, 0, 0, 1, 100)
+		-- love.graphics.draw(self.fft_canvas, 0, 0, 0, 1, 100)
 		love.graphics.setCanvas()
 	end
+	self.panel_music = panel_music
 end
 
 return music

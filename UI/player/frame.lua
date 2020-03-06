@@ -31,6 +31,7 @@ function player:load(loveframes)
 	local tabs = loveframes.Create("tabs", frame)
 	tabs:SetPos(4, 30)
 	tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
+	-- tabs:SetAlwaysUpdate(true)
 	tabs.Update = function(object, dt)
 		tabs:SetSize(frame:GetWidth()-8, frame:GetHeight()-26-4)
 	end
@@ -42,6 +43,10 @@ function player:load(loveframes)
 	music:load(loveframes, frame, tabs, start_y, step_y)
 	video:load(loveframes, frame, tabs, start_y, step_y)
 	script:load(loveframes, frame, tabs, start_y, step_y)
+
+	frame.Update = function(obj, dt)
+		music:fft()
+	end
 
 	frame.OnClose = function(object)
 		print("The frame Player was closed.")
