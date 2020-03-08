@@ -15,7 +15,7 @@ local debug = false
 local sync = false
 local counter = 0
 
-local time = 0
+time = 0
 
 
 require("lib/color")
