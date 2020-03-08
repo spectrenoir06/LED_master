@@ -1,7 +1,7 @@
 local snake = {}
 
 snake.player = {
-	size = 8,
+	size = 4,
 	dx = -1,
 	dy = 0,
 	tail = {},
@@ -47,7 +47,7 @@ function snake:reset()
 	self:spawn_food()
 	self.player.tail = {{lx/2, ly/2}}
 	self.init = true
-	self.score = 0
+	self.score = false
 end
 
 local timer = 10
@@ -55,7 +55,7 @@ local timer = 10
 function snake:update(dt, lx, ly)
 	timer = timer + dt
 
-	if not self.init then
+	if not self.init or (love.keyboard.isDown("w","s","a","d") and self.score) then
 		self:reset()
 	end
 
@@ -73,7 +73,7 @@ function snake:update(dt, lx, ly)
 		self.player.dy = 0
 	end
 
-	if timer > 0.1 and self.score <= 0 then
+	if timer > 0.1 and not self.score then
 		timer = 0
 		-- love.graphics.setColor(0.7, 0.7, 0.7)
 		-- love.graphics.setShader(shaders[shader_nb].shader)
@@ -94,8 +94,7 @@ function snake:update(dt, lx, ly)
 		end
 
 		if pos[1] < 0 or pos[1] > lx-1 or pos[2] < 0 or pos[2] > ly-1 or self:is_tail(pos)  then
-			-- self.init = false
-			self.score = 5
+			self.score = true
 		else
 			table.insert(self.player.tail, pos)
 		end
@@ -104,14 +103,13 @@ function snake:update(dt, lx, ly)
 	love.graphics.clear(0,0,0,1)
 
 
-	if self.score > 0 then
-		self.score = self.score - dt
-		if self.score <= 0 then self:reset() end
+	if self.score then
 		love.graphics.setFont(font)
 		local r,g,b = hslToRgb((time)%1,1,0.5)
 		love.graphics.setColor(r,g,b)
-		love.graphics.print(#self.player.tail-8,lx/2-font:getWidth(#self.player.tail-8)/2,5)
+		love.graphics.print(#self.player.tail-4,lx/2-font:getWidth(#self.player.tail-4)/2,5)
 	else
+		love.graphics.setColor(1,1,1,(math.sin(time*20)+1)/4+0.75)
 		love.graphics.rectangle("fill", self.food[1], self.food[2], 1, 1)
 
 		for k,v in ipairs(self.player.tail) do
