@@ -44,6 +44,9 @@ function player:load(loveframes)
 	video:load(loveframes, frame, tabs, start_y, step_y)
 	script:load(loveframes, frame, tabs, start_y, step_y)
 
+	tabs:SwitchToTab(4)
+	script.choice_script:SelectChoice("snake.lua")
+
 	frame.Update = function(obj, dt)
 		music:fft()
 	end
