@@ -46,6 +46,7 @@ function settings:load(loveframes)
 	self.canva_set:load(loveframes, frame, tabs, start_y, step_y, self)
 	self.new_node:load( loveframes, frame, tabs, start_y, step_y, self):SetVisible(false)
 
+	tabs:SwitchToTab(3)
 
 	return frame
 end
