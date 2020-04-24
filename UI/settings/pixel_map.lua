@@ -7,13 +7,13 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 	self.panel_pixel = loveframes.Create("map", self.panel_pixel_map)
 	self.panel_setting = loveframes.Create("panel", self.panel_pixel_map)
 
-	tabs:AddTab("Pixel map", self.panel_pixel_map, nil, "ressource/icons/map.png", function() self:reload() end)
+	tabs:AddTab("Pixel map", self.panel_pixel_map, nil, "ressource/icons/map.png", function() self:map_to_2d() self:reload() end)
 
 
 	self.select_x = 0
 	self.select_y = 0
-	self.select_lx = 5
-	self.select_ly = 5
+	self.select_lx = 10
+	self.select_ly = 10
 	local step_y = 25
 	local setting_lx = 180
 
@@ -64,17 +64,25 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 			love.graphics.draw(self.cv, x, y)
 
 			love.graphics.setColor(1,1,1,0.6)
-			love.graphics.rectangle("fill", x+self.select_x*24+1, y+self.select_y*24+1, 24*self.select_lx-2, 24*self.select_ly-2)
+			local tab_nb = self.tabs_settings:GetTabNumber()
+			if tab_nb == 1 then
+				love.graphics.rectangle("fill", x+self.select_x*24+1, y+self.select_y*24+1, 24-2, 24-2)
+			elseif tab_nb == 2 then
+				love.graphics.rectangle("fill", x+self.select_x*24+1, y+self.select_y*24+1, 24*self.select_lx-2, 24*self.select_ly-2)
+			end
 		love.graphics.setStencilTest()
 	end
 
 	self.panel_pixel.OnPixelClick = function(obj,x,y)
 		if x>=0 and y >=0 and x < mapping.lx and y < mapping.ly then
-			-- print(x,y, self.map[x+1][y+1].id,self.map[x+1][y+1].uni)
 			self.select_x = x
 			self.select_y = y
-			self.pixel_map_manual:click(x,y)
-			self.pixel_map_auto:click(x,y)
+			local tab_nb = self.tabs_settings:GetTabNumber()
+			if tab_nb == 1 then
+				self.pixel_map_manual:click(x,y)
+			elseif tab_nb == 2 then
+				self.pixel_map_auto:click(x,y)
+			end
 		end
 	end
 end
