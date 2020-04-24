@@ -78,4 +78,5 @@ while true do
 			love.thread.getChannel('node'):push(info)
 		end
 	end
+	socket.sleep(0.01)
 end
