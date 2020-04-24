@@ -100,7 +100,7 @@ function love.load(arg)
 	frame_player_frame = frame_player:load(loveframes)
 	frame_settings:load(loveframes)
 
-	local channel_data = love.thread.getChannel("data")
+	channel_data = love.thread.getChannel("data")
 
 	channel_data:push({type = "map", data = mapping.map})
 	channel_data:push({type = "nodes", data = mapping.nodes})
@@ -162,7 +162,6 @@ function love.draw()
 	-- love.graphics.print("getDPIScale: "..love.graphics.getDPIScale(), 10, 150)
 end
 
-local channel_img = love.thread.getChannel('img')
 local last_id = nil
 
 function love.update(dt)
@@ -172,9 +171,8 @@ function love.update(dt)
 
 	if timer > (1 / mapping.fps) then
 		local data = canvas:newImageData()
-		if last_id then channel_img:hasRead(last_id) end
-		last_id = channel_img:push(data)
-
+		-- if last_id then channel_data:hasRead(last_id) end
+		last_id = channel_data:push({type= "image", data = data})
 		timer = timer - (1 / mapping.fps)
 	end
 
