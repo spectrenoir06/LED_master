@@ -7,7 +7,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	parent.panel_pixel_map_manual = loveframes.Create("panel")
 
-	tabs:AddTab("Manual", parent.panel_pixel_map_manual, nil, "ressource/icons/map.png")
+	tabs:AddTab("Manual", parent.panel_pixel_map_manual, nil, "ressource/icons/map.png", function() self.parent:reload() end)
 	local step_y = 25
 	local setting_lx = 180
 
@@ -24,7 +24,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.numberbox_x_text:SetFont(small_font)
 
 	self.numberbox_x.OnValueChanged = function(obj, value)
-		self.select_x = value
+		self.parent.select_x = value
 		self:update_select()
 	end
 
@@ -41,7 +41,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.numberbox_y_text:SetFont(small_font)
 
 	self.numberbox_y.OnValueChanged = function(obj, value)
-		self.select_y = value
+		self.parent.select_y = value
 		self:update_select()
 	end
 
@@ -74,7 +74,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.subnet:SetValue(0)
 
 	self.subnet_text = loveframes.Create("text", parent.panel_pixel_map_manual)
-	self.subnet_text:SetPos(8+67, start_y+step_y*1+8)
+	self.subnet_text:SetPos(8+59, start_y+step_y*1+8)
 	self.subnet_text:SetText("Subnet:")
 	self.subnet_text:SetFont(small_font)
 
@@ -95,7 +95,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.uni:SetValue(0)
 
 	self.uni_text = loveframes.Create("text", parent.panel_pixel_map_manual)
-	self.uni_text:SetPos(8+120, start_y+step_y*1+8)
+	self.uni_text:SetPos(8+103, start_y+step_y*1+8)
 	self.uni_text:SetText("Uni:")
 	self.uni_text:SetFont(small_font)
 
@@ -135,9 +135,14 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.button_set:SetPos(8+80, start_y+step_y*4)
 
 	self.button_set.OnClick = function(object, x, y)
+		self.parent:map_to_2d()
 		self:update_value()
 		self.parent:map_from_2d()
 		self.parent:reload()
+	end
+
+	parent.panel_pixel_map_manual.Update = function(obj, dt)
+		obj:SetHeight(tabs:GetHeight()-8)
 	end
 
 	self.parent:reload()
@@ -156,7 +161,6 @@ function pixel_map_manual:update_value()
 end
 
 function pixel_map_manual:click(x,y)
-	print("click")
 	self.numberbox_x:SetValue(x)
 	self.numberbox_y:SetValue(y)
 	-- self:update_select()
