@@ -199,6 +199,49 @@ function love.update(dt)
 	loveframes.update(dt)
 end
 
+function gen_map_file(map)
+	local output = "{\n"
+	output = output..'\t"lx":  '..map.lx..',\n'
+	output = output..'\t"ly":  '..map.ly..',\n'
+	output = output..'\t"fps": '..map.fps..',\n\n'
+
+	output = output..'\t"nodes":[\n'
+		for k,v in ipairs(map.nodes) do
+			output = output..'\t\t{\n'
+
+				output = output..'\t\t\t"net":      '..v.net..',\n'
+				output = output..'\t\t\t"subnet":   '..(v.subnet or 0)..',\n'
+				output = output..'\t\t\t"uni":      '..v.uni..',\n'
+				output = output..'\t\t\t"ip":       "'..v.ip..'",\n'
+				output = output..'\t\t\t"port":     '..v.port..',\n'
+				output = output..'\t\t\t"rgbw":     '..(v.rgbw and "true" or "false")..',\n'
+				output = output..'\t\t\t"protocol": "'..v.protocol..'",\n'
+				output = output..'\t\t\t"led_nb":   '..v.led_nb..',\n'
+
+			output = output..'\t\t},\n'
+		end
+	output = output..'\t],\n'
+
+	output = output..'\t"map":[\n'
+		local last_y = 0
+		for k,v in ipairs(map.map) do
+			if v.y > last_y then output = output..'\n' end
+			output = output..'\t\t{'
+				output = output..'"x":'..v.x..','
+				output = output..' "y":'..v.y..','
+				output = output..' "net":'..v.net..','
+				output = output..' "subnet":'..(v.subnet or 0)..','
+				output = output..' "uni":'..v.uni..','
+				output = output..' "id":'..v.id
+			output = output..'},\n'
+			last_y = v.y
+		end
+	output = output..'\t]\n'
+
+	output = output.."}"
+	return output
+end
+
 function love.mousepressed(x, y, button)
 	loveframes.mousepressed(x, y, button)
 end
@@ -212,6 +255,14 @@ function love.keypressed( key, scancode, isrepeat )
 	-- print(key)
 	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
+
+	if key == "r" then
+		print(gen_map_file(mapping))
+		local data = gen_map_file(mapping)
+		print(love.filesystem.write( "ressource/map/new.map", data))
+		-- frame_settings.load_save.choice_file:SelectChoice("new.map")
+	end
+
 	if key == "up" then
 		ly = ly + 1
 	elseif key == "down" and canvas:getHeight() > 1 then
