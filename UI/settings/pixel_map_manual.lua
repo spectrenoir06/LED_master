@@ -192,6 +192,8 @@ function pixel_map_manual:click(x,y)
 		self.parent:map_from_2d()
 		self.parent:reload()
 		self.id:SetValue(self.id:GetValue()+(self.inc:GetChecked() and 1 or 0))
+		self.numberbox_x:SetValue(x)
+		self.numberbox_y:SetValue(y)
 	else
 		self.numberbox_x:SetValue(x)
 		self.numberbox_y:SetValue(y)

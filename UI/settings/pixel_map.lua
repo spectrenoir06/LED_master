@@ -9,7 +9,6 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 
 	tabs:AddTab("Pixel map", self.panel_pixel_map, nil, "ressource/icons/map.png", function() self:map_to_2d() self:reload() end)
 
-
 	self.select_x = 0
 	self.select_y = 0
 	self.select_lx = 10
@@ -85,6 +84,20 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 			end
 		end
 	end
+
+	self:map_to_2d()
+	self:reload()
+
+
+	-- for k,v in pairs(maps) do
+	-- 	mapping = v
+	-- 	self:map_to_2d()
+	-- 	self:map_from_2d()
+	-- 	-- print(gen_map_file(mapping))
+	-- 	-- print(k)
+	-- 	local data = gen_map_file(mapping)
+	-- 	print(love.filesystem.write( "ressource/map/"..k, data))
+	-- end
 end
 
 function pixel_map:map_from_2d()
