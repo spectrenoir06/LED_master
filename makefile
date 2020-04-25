@@ -16,7 +16,7 @@ build/game-aligned-debugSigned.apk: build/game.apk
 	java -jar ~/dev/prog/uber-apk-signer.jar --apks build/game.apk
 
 clean:
-	rm -f build/*.apk build/*.love
+	rm -f build/*.apk build/*.love build/*.exe build/*.zip
 
 apk_install: build/game-aligned-debugSigned.apk
 	adb install build/game-aligned-debugSigned.apk
@@ -38,5 +38,7 @@ debug_run: debug_install
 debug_log:
 	adb logcat --pid=`adb shell pidof -s org.love2d.android`
 
+all: build/game.love build/game-aligned-debugSigned.apk build/game_win.zip
 
-.PHONY: clean debug apk_install apk_run apk_log debug_install debug_run debug_log
+
+.PHONY: clean debug apk_install apk_run apk_log debug_install debug_run debug_log all
