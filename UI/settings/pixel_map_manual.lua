@@ -11,6 +11,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	local step_y = 25
 	local setting_lx = 180
 
+
 	self.numberbox_x = loveframes.Create("numberbox", parent.panel_pixel_map_manual)
 	self.numberbox_x:SetPos(8+15, start_y+step_y*0)
 	self.numberbox_x:SetSize(100, 25)
@@ -25,8 +26,9 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	self.numberbox_x.OnValueChanged = function(obj, value)
 		self.parent.select_x = value
-		self:update_select()
+		self:update_box()
 	end
+
 
 	self.numberbox_y = loveframes.Create("numberbox", parent.panel_pixel_map_manual)
 	self.numberbox_y:SetPos(8+15+85, start_y+step_y*0)
@@ -42,7 +44,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	self.numberbox_y.OnValueChanged = function(obj, value)
 		self.parent.select_y = value
-		self:update_select()
+		self:update_box()
 	end
 
 
@@ -58,6 +60,10 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.net_text:SetText("Net:")
 	self.net_text:SetFont(small_font)
 
+	self.net.OnValueChanged = function(obj, value)
+		self:update_value_and_reload()
+	end
+
 	self.net:GetInternals()[1].OnFocusGained = function(object, value)
 		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
 	end
@@ -65,6 +71,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.net:GetInternals()[1].OnFocusLost = function(object, value)
 		love.keyboard.setTextInput(false)
 	end
+
 
 	self.subnet = loveframes.Create("numberbox", parent.panel_pixel_map_manual)
 	self.subnet:SetPos(8+59, start_y+step_y*2)
@@ -77,6 +84,10 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.subnet_text:SetPos(8+59, start_y+step_y*1+8)
 	self.subnet_text:SetText("Subnet:")
 	self.subnet_text:SetFont(small_font)
+
+	self.subnet.OnValueChanged = function(obj, value)
+		self:update_value_and_reload()
+	end
 
 	self.subnet:GetInternals()[1].OnFocusGained = function(object, value)
 		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
@@ -99,6 +110,10 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.uni_text:SetText("Uni:")
 	self.uni_text:SetFont(small_font)
 
+	self.uni.OnValueChanged = function(obj, value)
+		self:update_value_and_reload()
+	end
+
 	self.uni:GetInternals()[1].OnFocusGained = function(object, value)
 		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
 	end
@@ -112,13 +127,17 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.id:SetPos(8+20, start_y+step_y*4)
 	self.id:SetSize(100, 25)
 	self.id:SetWidth(parent.panel_pixel_map_manual:GetWidth()-16-100)
-	self.id:SetMinMax(0, 9999)
+	self.id:SetMinMax(-1, 9999)
 	self.id:SetValue(0)
 
 	self.id_text = loveframes.Create("text", parent.panel_pixel_map_manual)
 	self.id_text:SetPos(8, start_y+step_y*4+6)
 	self.id_text:SetText("Id:")
 	self.id_text:SetFont(small_font)
+
+	self.id.OnValueChanged = function(obj, value)
+		self:update_value_and_reload()
+	end
 
 	self.id:GetInternals()[1].OnFocusGained = function(object, value)
 		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
@@ -128,27 +147,34 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 		love.keyboard.setTextInput(false)
 	end
 
-	self.button_set = loveframes.Create("button", parent.panel_pixel_map_manual)
-	self.button_set:SetWidth(60)
-	self.button_set:SetText("Set")
-	self.button_set:SetImage("ressource/icons/map--pencil.png")
-	self.button_set:SetPos(8+80, start_y+step_y*4)
 
-	self.button_set.OnClick = function(object, x, y)
-		self.parent:map_to_2d()
-		self:update_value()
-		self.parent:map_from_2d()
-		self.parent:reload()
+	self.checkbox = loveframes.Create("checkbox", parent.panel_pixel_map_manual)
+	self.checkbox:SetText("Set OnClick")
+	self.checkbox:SetPos(8, start_y+step_y*6)
+
+	self.inc = loveframes.Create("checkbox", parent.panel_pixel_map_manual)
+	self.inc:SetText("Auto Inc")
+	self.inc:SetPos(8, start_y+step_y*7)
+
+	self.checkbox.OnChanged = function(obj, value)
+		self.inc:SetEnabled(value)
 	end
+
+	self.parent:reload()
 
 	parent.panel_pixel_map_manual.Update = function(obj, dt)
 		obj:SetHeight(tabs:GetHeight()-8)
 	end
+end
 
+function pixel_map_manual:update_value_and_reload()
+	self.parent:map_to_2d()
+	self:update_2d_from_box()
+	self.parent:map_from_2d()
 	self.parent:reload()
 end
 
-function pixel_map_manual:update_value()
+function pixel_map_manual:update_2d_from_box()
 	if not self.parent.map[self.parent.select_x+1] then self.parent.map[self.parent.select_x+1] = {} end
 	self.parent.map[self.parent.select_x+1][self.parent.select_y+1] = {
 		x = self.parent.select_x,
@@ -161,24 +187,29 @@ function pixel_map_manual:update_value()
 end
 
 function pixel_map_manual:click(x,y)
-	self.numberbox_x:SetValue(x)
-	self.numberbox_y:SetValue(y)
-	-- self:update_select()
+	if self.checkbox:GetChecked() then
+		self:update_2d_from_box()
+		self.parent:map_from_2d()
+		self.parent:reload()
+		self.id:SetValue(self.id:GetValue()+(self.inc:GetChecked() and 1 or 0))
+	else
+		self.numberbox_x:SetValue(x)
+		self.numberbox_y:SetValue(y)
+	end
 end
 
-function pixel_map_manual:update_select()
+function pixel_map_manual:update_box()
 	if (self.parent.map[self.parent.select_x+1] and self.parent.map[self.parent.select_x+1][self.parent.select_y+1]) then
-		self.net:SetValue(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].net)
-		self.subnet:SetValue(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].subnet)
-		self.uni:SetValue(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].uni)
-		self.id:SetValue(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].id)
+		self.net:SetValueRaw(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].net)
+		self.subnet:SetValueRaw(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].subnet)
+		self.uni:SetValueRaw(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].uni)
+		self.id:SetValueRaw(self.parent.map[self.parent.select_x+1][self.parent.select_y+1].id)
 	else
-		self.net:SetValue(0)
-		self.subnet:SetValue(0)
-		self.uni:SetValue(0)
-		self.id:SetValue(0)
+		self.net:SetValueRaw(0)
+		self.subnet:SetValueRaw(0)
+		self.uni:SetValueRaw(0)
+		self.id:SetValueRaw(-1)
 	end
-
 end
 
 return pixel_map_manual

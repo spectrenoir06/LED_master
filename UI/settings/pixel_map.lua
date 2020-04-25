@@ -87,29 +87,15 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 	end
 end
 
-function pixel_map:update_select()
-	if (self.map[self.select_x+1] and self.map[self.select_x+1][self.select_y+1]) then
-		self.net:SetValue(self.map[self.select_x+1][self.select_y+1].net)
-		self.subnet:SetValue(self.map[self.select_x+1][self.select_y+1].subnet)
-		self.uni:SetValue(self.map[self.select_x+1][self.select_y+1].uni)
-		self.id:SetValue(self.map[self.select_x+1][self.select_y+1].id)
-	else
-		self.net:SetValue(0)
-		self.subnet:SetValue(0)
-		self.uni:SetValue(0)
-		self.id:SetValue(0)
-	end
-end
-
 function pixel_map:map_from_2d()
 	mapping.map = {}
-	for x=1,mapping.lx do
-		for y=1,mapping.ly do
+	for y=1,mapping.ly do
+		for x=1,mapping.lx do
 			local v
 			if self.map[x] then
 				v = self.map[x][y]
 			end
-			if v then
+			if v and v.id ~= -1 then
 				table.insert(mapping.map, v)
 			end
 		end
@@ -141,7 +127,7 @@ function pixel_map:reload()
 			if self.map[x] then
 				v = self.map[x][y]
 			end
-			if v then
+			if v and v.id ~=-1 then
 				local ur,ug,ub = hslToRgb((v.uni/8)%1,1,l-( (v.id%170)/170) * (l * 0.8) )
 
 				love.graphics.setColor(ur, ug, ub)

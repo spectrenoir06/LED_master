@@ -19,5 +19,5 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 
 	f = 1.0+log(f)/16.0;
 
-	return vec4(f,f*f,f*f*f,1.0);
+	return vec4(1-f,1-f*f,1-f*f*f,1.0);
 }
