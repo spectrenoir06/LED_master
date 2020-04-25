@@ -23,7 +23,7 @@ function snake:is_tail(p)
 	return false
 end
 
-function snake:spawn_food()
+function snake:spawn_food(lx, ly)
 	repeat
 		self.food[1] = math.random(0, lx-1)
 		self.food[2] = math.random(0, ly-1)
@@ -31,8 +31,8 @@ function snake:spawn_food()
 end
 
 function snake:reset(lx,ly)
-	self:spawn_food()
-	self.player.tail = {{lx/2, ly/2}}
+	self:spawn_food(lx, ly)
+	self.player.tail = {{math.floor(lx/2), math.floor(ly/2)}}
 	self.init = true
 	self.score = false
 	self.player.size = 4
@@ -71,7 +71,7 @@ function snake:update(dt, lx, ly)
 
 		if pos[1] == self.food[1] and pos[2] == self.food[2] then
 			self.player.size = self.player.size + 1
-			self:spawn_food()
+			self:spawn_food(lx, ly)
 		end
 
 		if self.player.size < #self.player.tail then
