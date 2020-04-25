@@ -7,7 +7,7 @@ function pixel_map_manual:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	parent.panel_pixel_map_manual = loveframes.Create("panel")
 
-	tabs:AddTab("Manual", parent.panel_pixel_map_manual, nil, "ressource/icons/map.png", function() self.parent:reload() end)
+	tabs:AddTab("Manual", parent.panel_pixel_map_manual, nil, "ressource/icons/pencil.png", function() self.parent:reload() end)
 	local step_y = 25
 	local setting_lx = 180
 
