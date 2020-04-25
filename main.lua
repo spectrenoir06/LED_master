@@ -327,7 +327,7 @@ function love.filedropped(file)
 		print(love.filesystem.write( "ressource/script/"..filename, data))
 		frame_player_frame:Remove()
 		frame_player_frame = frame_player:load(loveframes)
-	elseif extention == "json" then
+	elseif extention == "json" or extention == "map" then
 		print("load map")
 		file:open("r")
 		local data = file:read()
