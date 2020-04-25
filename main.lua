@@ -150,7 +150,7 @@ function love.draw()
 
 	-- local width, height = love.window.getDesktopDimensions(1)
 	-- local tx, ty =love.window.getMode()
-	-- local pixelwidth, pixelheight = love.graphics.getPixelDimensions()
+	-- local pixelwidth, pixelheight = love.graphiPrintTextcs.getPixelDimensions()
 	-- local gx, gy = love.graphics.getDimensions()
 	-- local x,y,sx, sy = love.window.getSafeArea()
 	-- --
@@ -204,11 +204,9 @@ function gen_map_file(map)
 	output = output..'\t"lx":  '..map.lx..',\n'
 	output = output..'\t"ly":  '..map.ly..',\n'
 	output = output..'\t"fps": '..map.fps..',\n\n'
-
 	output = output..'\t"nodes":[\n'
 		for k,v in ipairs(map.nodes) do
 			output = output..'\t\t{\n'
-
 				output = output..'\t\t\t"net":      '..v.net..',\n'
 				output = output..'\t\t\t"subnet":   '..(v.subnet or 0)..',\n'
 				output = output..'\t\t\t"uni":      '..v.uni..',\n'
@@ -217,11 +215,9 @@ function gen_map_file(map)
 				output = output..'\t\t\t"rgbw":     '..(v.rgbw and "true" or "false")..',\n'
 				output = output..'\t\t\t"protocol": "'..v.protocol..'",\n'
 				output = output..'\t\t\t"led_nb":   '..v.led_nb..',\n'
-
 			output = output..'\t\t},\n'
 		end
 	output = output..'\t],\n'
-
 	output = output..'\t"map":[\n'
 		local last_y = 0
 		for k,v in ipairs(map.map) do
@@ -237,7 +233,6 @@ function gen_map_file(map)
 			last_y = v.y
 		end
 	output = output..'\t]\n'
-
 	output = output.."}"
 	return output
 end

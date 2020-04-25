@@ -9,8 +9,19 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.choice_file:SetPos(8, 8)
 	self.choice_file:SetSize(self.panel_load_save:GetWidth()-16, 25)
 
+	local list = loveframes.Create("columnlist", self.panel_load_save)
+	list:SetPos(8, 38)
+	list:SetSize(self.panel_load_save:GetWidth()-16, self.panel_load_save:GetHeight()-38-8)
+	list:AddColumn("Name").children[1].width = 120
+	list:AddColumn("lx").children[2].width = 30
+	list:AddColumn("ly").children[3].width = 30
+	list:AddColumn("fps").children[4].width = 30
+	list:AddColumn("nodes").children[4].width = 30
+	list:AddColumn("pixels").children[5].width = 30
+
 	for k,v in pairs(maps) do
 		self.choice_file:AddChoice(v.name)
+		list:AddRow(v.name, v.lx, v.ly, v.fps, #v.nodes, #v.map)
 	end
 	self.choice_file:SelectChoice("42.map")
 
@@ -19,6 +30,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.panel_load_save.Update = function(object)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 		self.choice_file:SetWidth(object:GetWidth()-16)
+		list:SetSize(object:GetWidth()-16, object:GetHeight()-38-8)
 	end
 
 	self.choice_file.OnChoiceSelected = function(object, choice)

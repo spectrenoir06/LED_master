@@ -151,13 +151,13 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 end
 
 function new_node:reload(net, sub, ip, port, protocol, rgbw, led_nb)
-	print(net, sub, ip, port, protocol, rgbw, led_nb)
+	print(net, sub, ip, port, protocol, type(rgbw), led_nb)
 	self.numberbox_net:SetValue(net or 0)
 	self.numberbox_sub:SetValue(sub or 0)
 	self.ip_textinput:SetText(ip or "192.168.1.1")
 	self.numberbox_port:SetValue(port or 6454)
-	self.choice_protocol:SelectChoice(protocol)
-	self.rgbw_checkbox:SetChecked(false)
+	self.choice_protocol:SelectChoice(protocol or "artnet")
+	self.rgbw_checkbox:SetChecked((rgbw == "true") and true or false )
 	self.numberbox_LED_nb:SetValue(led_nb or 170)
 end
 

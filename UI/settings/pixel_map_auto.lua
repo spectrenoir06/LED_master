@@ -7,7 +7,7 @@ function pixel_map_auto:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	parent.panel_pixel_map_auto = loveframes.Create("panel")
 
-	tabs:AddTab("Auto", parent.panel_pixel_map_auto, nil, "ressource/icons/map.png", function() self:preview() end, function()  self.parent:map_to_2d() self.parent:reload() end )
+	tabs:AddTab("Auto", parent.panel_pixel_map_auto, nil, "ressource/icons/wand-magic.png", function() self:preview() end, function()  self.parent:map_to_2d() self.parent:reload() end )
 	local start_y = start_y-10
 	local step_y = 21
 	local setting_lx = 180
