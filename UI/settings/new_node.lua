@@ -62,6 +62,7 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.choice_protocol:SetPos(70+8, start_y+step_y*4)
 	self.choice_protocol:SetWidth(panel_node_new:GetWidth()-16-70)
 	self.choice_protocol:AddChoice("artnet")
+	self.choice_protocol:AddChoice("artnet_big")
 	self.choice_protocol:AddChoice("RGB888")
 	self.choice_protocol:AddChoice("RGB565")
 	self.choice_protocol:AddChoice("RLE888")
@@ -150,11 +151,13 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 end
 
 function new_node:reload(net, sub, ip, port, protocol, rgbw, led_nb)
+	print(net, sub, ip, port, protocol, rgbw, led_nb)
 	self.numberbox_net:SetValue(net or 0)
 	self.numberbox_sub:SetValue(sub or 0)
 	self.ip_textinput:SetText(ip or "192.168.1.1")
 	self.numberbox_port:SetValue(port or 6454)
-	self.rgbw_checkbox:SetChecked(rgbw or false)
+	self.choice_protocol:SelectChoice(protocol)
+	self.rgbw_checkbox:SetChecked(false)
 	self.numberbox_LED_nb:SetValue(led_nb or 170)
 end
 
