@@ -6,6 +6,12 @@ build/game.apk: build/game.love
 	cp ressource/AndroidManifest.xml ../love2apk/love_decoded/
 	apktool b -o build/game.apk ../love2apk/love_decoded
 
+build/game.exe: build/game.love
+	cat ../love-11.3-win64/love.exe build/game.love > build/game.exe
+
+build/game_win.zip: build/game.exe
+	zip -r -j build/game_win.zip build/game.exe ../love-11.3-win64/SDL2.dll ../love-11.3-win64/OpenAL32.dll ../love-11.3-win64/license.txt ../love-11.3-win64/love.dll ../love-11.3-win64/lua51.dll ../love-11.3-win64/mpg123.dll ../love-11.3-win64/msvcp120.dll ../love-11.3-win64/msvcr120.dll
+
 build/game-aligned-debugSigned.apk: build/game.apk
 	java -jar ~/dev/prog/uber-apk-signer.jar --apks build/game.apk
 
