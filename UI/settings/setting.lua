@@ -125,6 +125,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		self.numberbox_y:SetWidth(object:GetWidth()-16-100)
 		self.slider_bright:SetWidth(object:GetWidth()-100-8)
 		self.choice_rgbw:SetSize(object:GetWidth()-16-100, 25)
+		self.numberbox_fps:SetWidth(panel_setting:GetWidth()-16-100)
 	end
 
 	self.choice_rgbw.OnChoiceSelected = function(object, choice)

@@ -9,7 +9,7 @@ function pixel_map_auto:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	tabs:AddTab("Auto", parent.panel_pixel_map_auto, nil, "ressource/icons/map.png", function() self:preview() end, function()  self.parent:map_to_2d() self.parent:reload() end )
 	local start_y = start_y-10
-	local step_y = 25
+	local step_y = 21
 	local setting_lx = 180
 
 	self.numberbox_x = loveframes.Create("numberbox", parent.panel_pixel_map_auto)
@@ -174,7 +174,7 @@ function pixel_map_auto:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 
 	self.id_max_text = loveframes.Create("text", parent.panel_pixel_map_auto)
-	self.id_max_text:SetPos(8+70, start_y+step_y*6+6)
+	self.id_max_text:SetPos(8+70+8, start_y+step_y*6+6)
 	self.id_max_text:SetText("Id max:")
 	self.id_max_text:SetFont(small_font)
 

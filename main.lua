@@ -80,7 +80,7 @@ function love.load(arg)
 		maps[v].name = v
 	end
 
-	mapping = maps["42.json"]
+	mapping = maps["42.map"]
 	lx = mapping.lx
 	ly = mapping.ly
 	fps = mapping.fps
