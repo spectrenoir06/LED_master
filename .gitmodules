@@ -4,3 +4,6 @@
 [submodule "lib/Yeelight"]
 	path = lib/Yeelight
 	url = git@github.com:spectrenoir06/Yeelight.git
+[submodule "lib/loveframes"]
+	path = lib/loveframes
+	url = git@github.com:spectrenoir06/loveframes.git
