@@ -211,6 +211,7 @@ function love.update(dt)
 end
 
 function gen_map_file(map)
+	if not map then return nil end
 
 	local string_node = [[
 		{
@@ -247,6 +248,7 @@ local string_map = [[
 end
 
 function gen_map_file_lite(map)
+	if not map then return nil end
 
 	local string_node = '{"net":%d,"subnet":%d,"uni":%d,"ip":"%s","port":%d,"rgbw":%s,"protocol":"%s","led_nb":%d},'
 	local string_map = '{"x":%d,"y":%d,"net":%d,"subnet":%d,"uni":%d,"id":%d},'
