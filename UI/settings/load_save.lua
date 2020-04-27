@@ -72,6 +72,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 
 	self.button_clone.OnClick = function(object, x, y)
 		local name = self.textinput_name:GetText()..".map"
+		name = (name == ".map") and "_.map" or name
 		print("Clone", name)
 		local new_name = name
 		if maps[new_name] then
