@@ -197,6 +197,8 @@ function pixel_map_auto:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.mode:AddChoice("Line V")
 	self.mode:AddChoice("Snake H")
 	self.mode:AddChoice("Snake V")
+	self.mode:AddChoice("Delete")
+	self.mode:AddChoice("Set Uni")
 
 	self.mode:SetChoice("Line H")
 
@@ -277,7 +279,7 @@ function pixel_map_auto:preview()
 
 	function set(px,py,id)
 		if not self.parent.map[off_x+px] then self.parent.map[off_x+px] = {} end
-		local id_c = id%self.id_max:GetValue()
+		local id_c = id == -1 and -1 or (id%self.id_max:GetValue())
 		local uni = self.uni:GetValue()+math.floor(id/self.id_max:GetValue())
 
 		self.parent.map[off_x+px][off_y+py] = {
@@ -352,6 +354,23 @@ function pixel_map_auto:preview()
 					set(px,py,id)
 					id=id+1
 				end
+			end
+		end
+	elseif mode == "Delete" then
+		for py=py_start, py_end, py_inc do
+			for px=px_start, px_end, px_inc do
+				set(px,py,-1)
+			end
+		end
+	elseif mode == "Set Uni" then
+		for py=py_start, py_end, py_inc do
+			for px=px_start, px_end, px_inc do
+				local id = -1
+				if self.parent.map[off_x+px] and self.parent.map[off_x+px][off_y+py] then
+					id = self.parent.map[off_x+px][off_y+py].id
+				end
+				print(id)
+				set(px,py,id)
 			end
 		end
 	end

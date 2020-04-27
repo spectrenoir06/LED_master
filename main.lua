@@ -200,40 +200,58 @@ function love.update(dt)
 end
 
 function gen_map_file(map)
-	local output = "{\n"
-	output = output..'\t"lx":  '..map.lx..',\n'
-	output = output..'\t"ly":  '..map.ly..',\n'
-	output = output..'\t"fps": '..map.fps..',\n\n'
-	output = output..'\t"nodes":[\n'
-		for k,v in ipairs(map.nodes) do
-			output = output..'\t\t{\n'
-				output = output..'\t\t\t"net":      '..v.net..',\n'
-				output = output..'\t\t\t"subnet":   '..(v.subnet or 0)..',\n'
-				output = output..'\t\t\t"uni":      '..v.uni..',\n'
-				output = output..'\t\t\t"ip":       "'..v.ip..'",\n'
-				output = output..'\t\t\t"port":     '..v.port..',\n'
-				output = output..'\t\t\t"rgbw":     '..(v.rgbw and "true" or "false")..',\n'
-				output = output..'\t\t\t"protocol": "'..v.protocol..'",\n'
-				output = output..'\t\t\t"led_nb":   '..v.led_nb..',\n'
-			output = output..'\t\t},\n'
-		end
-	output = output..'\t],\n'
-	output = output..'\t"map":[\n'
-		local last_y = 0
-		for k,v in ipairs(map.map) do
-			if v.y > last_y then output = output..'\n' end
-			output = output..'\t\t{'
-				output = output..'"x":'..v.x..','
-				output = output..' "y":'..v.y..','
-				output = output..' "net":'..v.net..','
-				output = output..' "subnet":'..(v.subnet or 0)..','
-				output = output..' "uni":'..v.uni..','
-				output = output..' "id":'..v.id
-			output = output..'},\n'
-			last_y = v.y
-		end
-	output = output..'\t]\n'
-	output = output.."}"
+
+	local string_node = [[
+		{
+			"net":      %d,
+			"subnet":   %d,
+			"uni":      %d,
+			"ip":       "%s",
+			"port":     %d,
+			"rgbw":     %s,
+			"protocol": "%s",
+			"led_nb":   %d,
+		},
+]]
+
+local string_map = [[
+		{"x":%d, "y":%d, "net":%d, "subnet":%d, "uni":%d, "id":%d},
+]]
+
+	local output = string.format('{\n\t"lx":  %d,\n\t"ly":  %d,\n\t"fps": %d,\n\n\t"nodes":[\n', map.lx, map.ly, map.fps)
+	for k,v in ipairs(map.nodes) do
+		output = output..string.format(string_node, v.net or 0, v.subnet or 0, v.uni or 0, v.ip, v.port, (v.rgbw and "true" or "false"), v.protocol, v.led_nb)
+	end
+
+	output = output..'\t],\n\n\t"map":[\n'
+	local last_y = 0
+	for k,v in ipairs(map.map) do
+		if v.y > last_y then output = output..'\n' end
+		output=output..string.format(string_map, v.x, v.y, v.net or 0, v.subnet or 0, v.uni or 0, v.id)
+		last_y = v.y
+	end
+	output = output..'\t]\n}'
+
+	return output
+end
+
+function gen_map_file_lite(map)
+
+	local string_node = '{"net":%d,"subnet":%d,"uni":%d,"ip":"%s","port":%d,"rgbw":%s,"protocol":"%s","led_nb":%d},'
+	local string_map = '{"x":%d,"y":%d,"net":%d,"subnet":%d,"uni":%d,"id":%d},'
+
+	local output = string.format('{"lx":%d,"ly":%d,"fps":%d,"nodes":[', map.lx, map.ly, map.fps)
+	for k,v in ipairs(map.nodes) do
+		output = output..string.format(string_node, v.net, v.subnet, v.uni, v.ip, v.port, (v.rgbw and "true" or "false"), v.protocol, v.led_nb)
+	end
+
+	output = output..'],"map":['
+	for k,v in ipairs(map.map) do
+		output=output..string.format(string_map, v.x, v.y, v.net, v.subnet, v.uni, v.id)
+		last_y = v.y
+	end
+	output = output..']}'
+
 	return output
 end
 
