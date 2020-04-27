@@ -22,6 +22,9 @@ require("lib/color")
 
 function love.load(arg)
 
+	-- love.profiler = require('profile')
+	-- love.profiler.start()
+
 	-- local os = love.system.getOS()
 	-- if os == "Android" or  os == "iOS" then
 	-- 	love.window.setMode( 411, 838, {resizable = false} )
@@ -81,9 +84,8 @@ function love.load(arg)
 	end
 
 	mapping = maps["42.map"]
-	lx = mapping.lx
-	ly = mapping.ly
-	fps = mapping.fps
+	local lx = mapping.lx
+	local ly = mapping.ly
 
 	canvas = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
 	canvas_test = love.graphics.newCanvas(lx, ly, {dpiscale = 1, mipmaps = "none"})
@@ -160,9 +162,12 @@ function love.draw()
 	-- love.graphics.print("getDimensions: "..gx.."x"..gy, 10, 110)
 	-- love.graphics.print("getSafeArea: "..x.."x"..y..", "..sx.."x"..sy, 10, 130)
 	-- love.graphics.print("getDPIScale: "..love.graphics.getDPIScale(), 10, 150)
+
+	-- love.graphics.print(love.report or "Please wait...", 500)
 end
 
 local last_id = nil
+love.frame = 0
 
 function love.update(dt)
 	timer = timer + dt
@@ -197,6 +202,12 @@ function love.update(dt)
 	end
 
 	loveframes.update(dt)
+
+	-- love.frame = love.frame + 1
+	-- if love.frame%100 == 0 then
+	-- 	love.report = love.profiler.report(20)
+	-- 	love.profiler.reset()
+	-- end
 end
 
 function gen_map_file(map)

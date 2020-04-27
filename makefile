@@ -23,7 +23,7 @@ apk_install: build/game-aligned-debugSigned.apk
 
 apk_run: apk_install
 	adb shell am force-stop org.spectre.ledmaster
-	adb shell am start -n org.spectre.ledmaster/.GameActivity
+	adb shell am start -n org.spectre.ledmaster/org.love2d.android.GameActivity
 
 apk_log:
 	adb logcat --pid=`adb shell pidof -s org.spectre.ledmaster`

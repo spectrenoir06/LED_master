@@ -22,6 +22,8 @@ function animation:load(loveframes)
 
 	frame:SetIcon("ressource/icons/television-test.png")
 
+	low_fps = love.graphics.newImage("ressource/icons/dashboard--exclamation.png")
+
 	local panel = loveframes.Create("panel", frame)
 	panel:SetPos(4, 28)
 	panel:SetSize(frame:GetWidth()-8, frame:GetHeight()-28-4)
@@ -43,6 +45,10 @@ function animation:load(loveframes)
 		love.graphics.print(lx.."x"..ly.." FPS: "..love.timer.getFPS(), object:GetX()+5+1, object:GetY()+5+1)
 		love.graphics.setColor(1, 1, 1)
 		love.graphics.print(lx.."x"..ly.." FPS: "..love.timer.getFPS(), object:GetX()+5, object:GetY()+5)
+
+		if love.timer.getFPS() < mapping.fps-2 then
+			love.graphics.draw(low_fps, object:GetX()+object:GetWidth()-low_fps:getWidth()*2-8, object:GetY()+8,0,2,2)
+		end
 	end
 
 	panel.Update = function(object)
