@@ -1,5 +1,15 @@
 local load_save = {}
 
+function copy(obj, seen)
+	if type(obj) ~= 'table' then return obj end
+	if seen and seen[obj] then return seen[obj] end
+	local s = seen or {}
+	local res = setmetatable({}, getmetatable(obj))
+	s[obj] = res
+	for k, v in pairs(obj) do res[copy(k, s)] = copy(v, s) end
+	return res
+end
+
 function load_save:load(loveframes, frame, tabs, start_y, step_y)
 
 	self.panel_load_save = loveframes.Create("panel")
@@ -48,7 +58,37 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 
 	self.button_save.OnClick = function(object, x, y)
 		local data = gen_map_file(mapping)
-		print(love.filesystem.write( "ressource/map/"..mapping.name, data))
+		love.filesystem.write( "ressource/map/"..mapping.name, data)
+		self:reload()
+	end
+
+	self.button_clone = loveframes.Create("button", self.panel_load_setting)
+	self.button_clone:SetWidth(60)
+	self.button_clone:SetText("Clone")
+	self.button_clone:SetImage("ressource/icons/disks.png")
+	self.button_clone:SetPos(60+8+8, step_y*1+8)
+
+	self.button_clone.OnClick = function(object, x, y)
+		local name = self.textinput_name:GetText()..".map"
+		print("Clone", name)
+		local new_name = name
+		if maps[new_name] then
+			local nb = 2
+			while (maps[new_name]) do
+				new_name = name:match("^(.+).map$").."_"..nb..".map"
+				nb = nb + 1
+			end
+		end
+		maps[new_name] = copy(maps[self.row_selected[1]])
+		maps[new_name].name = new_name
+
+		local data = gen_map_file(maps[new_name])
+		love.filesystem.write("ressource/map/"..new_name, data)
+
+		self.list:AddRow(maps[new_name].name, maps[new_name].lx, maps[new_name].ly, maps[new_name].fps, #maps[new_name].nodes, #maps[new_name].map, false)
+		self.list:SelectRow(self.list.internals[1].children[#self.list.internals[1].children])
+
+		-- self:load_list()
 		self:reload()
 	end
 
@@ -57,13 +97,17 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.button_delete:SetWidth(60)
 	self.button_delete:SetText("Delete")
 	self.button_delete:SetImage("ressource/icons/disk--minus.png")
-	self.button_delete:SetPos(60+8+8, step_y*1+8)
+	self.button_delete:SetPos(120+8+8+8, step_y*1+8)
 
-	self.button_clone = loveframes.Create("button", self.panel_load_setting)
-	self.button_clone:SetWidth(60)
-	self.button_clone:SetText("Clone")
-	self.button_clone:SetImage("ressource/icons/disks.png")
-	self.button_clone:SetPos(120+8+8+8, step_y*1+8)
+	self.button_delete.OnClick = function(object, x, y)
+		local name = self.row_selected[1]
+		print("remove", name)
+		maps[name] = nil
+		love.filesystem.remove("ressource/map/"..name)
+		self:load_list()
+		self:reload()
+	end
+
 
 	self.textinput_name = loveframes.Create("textinput", self.panel_load_setting)
 	self.textinput_name:SetPos(8, step_y*0+8)
@@ -76,6 +120,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	menu:AddOption("Remove change", "ressource/icons/disk--minus.png", nil)
 	menu:SetVisible(false)
 
+	self.row_selected = nil
 
 	self.list.OnRowSelected = function(object, row, data)
 		print("OnRowSelected", data[1])
@@ -89,6 +134,8 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		canvas:setFilter("nearest", "nearest")
 		canvas_test:setFilter("nearest", "nearest")
 
+		self.button_save:SetEnabled(data[7] == "true")
+		self.row_selected = data
 		self.textinput_name:SetText(data[1]:match("^(.+).map$"))
 	end
 
@@ -98,14 +145,18 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		menu:MoveToTop()
 	end
 
+	self:load_list()
+	menu:SetVisible(false)
+
+end
+
+function load_save:load_list()
+	self.list:Clear()
 	for k,v in pairs(maps) do
 		self.list:AddRow(v.name, v.lx, v.ly, v.fps, #v.nodes, #v.map, false)
 	end
-	-- self:reload()
-
+	self.list.internals[1]:Sort(1, true)
 	self.list:SelectRow(self.list.internals[1].children[1])
-	menu:SetVisible(false)
-
 end
 
 function load_save:reload()
@@ -114,6 +165,7 @@ function load_save:reload()
 		local diff = (gen_map_file(maps[name]) ~= love.filesystem.read("ressource/map/"..name))
 		v.columndata[7] = tostring(diff)
 	end
+	self.button_save:SetEnabled(self.row_selected[7] == "true")
 end
 
 return load_save
