@@ -39,14 +39,14 @@ function settings:load(loveframes)
 	self.canva_set = require "UI.settings.setting"
 	self.new_node  = require "UI.settings.new_node"
 
+	self.load_save:load(loveframes, frame, tabs, start_y, step_y, self)
 	self.node_scan:load(loveframes, frame, tabs, start_y, step_y, self)
 	self.node_map:load( loveframes, frame, tabs, start_y, step_y, self)
 	self.pixel_map:load(loveframes, frame, tabs, start_y, step_y, self)
-	self.load_save:load(loveframes, frame, tabs, start_y, step_y, self)
 	self.canva_set:load(loveframes, frame, tabs, start_y, step_y, self)
 	self.new_node:load( loveframes, frame, tabs, start_y, step_y, self):SetVisible(false)
 
-	tabs:SwitchToTab(3)
+	tabs:SwitchToTab(1)
 
 	return frame
 end

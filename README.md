@@ -33,7 +33,7 @@ LED_Master
     - Shader
       - [x] Fragment Shader
       - [x] External parameter
-      - [ ] FFT sound input ( FFT => canvas => shader:send )
+      - [x] FFT sound input ( FFT => canvas => shader:send )
       - [x] Drag and drop
     - Music
       - [x] Music Loader
@@ -54,10 +54,10 @@ LED_Master
       - [ ] Octo-LED ()
     - Node map
       - [x] Viewer
-      - [ ] Editor
+      - [x] Editor
     - Pixel mapping
       - [x] Viewer
-      - [ ] Editor
+      - [x] Editor
     - Load/save Json
       - [x] Load
       - [ ] Save

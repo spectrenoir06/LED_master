@@ -57,7 +57,6 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 		end
 	end
 
-
 	local menu = loveframes.Create("menu")
 	menu:AddOption("Edit node", "ressource/icons/node-design.png", edit_node)
 	menu:AddOption("Remove node", "ressource/icons/node-delete-next.png", remove_node)

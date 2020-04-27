@@ -7,7 +7,7 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 	self.panel_pixel = loveframes.Create("map", self.panel_pixel_map)
 	self.panel_setting = loveframes.Create("panel", self.panel_pixel_map)
 
-	tabs:AddTab("Pixel map", self.panel_pixel_map, nil, "ressource/icons/map.png", function() self:map_to_2d() self:reload() end)
+	tabs:AddTab("Pixel map", self.panel_pixel_map, nil, "ressource/icons/map.png", function() self:map_to_2d() self:reload() if(self.tabs_settings:GetTabNumber()==2) then self.pixel_map_auto:preview() end end)
 
 	self.select_x = 0
 	self.select_y = 0
@@ -87,17 +87,6 @@ function pixel_map:load(loveframes, frame, tabs, start_y, step_y)
 
 	self:map_to_2d()
 	self:reload()
-
-
-	-- for k,v in pairs(maps) do
-	-- 	mapping = v
-	-- 	self:map_to_2d()
-	-- 	self:map_from_2d()
-	-- 	-- print(gen_map_file(mapping))
-	-- 	-- print(k)
-	-- 	local data = gen_map_file(mapping)
-	-- 	print(love.filesystem.write( "ressource/map/"..k, data))
-	-- end
 end
 
 function pixel_map:map_from_2d()
@@ -130,9 +119,6 @@ function pixel_map:reload()
 	self.cv = love.graphics.newCanvas(24*mapping.lx, 24*mapping.ly)
 	love.graphics.setCanvas(self.cv)
 	local l = 0.8
-
-	-- self.numberbox_x:SetMinMax(0, mapping.lx-1)
-	-- self.numberbox_y:SetMinMax(0, mapping.ly-1)
 
 	for x=1,mapping.lx do
 		for y=1,mapping.ly do
