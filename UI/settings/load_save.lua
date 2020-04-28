@@ -72,6 +72,10 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 			-- self:load_list()
 			-- self:reload()
 		end
+
+		mapping.lx = self.lx:GetValue()
+		mapping.ly = self.ly:GetValue()
+
 		local data = gen_map_file(mapping)
 		love.filesystem.write("ressource/map/"..mapping.name, data)
 		self:reload()
