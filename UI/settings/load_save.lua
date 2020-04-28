@@ -59,8 +59,21 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.button_save:SetPos(8, step_y*1+8)
 
 	self.button_save.OnClick = function(object, x, y)
+		if (self.textinput_name:GetValue()..".map") ~= mapping.name then
+			local name = self.row_selected[1]
+			local new_name = self.textinput_name:GetValue()..".map"
+			print("remove", name)
+			maps[name] = nil
+			love.filesystem.remove("ressource/map/"..name)
+
+			mapping.name = new_name
+			maps[new_name] = mapping
+			self.row_selected[1] = mapping.name
+			-- self:load_list()
+			-- self:reload()
+		end
 		local data = gen_map_file(mapping)
-		love.filesystem.write( "ressource/map/"..mapping.name, data)
+		love.filesystem.write("ressource/map/"..mapping.name, data)
 		self:reload()
 	end
 
@@ -121,7 +134,12 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		local name = self.row_selected[1]
 		print("undo", name)
 		maps[name] = json.decode(love.filesystem.read("ressource/map/"..name))
+		self.textinput_name:SetText(name:match("^(.+).map$"))
 		self.row_selected[7] = "false"
+		self.lx:SetValue(maps[name].lx)
+		self.ly:SetValue(maps[name].ly)
+		self.button_save:SetEnabled(false)
+		self.button_undo:SetEnabled(false)
 	end
 
 
@@ -129,6 +147,71 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.textinput_name:SetPos(8, step_y*0+8)
 	self.textinput_name:SetWidth(230-16-8)
 	-- self.textinput_name:SetFont(love.graphics.newFont(12))
+
+	self.lx = loveframes.Create("numberbox", self.panel_load_setting)
+	self.lx:SetPos(8, start_y+step_y*5)
+	self.lx:SetSize(100, 25)
+	self.lx:SetWidth(60)
+	self.lx:SetMinMax(1, 9999)
+	self.lx:SetValue(0)
+
+	self.lx_text = loveframes.Create("text", self.panel_load_setting)
+	self.lx_text:SetPos(8, start_y+step_y*4+8)
+	self.lx_text:SetText("lx:")
+	-- self.lx_text:SetFont(small_font)
+
+	self.lx.OnValueChanged = function(obj, nb)
+		mapping.lx = nb
+		if mapping.lx ~= tonumber(self.row_selected[2]) then
+			self.button_save:SetEnabled(true)
+			self.button_undo:SetEnabled(true)
+		end
+	end
+
+	self.lx:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.lx:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+	self.textinput_name = loveframes.Create("textinput", self.panel_load_setting)
+	self.textinput_name:SetPos(8, step_y*0+8)
+	self.textinput_name:SetWidth(230-16-8)
+	-- self.textinput_name:SetFont(love.graphics.newFont(12))
+
+	self.textinput_name.OnTextChanged = function(object, text)
+		print(object:GetValue()..".map", mapping.name)
+		if (object:GetValue()..".map") ~= mapping.name then
+			print("change")
+			self.button_save:SetEnabled(true)
+			self.button_undo:SetEnabled(true)
+		else
+			self.button_save:SetEnabled(self.row_selected[7] == "true")
+			self.button_undo:SetEnabled(self.row_selected[7] == "true")
+		end
+	end
+
+	self.ly = loveframes.Create("numberbox", self.panel_load_setting)
+	self.ly:SetPos(8+100, start_y+step_y*5)
+	self.ly:SetSize(100, 25)
+	self.ly:SetWidth(60)
+	self.ly:SetMinMax(1, 9999)
+	self.ly:SetValue(0)
+
+	self.ly_text = loveframes.Create("text", self.panel_load_setting)
+	self.ly_text:SetPos(8+100, start_y+step_y*4+8)
+	self.ly_text:SetText("ly:")
+	-- self.ly_text:SetFont(small_font)
+
+	self.ly:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.ly:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
 
 	self.row_selected = nil
 
@@ -148,6 +231,9 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		self.button_undo:SetEnabled(data[7] == "true")
 		self.row_selected = data
 		self.textinput_name:SetText(data[1]:match("^(.+).map$"))
+
+		self.lx:SetValue(mapping.lx)
+		self.ly:SetValue(mapping.ly)
 	end
 
 	self:load_list()
@@ -167,6 +253,8 @@ function load_save:reload()
 	for k,v in ipairs(self.list.internals[1].children) do
 		local name = v.columndata[1]
 		local diff = (gen_map_file(maps[name]) ~= love.filesystem.read("ressource/map/"..name))
+		v.columndata[2] = tostring(maps[name].lx)
+		v.columndata[3] = tostring(maps[name].ly)
 		v.columndata[7] = tostring(diff)
 	end
 	self.button_save:SetEnabled(self.row_selected[7] == "true")

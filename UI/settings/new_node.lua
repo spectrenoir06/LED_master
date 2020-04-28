@@ -122,6 +122,7 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 		parent.node_map:reload()
 		panel_node_new:SetVisible(false)
 		tabs:SetVisible(true)
+		print("add", t, mapping.nodes, self.edit)
 	end
 
 

@@ -27,6 +27,7 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	self.button_add.OnClick = function()
 		tabs:SetVisible(false)
+		parent.new_node.edit = 0
 		parent.new_node:reload()
 		parent.new_node.panel_node_new:SetVisible(true)
 	end
@@ -89,6 +90,8 @@ function node_map:reload()
 			k
 		)
 	end
+	local channel_data = love.thread.getChannel("data")
+	channel_data:push({type = "nodes", data = mapping.nodes})
 end
 
 return node_map
