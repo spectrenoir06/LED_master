@@ -94,38 +94,12 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.choice_rgbw:AddChoice("Mode 3")
 	self.choice_rgbw:SelectChoice("Mode 0")
 
-	self.numberbox_fps = loveframes.Create("numberbox", panel_setting)
-	self.numberbox_fps:SetPos(8+100, start_y+step_y*4)
-	self.numberbox_fps:SetSize(100, 25)
-	self.numberbox_fps:SetWidth(panel_setting:GetWidth()-16-100)
-	self.numberbox_fps:SetMinMax(1, 2048)
-	self.numberbox_fps:SetValue(mapping.fps)
-
-	self.numberbox_fps_text = loveframes.Create("text", panel_setting)
-	self.numberbox_fps_text:SetPos(8, start_y+step_y*4+6)
-	self.numberbox_fps_text:SetText("FPS")
-	self.numberbox_fps_text:SetFont(small_font)
-
-	self.numberbox_fps:GetInternals()[1].OnFocusGained = function(object, value)
-		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
-	end
-
-	self.numberbox_fps:GetInternals()[1].OnFocusLost = function(object, value)
-		love.keyboard.setTextInput(false)
-	end
-
-	self.numberbox_fps.OnValueChanged = function(object)
-		mapping.fps = self.numberbox_fps:GetValue()
-	end
-
-
 	panel_setting.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 		self.numberbox_x:SetWidth(object:GetWidth()-16-100)
 		self.numberbox_y:SetWidth(object:GetWidth()-16-100)
 		self.slider_bright:SetWidth(object:GetWidth()-100-8)
 		self.choice_rgbw:SetSize(object:GetWidth()-16-100, 25)
-		self.numberbox_fps:SetWidth(panel_setting:GetWidth()-16-100)
 	end
 
 	self.choice_rgbw.OnChoiceSelected = function(object, choice)
