@@ -120,6 +120,9 @@ function pixel_map:reload()
 	love.graphics.setCanvas(self.cv)
 	local l = 0.8
 
+	local channel_data = love.thread.getChannel("data")
+	channel_data:push({type = "map", data = mapping.map})
+
 	for x=1,mapping.lx do
 		for y=1,mapping.ly do
 			local v
