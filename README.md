@@ -60,7 +60,7 @@ LED_Master
       - [x] Editor
     - Load/save Json
       - [x] Load
-      - [ ] Save
+      - [x] Save
       - [x] Drag and drop
     - Canvas setting
       - [x] Canvas size
@@ -78,6 +78,6 @@ LED_Master
     - [x] Android
     - [ ] iOS
     - [x] Raspberry Pi
-    - [ ] Nintendo Switch
+    - [x] Nintendo Switch
   - Ideas
     - Screen grabber

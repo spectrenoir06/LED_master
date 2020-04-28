@@ -13,6 +13,7 @@ function copy(obj, seen)
 end
 
 function load_save:load(loveframes, frame, tabs, start_y, step_y)
+	-- local step_y = 15
 
 	self.panel_load_save = loveframes.Create("panel")
 	tabs:AddTab("Load/Save", self.panel_load_save, nil, "ressource/icons/json.png", function() self:reload() end)
@@ -52,11 +53,23 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.panel_load_setting:SetSize(230-8, self.panel_load_save:GetHeight()-16)
 	self.panel_load_setting:SetPos(self.panel_load_save:GetWidth()-230,8)
 
+
+	self.textinput_name = loveframes.Create("textinput", self.panel_load_setting)
+	self.textinput_name:SetPos(8, start_y+step_y*0)
+	self.textinput_name:SetWidth(230-16-8)
+	-- self.textinput_name:SetFont(love.graphics.newFont(12))
+
+	self.textinput_name.OnTextChanged = function(object, text)
+		print(object:GetValue()..".map", mapping.name)
+		self:checkChange()
+	end
+
+
 	self.button_save = loveframes.Create("button", self.panel_load_setting)
 	self.button_save:SetWidth(60)
 	self.button_save:SetText("Save")
 	self.button_save:SetImage("ressource/icons/disk.png")
-	self.button_save:SetPos(8, step_y*1+8)
+	self.button_save:SetPos(8, start_y+step_y*1)
 
 	self.button_save.OnClick = function(object, x, y)
 		if (self.textinput_name:GetValue()..".map") ~= mapping.name then
@@ -65,27 +78,26 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 			print("remove", name)
 			maps[name] = nil
 			love.filesystem.remove("ressource/map/"..name)
-
 			mapping.name = new_name
 			maps[new_name] = mapping
 			self.row_selected[1] = mapping.name
-			-- self:load_list()
-			-- self:reload()
 		end
 
 		mapping.lx = self.lx:GetValue()
 		mapping.ly = self.ly:GetValue()
+		mapping.fps = self.fps:GetValue()
 
 		local data = gen_map_file(mapping)
 		love.filesystem.write("ressource/map/"..mapping.name, data)
 		self:reload()
 	end
 
+
 	self.button_clone = loveframes.Create("button", self.panel_load_setting)
 	self.button_clone:SetWidth(60)
 	self.button_clone:SetText("Clone")
 	self.button_clone:SetImage("ressource/icons/disks.png")
-	self.button_clone:SetPos(60+8+8, step_y*1+8)
+	self.button_clone:SetPos(60+8+8, start_y+step_y*1)
 
 	self.button_clone.OnClick = function(object, x, y)
 		local name = self.textinput_name:GetText()..".map"
@@ -117,7 +129,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.button_delete:SetWidth(60)
 	self.button_delete:SetText("Delete")
 	self.button_delete:SetImage("ressource/icons/disk--minus.png")
-	self.button_delete:SetPos(120+8+8+8, step_y*1+8)
+	self.button_delete:SetPos(120+8+8+8, start_y+step_y*1)
 
 	self.button_delete.OnClick = function(object, x, y)
 		local name = self.row_selected[1]
@@ -128,11 +140,12 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		self:reload()
 	end
 
+
 	self.button_undo = loveframes.Create("button", self.panel_load_setting)
 	self.button_undo:SetWidth(60)
 	self.button_undo:SetText("Undo")
 	self.button_undo:SetImage("ressource/icons/clock-history-frame.png")
-	self.button_undo:SetPos(8, step_y*2+8)
+	self.button_undo:SetPos(8, start_y+step_y*2)
 
 	self.button_undo.OnClick = function(object, x, y)
 		local name = self.row_selected[1]
@@ -147,29 +160,21 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	end
 
 
-	self.textinput_name = loveframes.Create("textinput", self.panel_load_setting)
-	self.textinput_name:SetPos(8, step_y*0+8)
-	self.textinput_name:SetWidth(230-16-8)
-	-- self.textinput_name:SetFont(love.graphics.newFont(12))
-
 	self.lx = loveframes.Create("numberbox", self.panel_load_setting)
-	self.lx:SetPos(8, start_y+step_y*5)
+	self.lx:SetPos(8, start_y+step_y*4)
 	self.lx:SetSize(100, 25)
 	self.lx:SetWidth(60)
 	self.lx:SetMinMax(1, 9999)
 	self.lx:SetValue(0)
 
 	self.lx_text = loveframes.Create("text", self.panel_load_setting)
-	self.lx_text:SetPos(8, start_y+step_y*4+8)
+	self.lx_text:SetPos(8, start_y+step_y*3+16)
 	self.lx_text:SetText("lx:")
 	-- self.lx_text:SetFont(small_font)
 
 	self.lx.OnValueChanged = function(obj, nb)
 		mapping.lx = nb
-		if mapping.lx ~= tonumber(self.row_selected[2]) then
-			self.button_save:SetEnabled(true)
-			self.button_undo:SetEnabled(true)
-		end
+		self:checkChange()
 	end
 
 	self.lx:GetInternals()[1].OnFocusGained = function(object, value)
@@ -180,34 +185,23 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		love.keyboard.setTextInput(false)
 	end
 
-	self.textinput_name = loveframes.Create("textinput", self.panel_load_setting)
-	self.textinput_name:SetPos(8, step_y*0+8)
-	self.textinput_name:SetWidth(230-16-8)
-	-- self.textinput_name:SetFont(love.graphics.newFont(12))
-
-	self.textinput_name.OnTextChanged = function(object, text)
-		print(object:GetValue()..".map", mapping.name)
-		if (object:GetValue()..".map") ~= mapping.name then
-			print("change")
-			self.button_save:SetEnabled(true)
-			self.button_undo:SetEnabled(true)
-		else
-			self.button_save:SetEnabled(self.row_selected[7] == "true")
-			self.button_undo:SetEnabled(self.row_selected[7] == "true")
-		end
-	end
 
 	self.ly = loveframes.Create("numberbox", self.panel_load_setting)
-	self.ly:SetPos(8+100, start_y+step_y*5)
-	self.ly:SetSize(100, 25)
-	self.ly:SetWidth(60)
+	self.ly:SetPos(8+60+8, start_y+step_y*4)
+	self.ly:SetSize(60, 25)
 	self.ly:SetMinMax(1, 9999)
 	self.ly:SetValue(0)
 
 	self.ly_text = loveframes.Create("text", self.panel_load_setting)
-	self.ly_text:SetPos(8+100, start_y+step_y*4+8)
+	self.ly_text:SetPos(8+60+8, start_y+step_y*3+16)
 	self.ly_text:SetText("ly:")
 	-- self.ly_text:SetFont(small_font)
+
+	self.ly.OnValueChanged = function(obj, nb)
+		mapping.ly = nb
+		self:checkChange()
+	end
+
 
 	self.ly:GetInternals()[1].OnFocusGained = function(object, value)
 		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
@@ -216,6 +210,32 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	self.ly:GetInternals()[1].OnFocusLost = function(object, value)
 		love.keyboard.setTextInput(false)
 	end
+
+
+	self.fps = loveframes.Create("numberbox", self.panel_load_setting)
+	self.fps:SetPos(8+60+8+60+8, start_y+step_y*4)
+	self.fps:SetSize(60, 25)
+	self.fps:SetMinMax(1, 2048)
+	self.fps:SetValue(mapping.fps)
+
+	self.fps_text = loveframes.Create("text", self.panel_load_setting)
+	self.fps_text:SetPos(8+60+8+60+8, start_y+step_y*3+16)
+	self.fps_text:SetText("FPS:")
+	-- self.fps_text:SetFont(small_font)
+
+	self.fps:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.fps:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+	self.fps.OnValueChanged = function(object)
+		mapping.fps = self.fps:GetValue()
+		self:checkChange()
+	end
+
 
 	self.row_selected = nil
 
@@ -238,6 +258,7 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 
 		self.lx:SetValue(mapping.lx)
 		self.ly:SetValue(mapping.ly)
+		self.fps:SetValue(mapping.fps)
 	end
 
 	self:load_list()
@@ -253,16 +274,31 @@ function load_save:load_list()
 	self.list:SelectRow(self.list.internals[1].children[1])
 end
 
+function load_save:checkChange()
+	if mapping.lx   ~= tonumber(self.row_selected[2])
+	or mapping.ly   ~= tonumber(self.row_selected[3])
+	or mapping.fps  ~= tonumber(self.row_selected[4])
+	or mapping.name ~= (self.textinput_name:GetValue()..".map")
+	or self.row_selected[7] == "true"
+	then
+		self.button_save:SetEnabled(true)
+		self.button_undo:SetEnabled(true)
+	else
+		self.button_save:SetEnabled(false)
+		self.button_undo:SetEnabled(false)
+	end
+end
+
 function load_save:reload()
 	for k,v in ipairs(self.list.internals[1].children) do
 		local name = v.columndata[1]
 		local diff = (gen_map_file(maps[name]) ~= love.filesystem.read("ressource/map/"..name))
 		v.columndata[2] = tostring(maps[name].lx)
 		v.columndata[3] = tostring(maps[name].ly)
+		v.columndata[4] = tostring(maps[name].fps)
 		v.columndata[7] = tostring(diff)
 	end
-	self.button_save:SetEnabled(self.row_selected[7] == "true")
-	self.button_undo:SetEnabled(self.row_selected[7] == "true")
+	self:checkChange()
 end
 
 return load_save
