@@ -212,6 +212,8 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 	end
 
 
+
+
 	self.fps = loveframes.Create("numberbox", self.panel_load_setting)
 	self.fps:SetPos(8+60+8+60+8, start_y+step_y*4)
 	self.fps:SetSize(60, 25)

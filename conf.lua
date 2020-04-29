@@ -50,4 +50,21 @@ function love.conf(t)
 	t.modules.touch = true              -- Enable the touch module (boolean)
 	t.modules.video = true              -- Enable the video module (boolean)
 	t.modules.window = true             -- Enable the window module (boolean)
+
+	t.releases = {
+		title = 'LED-Master',
+		package = 'LED-Master',
+		loveVersion = '11.3',
+		version = "0.9.0",
+		author = "Spectre",
+		email = "antoine@doussaud.org",
+		description = "LED Master",
+		homepage = "antoine.doussaud.org",
+		identifier = "org.spectre.led-master.",
+		excludeFileList = {'build'},
+		compile = true,
+		projectDirectory = '/home/spectre/dev/lua/love2d/led_streamer',
+		releaseDirectory = '/home/spectre/dev/lua/love2d/led_streamer/releases',
+	}
+
 end

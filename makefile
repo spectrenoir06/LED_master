@@ -1,25 +1,36 @@
-build/game.love: main.lua conf.lua lib ressource thread_led_controller.lua UI
-	zip -r build/game.love  main.lua conf.lua lib ressource thread_led_controller.lua UI
+releases/LED-Master.love: main.lua conf.lua UI/ lib/
+	love-release -b
 
-build/game.apk: build/game.love
-	cp build/game.love ../love2apk/love_decoded/assets/
+releases/LED-Master.apk: clean_love
+	love-release
+	mv releases/LED-Master.love ../love2apk/love_decoded/assets/game.love
 	cp ressource/AndroidManifest.xml ../love2apk/love_decoded/
-	apktool b -o build/game.apk ../love2apk/love_decoded
+	apktool b -o releases/LED-Master.apk ../love2apk/love_decoded
 
-build/game.exe: build/game.love
-	cat ../love-11.3-win64/love.exe build/game.love > build/game.exe
+releases/LED-Master-aligned-debugSigned.apk: releases/LED-Master.apk
+	java -jar ~/dev/prog/uber-apk-signer.jar --apks releases/LED-Master.apk
 
-build/game_win.zip: build/game.exe
-	zip -r -j build/game_win.zip build/game.exe ../love-11.3-win64/SDL2.dll ../love-11.3-win64/OpenAL32.dll ../love-11.3-win64/license.txt ../love-11.3-win64/love.dll ../love-11.3-win64/lua51.dll ../love-11.3-win64/mpg123.dll ../love-11.3-win64/msvcp120.dll ../love-11.3-win64/msvcr120.dll
+releases/LED-Master-macos.zip: releases/LED-Master.love
+	love-release -M
 
-build/game-aligned-debugSigned.apk: build/game.apk
-	java -jar ~/dev/prog/uber-apk-signer.jar --apks build/game.apk
+releases/LED-Master-win32.zip: releases/LED-Master.love
+	love-release -W 32
+
+releases/LED-Master-win64.zip: releases/LED-Master.love
+	love-release -W 64
+
+releases/LED-Master.deb: releases/LED-Master.love
+	love-release -D
+	mv releases/LED-Master-0.9.0_all.deb releases/LED-Master.deb
 
 clean:
-	rm -f build/*.apk build/*.love build/*.exe build/*.zip
+	rm -f releases/*.apk releases/*.love releases/*.zip releases/*.deb
 
-apk_install: build/game-aligned-debugSigned.apk
-	adb install build/game-aligned-debugSigned.apk
+clean_love:
+	rm -f releases/*.love
+
+apk_install: releases/LED-Master-aligned-debugSigned.apk
+	adb install releases/LED-Master-aligned-debugSigned.apk
 
 apk_run: apk_install
 	adb shell am force-stop org.spectre.ledmaster
@@ -38,7 +49,8 @@ debug_run: debug_install
 debug_log:
 	adb logcat --pid=`adb shell pidof -s org.love2d.android`
 
-all: build/game.love build/game-aligned-debugSigned.apk build/game_win.zip
+all: clean releases/LED-Master-aligned-debugSigned.apk clean_love releases/LED-Master-macos.zip releases/LED-Master-win32.zip releases/LED-Master-win64.zip releases/LED-Master.deb
+	echo "Done"
 
 
-.PHONY: clean debug apk_install apk_run apk_log debug_install debug_run debug_log all
+.PHONY: clean clean_love debug apk_install apk_run apk_log debug_install debug_run debug_log all
