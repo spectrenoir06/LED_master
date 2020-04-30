@@ -22,55 +22,97 @@ function music:spectro_up_mic(obj, sdata, size, mic)
 		for i= 0, size-1 do
 			List[#List+1] = new(data:getSample(i), 0)
 		end
+
+		local sum = 0
+		for k,v in ipairs(List) do
+			sum = sum + v
+		end
+		local mean = sum / size
+		-- print(mean)
+		for k,v in ipairs(List) do
+			List[k] = List[k] - mean
+		end
+
+		for i=0, size-1 do
+			local multiplier = 0.5 * (1 - math.cos(2*math.pi*i/(size-1)));
+			List[i+1] = multiplier * List[i+1]
+		end
+
 		return fft(List, false)
 	end
 end
 
-function music:spectro_up(obj, sdata, size)
-	local MusicPos = obj:tell("samples")
+function music:spectro_up(obj, sdata, size, music_pos)
+	local MusicPos = music_pos or obj:tell("samples")
 	local MusicSize = sdata:getSampleCount()
 	local List = {}
 
-	for i= MusicPos, MusicPos + (size-1) do
-		CopyPos = i
-		if i + fft_bin > MusicSize then i = MusicSize/2 end
-
+	for i=MusicPos, MusicPos+(size-1) do
+		if i + size > MusicSize then i = MusicSize/2 end
 		if sdata:getChannelCount()==1 then
 			List[#List+1] = new(sdata:getSample(i), 0)
 		else
 			List[#List+1] = new(sdata:getSample(i*2), 0)
 		end
 	end
+
+	local sum = 0
+	for k,v in ipairs(List) do
+		sum = sum + v
+	end
+	local mean = sum / size
+	-- print(mean)
+	for k,v in ipairs(List) do
+		List[k] = List[k] - mean
+	end
+
+	for i=0, size-1 do
+		local multiplier = 0.5 * (1 - math.cos(2*math.pi*i/(size-1)));
+		List[i+1] = multiplier * List[i+1]
+	end
 	return fft(List, false)
+
 end
 
-function music:fft()
-	if self.mic_checkbox:GetChecked() and self.mic then
-		if not self.mic:isRecording() then
-			local test = self.mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+function music:fft(dt)
+	local fps_fft = 60
+	if self.fft_timer > (1/fps_fft) then
+		if self.mic_checkbox:GetChecked() and self.mic then
+			if not self.mic:isRecording() then
+				local test = self.mic:start(mic_sample_size, mic_sample_rate, mic_depth, 1)
+			end
+			s = self:spectro_up_mic(sound, soundData, fft_bin, self.mic)
+			spectre = s or spectre
+		elseif sound:isPlaying() then
+			spectre = self:spectro_up(sound, soundData, fft_bin)
+				-- print(spectre[1]:abs())
+			-- spectre[1] = new(0, 0)
 		end
-		s = self:spectro_up_mic(sound, soundData, fft_bin, self.mic)
-		spectre = s or spectre
-	elseif sound:isPlaying() then
-		spectre = self:spectro_up(sound, soundData, fft_bin)
-		-- spectre[1] = new(0, 0)
-	end
-	if spectre then
-		if shaders[shader_nb] then
-			if shaders[shader_nb].shader:hasUniform('fft') then
-				self.fft_canvas:renderTo(function()
-					love.graphics.clear(0,0,0,0)
-					for i = 0, self.fft_canvas:getWidth()-1 do
-						local c = spectre[i+1]:abs() * self.slider_amp:GetValue() / 255
-						self.t_canvas[i+1] = lerp(self.t_canvas[i+1] or 0, c, self.slider_lerp:GetValue())
-						love.graphics.setColor(self.t_canvas[i+1],self.t_canvas[i+1],self.t_canvas[i+1])
-						love.graphics.points(i+0.5,0.5)
+		if spectre then
+			if shaders[shader_nb] then
+				if shaders[shader_nb].shader:hasUniform('fft') then
+					self.fft_canvas:renderTo(function()
+						love.graphics.clear(0,0,0,0)
+						for i = 0, self.fft_canvas:getWidth()-1 do
+							local c = spectre[i+1]:abs() * self.slider_amp:GetValue() / 255
+							self.t_canvas[i+1] = lerp(self.t_canvas[i+1] or 0, c, self.slider_lerp:GetValue())
+							love.graphics.setColor(self.t_canvas[i+1],self.t_canvas[i+1],self.t_canvas[i+1])
+							love.graphics.points(i+0.5,0.5)
+						end
+					end)
+						shaders[shader_nb].shader:send('fft', self.fft_canvas)
 					end
-				end)
-				shaders[shader_nb].shader:send('fft', self.fft_canvas)
+				-- canvas:renderTo(function()
+				-- 	love.graphics.setColor(1,1,1,1)
+				-- 	love.graphics.draw(self.fft_canvas, 0, self.pos_spectre%canvas:getHeight())
+				-- 	self.pos_spectre = self.pos_spectre + 1
+				-- end)
 			end
 		end
+		self.fft_timer = self.fft_timer - (1/fps_fft)
 	end
+	self.fft_timer = self.fft_timer + dt
+
 end
 
 function music:load(loveframes, frame, tabs, start_y, step_y)
@@ -146,8 +188,11 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	self.mic_checkbox:SetFont(small_font)
 
 	local t = {}
+	local t2 = {}
 	self.t_canvas = {}
 	local timer = 0
+
+	self.fft_timer = 0
 
 	local choice_music = loveframes.Create("multichoice", panel_music)
 	choice_music:SetPos(100, start_y+step_y*0)
@@ -160,7 +205,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y+step_y*0)
 	choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 
-	for i=1, 2 do
+	for i=1, 3 do
 		choice_render:AddChoice(tostring(i))
 	end
 	choice_render:SelectChoice("1")
@@ -170,6 +215,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		if sound then sound:stop() end
 
 		soundData = love.sound.newSoundData("ressource/music/"..choice)
+		print(soundData:getFFIPointer())
+		print(soundData:getBitDepth(), soundData:getSampleRate())
 		sound = love.audio.newSource(soundData)
 		sound:play()
 		progressbar:SetMinMax(0, sound:getDuration("seconds"))
@@ -238,7 +285,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		end
 	end
 
-	canvas_fft = love.graphics.newCanvas( 512, height )
+	-- canvas_fft = love.graphics.newCanvas( 512, height )
+	self.pos_spectre = 0
 
 	panel_music.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
@@ -277,10 +325,14 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 					-- print(band_size, pos)
 
 					local sum = 0
-					for j=1, band_size do
-						sum = sum + spectre[pos+j]:abs() * self.slider_amp:GetValue() / 1000 * canvas:getHeight()
+					for j=math.floor(-band_size/2), math.floor(band_size/2+1) do
+						-- print(j)
+						if spectre[pos+j] then
+							sum = sum + spectre[pos+j]:abs() * self.slider_amp:GetValue() / 100 * canvas:getHeight()
+						else
+						end
 					end
-					sum = sum
+					sum = sum / band_size
 
 					t[pos+1] = lerp(t[pos+1] or 0, sum, self.slider_lerp:GetValue())
 
@@ -299,12 +351,18 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 					elseif choice == "2" then
 						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, floor(v/2))
 						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), l, -floor(v/2))
+					elseif choice == "3" then
+						-- for y=0, canvas:getHeight()-1 do
+							-- if t2[y+1] then
+								-- print(pos,y)
+								-- love.graphics.setColor(1,1,1,t2[y+1][pos+1])
+								-- love.graphics.rectangle("fill", x, y, l, 1)
+								-- love.graphics.points(pos+.5, y+.5)
+							-- end
+						-- end
 					end
-
 				end
 			end
-		-- love.graphics.setColor(1,1,1,1)
-		-- love.graphics.draw(self.fft_canvas, 0, 0, 0, 1, 100)
 		love.graphics.setCanvas()
 	end
 	self.panel_music = panel_music
