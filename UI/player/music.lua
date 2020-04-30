@@ -75,7 +75,7 @@ function music:spectro_up(obj, sdata, size, music_pos)
 end
 
 function music:fft(dt)
-	local fps_fft = 60
+	local fps_fft = mapping.fps
 	if self.fft_timer > (1/fps_fft) then
 		if self.mic_checkbox:GetChecked() and self.mic then
 			if not self.mic:isRecording() then
@@ -85,28 +85,29 @@ function music:fft(dt)
 			spectre = s or spectre
 		elseif sound:isPlaying() then
 			spectre = self:spectro_up(sound, soundData, fft_bin)
-				-- print(spectre[1]:abs())
-			-- spectre[1] = new(0, 0)
 		end
+
 		if spectre then
-			if shaders[shader_nb] then
-				if shaders[shader_nb].shader:hasUniform('fft') then
-					self.fft_canvas:renderTo(function()
-						love.graphics.clear(0,0,0,0)
-						for i = 0, self.fft_canvas:getWidth()-1 do
-							local c = spectre[i+1]:abs() * self.slider_amp:GetValue() / 255
-							self.t_canvas[i+1] = lerp(self.t_canvas[i+1] or 0, c, self.slider_lerp:GetValue())
-							love.graphics.setColor(self.t_canvas[i+1],self.t_canvas[i+1],self.t_canvas[i+1])
-							love.graphics.points(i+0.5,0.5)
-						end
-					end)
-						shaders[shader_nb].shader:send('fft', self.fft_canvas)
-					end
-				-- canvas:renderTo(function()
-				-- 	love.graphics.setColor(1,1,1,1)
-				-- 	love.graphics.draw(self.fft_canvas, 0, self.pos_spectre%canvas:getHeight())
-				-- 	self.pos_spectre = self.pos_spectre + 1
-				-- end)
+			self.fft_canvas:renderTo(function()
+				love.graphics.clear(0,0,0,0)
+				for i = 0, self.fft_canvas:getWidth()-1 do
+					local c = spectre[i+1]:abs() * self.slider_amp:GetValue() / 255
+					self.t_canvas[i+1] = lerp(self.t_canvas[i+1] or 0, c, self.slider_lerp:GetValue())
+					love.graphics.setColor(self.t_canvas[i+1],self.t_canvas[i+1],self.t_canvas[i+1])
+					love.graphics.points(i+0.5,0.5)
+				end
+			end)
+
+			if shaders[shader_nb] and shaders[shader_nb].shader:hasUniform('fft') then
+				shaders[shader_nb].shader:send('fft', self.fft_canvas)
+			end
+
+			if self.choice_render:GetChoice() == "3" then
+				canvas:renderTo(function()
+					love.graphics.setColor(1,1,1,1)
+					love.graphics.draw(self.fft_canvas, 0, self.pos_spectre%canvas:getHeight())
+					self.pos_spectre = self.pos_spectre + 1
+				end)
 			end
 		end
 		self.fft_timer = self.fft_timer - (1/fps_fft)
@@ -201,14 +202,14 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local list = love.filesystem.getDirectoryItems("ressource/music/")
 	local musics = {}
 
-	local choice_render = loveframes.Create("multichoice", panel_music)
-	choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y+step_y*0)
-	choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
+	self.choice_render = loveframes.Create("multichoice", panel_music)
+	self.choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y+step_y*0)
+	self.choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 
 	for i=1, 3 do
-		choice_render:AddChoice(tostring(i))
+		self.choice_render:AddChoice(tostring(i))
 	end
-	choice_render:SelectChoice("1")
+	self.choice_render:SelectChoice("1")
 
 	choice_music.OnChoiceSelected = function(object, choice)
 		-- print("choice_music", choice)
@@ -291,13 +292,13 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	panel_music.Update = function(object, dt)
 		object:SetSize(frame:GetWidth()-16, frame:GetHeight()-60-4)
 		choice_music:SetSize((panel_music:GetWidth()-8-100)/2, 25)
-		choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
+		self.choice_render:SetSize((panel_music:GetWidth()-8-100)/2, 25)
 		progressbar:SetSize(panel_music:GetWidth()-8-100, 25)
 		self.slider_lerp:SetSize(panel_music:GetWidth()-8-100, 25)
 		self.slider_amp:SetSize(panel_music:GetWidth()-8-100, 25)
 		choice_mic:SetSize(panel_music:GetWidth()-8-100, 25)
 
-		choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y)
+		self.choice_render:SetPos(100+4+(panel_music:GetWidth()-8-100)/2, start_y)
 
 
 		progressbar_text:SetText(floor(sound:tell("seconds")).." / "..floor(sound:getDuration()))
@@ -317,7 +318,9 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		local size = canvas:getWidth()
 
 		love.graphics.setCanvas(canvas)
-			love.graphics.clear(0,0,0,1)
+			if self.choice_render:GetChoice() ~= "3" then
+				love.graphics.clear(0,0,0,1)
+			end
 			if spectre then
 				local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2 * l), 1)
 				for i = 0, canvas:getWidth()/l-1 do
@@ -345,7 +348,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 					-- love.graphics.setColor(1,1-color,0)
 
 					local v = floor(t[pos+1])
-					local choice = choice_render:GetChoice()
+					local choice = self.choice_render:GetChoice()
 					if choice == "1" then
 						love.graphics.rectangle("fill", x, canvas:getHeight(), l, -v)
 					elseif choice == "2" then
