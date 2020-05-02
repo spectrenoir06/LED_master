@@ -48,7 +48,7 @@ function player:load(loveframes)
 	script.choice_script:SelectChoice("snake.lua")
 
 	frame.Update = function(obj, dt)
-		music:fft(dt)
+		music:spectre_update(dt)
 	end
 
 	frame.OnClose = function(object)

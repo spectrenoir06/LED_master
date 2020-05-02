@@ -97,6 +97,10 @@ function fft(input, inverse)
 	local output = {}
 	msg("FFT Initialization completed.\nFactors of size " .. #factors)
 	work(input, output, 1, 1, factors,1, twiddles, 1, 1, inverse)
+	for i=1, #output do
+		output[i] = output[i]:abs()
+	end
+	output[1]=0
 	return output
 
 end

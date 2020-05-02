@@ -116,38 +116,39 @@ end
 
 function pixel_map:reload()
 	love.graphics.setFont(small_font)
-	self.cv = love.graphics.newCanvas(24*mapping.lx, 24*mapping.ly)
+	local limits = love.graphics.getSystemLimits()
+	self.cv = love.graphics.newCanvas(math.min(24*mapping.lx,4096), math.min(24*mapping.ly,4096))
 	love.graphics.setCanvas(self.cv)
 	local l = 0.8
 
 	local channel_data = love.thread.getChannel("data")
 	channel_data:push({type = "map", data = mapping.map})
 
-	for x=1,mapping.lx do
-		for y=1,mapping.ly do
-			local v
-			if self.map[x] then
-				v = self.map[x][y]
-			end
-			if v and v.id ~=-1 then
-				local ur,ug,ub = hslToRgb((v.uni/8)%1,1,l-( (v.id%170)/170) * (l * 0.8) )
-
-				love.graphics.setColor(ur, ug, ub)
-				love.graphics.rectangle("fill", v.x*24, v.y*24, 24, 24)
-				love.graphics.setColor(0.2,0.2,0.2,1)
-				love.graphics.rectangle("line", v.x*24, v.y*24, 24, 24)
-				love.graphics.setColor(0,0,0,1)
-				love.graphics.print(v.id, v.x*24-small_font:getWidth(v.id)/2+12+1, v.y*24+5+1)
-				love.graphics.setColor(1,1,1,1)
-				love.graphics.print(v.id, v.x*24-small_font:getWidth(v.id)/2+12, v.y*24+5)
-			else
-				love.graphics.setColor(0.85,0.85,0.85)
-				love.graphics.rectangle("fill", (x-1)*24, (y-1)*24, 24, 24)
-				love.graphics.setColor(0.2,0.2,0.2,1)
-				love.graphics.rectangle("line", (x-1)*24, (y-1)*24, 24, 24)
-			end
-		end
-	end
+	-- for x=1,mapping.lx do
+	-- 	for y=1,mapping.ly do
+	-- 		local v
+	-- 		if self.map[x] then
+	-- 			v = self.map[x][y]
+	-- 		end
+	-- 		if v and v.id ~=-1 then
+	-- 			local ur,ug,ub = hslToRgb((v.uni/8)%1,1,l-( (v.id%170)/170) * (l * 0.8) )
+	--
+	-- 			love.graphics.setColor(ur, ug, ub)
+	-- 			love.graphics.rectangle("fill", v.x*24, v.y*24, 24, 24)
+	-- 			love.graphics.setColor(0.2,0.2,0.2,1)
+	-- 			love.graphics.rectangle("line", v.x*24, v.y*24, 24, 24)
+	-- 			love.graphics.setColor(0,0,0,1)
+	-- 			love.graphics.print(v.id, v.x*24-small_font:getWidth(v.id)/2+12+1, v.y*24+5+1)
+	-- 			love.graphics.setColor(1,1,1,1)
+	-- 			love.graphics.print(v.id, v.x*24-small_font:getWidth(v.id)/2+12, v.y*24+5)
+	-- 		else
+	-- 			love.graphics.setColor(0.85,0.85,0.85)
+	-- 			love.graphics.rectangle("fill", (x-1)*24, (y-1)*24, 24, 24)
+	-- 			love.graphics.setColor(0.2,0.2,0.2,1)
+	-- 			love.graphics.rectangle("line", (x-1)*24, (y-1)*24, 24, 24)
+	-- 		end
+	-- 	end
+	-- end
 	love.graphics.setCanvas()
 end
 
