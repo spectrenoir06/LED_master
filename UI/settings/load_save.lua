@@ -250,8 +250,10 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 
 		canvas = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
 		canvas_test = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
+		spectre2d_canvas = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
 		canvas:setFilter("nearest", "nearest")
 		canvas_test:setFilter("nearest", "nearest")
+		spectre2d_canvas:setFilter("nearest", "nearest")
 
 		self.button_save:SetEnabled(data[7] == "true")
 		self.button_undo:SetEnabled(data[7] == "true")
