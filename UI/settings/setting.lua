@@ -79,10 +79,10 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		love.thread.getChannel('data'):push({ type = "bright", data = self.slider_bright:GetValue()})
 	end
 
-	self.choice_rgbw = loveframes.Create("text", panel_setting)
-	self.choice_rgbw:SetPos(8, start_y+step_y*3+6)
-	self.choice_rgbw:SetText("RGBW mode:")
-	self.choice_rgbw:SetFont(small_font)
+	self.choice_rgbw_text = loveframes.Create("text", panel_setting)
+	self.choice_rgbw_text:SetPos(8, start_y+step_y*3+6)
+	self.choice_rgbw_text:SetText("RGBW mode:")
+	self.choice_rgbw_text:SetFont(small_font)
 
 	self.choice_rgbw = loveframes.Create("multichoice", panel_setting)
 	self.choice_rgbw:SetPos(108, start_y+step_y*3)
@@ -109,6 +109,44 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		if choice == "Mode 3" then v = 3 end
 		love.thread.getChannel('data'):push({ type = "rgbw", data = v})
 	end
+
+	self.choice_fft_size_text = loveframes.Create("text", panel_setting)
+	self.choice_fft_size_text:SetPos(8, start_y+step_y*4+6)
+	self.choice_fft_size_text:SetText("FFT size:")
+	self.choice_fft_size_text:SetFont(small_font)
+
+	self.choice_fft_size = loveframes.Create("multichoice", panel_setting)
+	self.choice_fft_size:SetPos(108, start_y+step_y*4)
+	self.choice_fft_size:SetSize(panel_setting:GetWidth()-16-100, 25)
+
+	self.choice_fft_size:AddChoice("64")
+	self.choice_fft_size:AddChoice("128")
+	self.choice_fft_size:AddChoice("256")
+	self.choice_fft_size:AddChoice("512")
+	self.choice_fft_size:AddChoice("1024")
+	self.choice_fft_size:AddChoice("2048")
+	self.choice_fft_size:AddChoice("4096")
+	self.choice_fft_size:AddChoice("8192")
+	self.choice_fft_size:SelectChoice("1024")
+
+	self.choice_fft_deci_text = loveframes.Create("text", panel_setting)
+	self.choice_fft_deci_text:SetPos(8, start_y+step_y*5+6)
+	self.choice_fft_deci_text:SetText("FFT deci:")
+	self.choice_fft_deci_text:SetFont(small_font)
+
+	self.choice_fft_deci = loveframes.Create("multichoice", panel_setting)
+	self.choice_fft_deci:SetPos(108, start_y+step_y*5)
+	self.choice_fft_deci:SetSize(panel_setting:GetWidth()-16-100, 25)
+
+	self.choice_fft_deci:AddChoice("0")
+	self.choice_fft_deci:AddChoice("1")
+	self.choice_fft_deci:AddChoice("2")
+	self.choice_fft_deci:AddChoice("3")
+	self.choice_fft_deci:AddChoice("4")
+	self.choice_fft_deci:AddChoice("5")
+	self.choice_fft_deci:AddChoice("7")
+	self.choice_fft_deci:AddChoice("7")
+	self.choice_fft_deci:SelectChoice("0")
 end
 
 function setting:reload()

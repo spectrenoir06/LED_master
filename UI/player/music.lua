@@ -7,23 +7,12 @@ local abs = math.abs
 local new = complex.new
 local floor = math.floor
 
-local mic_sample_size = 2081
-local mic_sample_rate = 48000
-local mic_depth = 8
-local fft_bin = 1024
-
-local multiplier = {}
-
-for i=0, fft_bin do
-	multiplier[i+1] = .5 * (1 - math.cos(2*math.pi*i/(fft_bin-1)));
-end
-
 local function lerp(a, b, t)
 	-- return a + (b - a) * t
 	return (1 - t) * a + t * b
 end
 
-function music:fft(sdata, start, size)
+function music:fft(sdata, start, size, dec)
 		-- if sdata:getBitDepth() == 16 then
 		-- 	-- 16-bit data is stored as signed values internally.
 		-- 	local pointer = ffi.cast("int16_t*", sdata:getFFIPointer())
@@ -31,14 +20,15 @@ function music:fft(sdata, start, size)
 		-- else
 		-- -- 8-bit data is stored as unsigned values internally.
 		-- 	local pointer = ffi.cast("uint8_t*", sdata:getFFIPointer())
-		-- 	print((pointer[MusicPos] - 128 ) / 127, sdata:getSample(MusicPos))
+		-- 	print((pointer[MusicPos] - 128 ) / 127, sdata:getSample(MusicPos))fi
 		-- end
 
 	local List = {}
 
 	for i=0, size-1 do
-		if i + start >= sdata:getSampleCount() then i = 0 end
-		List[#List+1] = new(sdata:getSample(i+start, 1), 0) * multiplier[i+1]
+		local pos = start+i*(dec or 1)
+		if pos >= sdata:getSampleCount() then pos = sdata:getSampleCount()-1 end
+		List[#List+1] = new(sdata:getSample(pos, 1), 0) * self.multiplier[i+1]
 	end
 
 	return fft(List, false)
@@ -49,22 +39,25 @@ function music:spectre_update(dt)
 	if self.fft_timer > (1/fps_fft) then
 
 		if self.mic_checkbox:GetChecked() and self.mic then
-			if self.mic:getSampleCount() >= fft_bin then
+			if self.mic:getSampleCount() >= self.fft_bin then
 				self.spectre_old = self.spectre
-				self.spectre = self:fft(self.mic:getData(), 0, fft_bin)
+				self.spectre = self:fft(self.mic:getData(), 0, self.fft_bin)
+			else
+				print("wait")
+				return
 			end
 		elseif self.sound:isPlaying() then
 			self.spectre_old = self.spectre
-			self.spectre = self:fft(self.soundData, self.sound:tell("samples"), fft_bin)
+			self.spectre = self:fft(self.soundData, self.sound:tell("samples"), self.fft_bin, 2)
 		end
 
-		for i=0, fft_bin-1 do
+		for i=0, self.fft_bin-1 do
 			self.spectre[i+1] = lerp(self.spectre_old[i+1], self.spectre[i+1] * self.slider_amp:GetValue() / 100, self.slider_lerp:GetValue())
 		end
 
 		local max= -1
 		local id = -1
-		for i=2, fft_bin/2 do
+		for i=2, self.fft_bin/2 do
 			if self.spectre[i] > max then
 				max = self.spectre[i]
 				id = i
@@ -72,9 +65,9 @@ function music:spectre_update(dt)
 		end
 
 		-- if self.mic_checkbox:GetChecked() and self.mic then
-		-- 	print(id, max, (id-1) * self.mic:getSampleRate() / fft_bin)
+		-- 	print(id, max, (id-1) * self.mic:getSampleRate() / self.fft_bin)
 		-- else
-		-- 	print(id, max, (id-1) * self.soundData:getSampleRate() / fft_bin)
+		-- 	print(id, max, (id-1) * self.soundData:getSampleRate() / self.fft_bin)
 		-- end
 
 		self.fft_canvas:renderTo(function()
@@ -98,33 +91,35 @@ function music:spectre_update(dt)
 
 			love.graphics.clear(0,0,0,1)
 
-			local band_size = math.max(floor(fft_bin / canvas:getWidth() / 2), 1)
+			local band_size = math.max(floor(self.fft_bin / 2 / canvas:getWidth()), 1)
 			for x = 0, canvas:getWidth()-1 do
 				local pos = floor(band_size * x / div)
 				-- print(band_size, pos)
 
-				local max = 0
-				for j=1, math.floor(band_size) do
-					local val = self.spectre[pos+j]
-					if val > max then
-						max = val
+				if x<self.fft_bin/2 then
+					local max = 0
+					for j=1, math.floor(band_size) do
+						local val = self.spectre[pos+j]
+						if val > max then
+							max = val
+						end
 					end
-				end
-				max = max * canvas:getHeight()
+					max = max * canvas:getHeight()
 
-				self.t[pos+1] = lerp(self.t[pos+1] or 0, max, self.slider_lerp:GetValue())
+					self.t[pos+1] = lerp(self.t[pos+1] or 0, max, self.slider_lerp:GetValue())
 
-				local r,g,b = hslToRgb((self.timer/4+(x/canvas:getWidth()))%1,1,0.5)
-				love.graphics.setColor(r,g,b)
+					local r,g,b = hslToRgb((self.timer/4+(x/canvas:getWidth()))%1,1,0.5)
+					love.graphics.setColor(r,g,b)
 
-				local v = floor(self.t[pos+1])
+					local v = floor(self.t[pos+1])
 
-				local choice = self.choice_render:GetChoice()
-				if choice == "1" then
-					love.graphics.rectangle("fill", x, canvas:getHeight(), 1, -v)
-				elseif choice == "2" then
-					love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), 1, floor(v/2))
-					love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), 1, -floor(v/2))
+					local choice = self.choice_render:GetChoice()
+					if choice == "1" then
+						love.graphics.rectangle("fill", x, canvas:getHeight(), 1, -v)
+					elseif choice == "2" then
+						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), 1, floor(v/2))
+						love.graphics.rectangle("fill", x, floor(canvas:getHeight()/2), 1, -floor(v/2))
+					end
 				end
 			end
 
@@ -165,8 +160,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	local icons_play = love.graphics.newImage("ressource/icons/control.png")
 	local icons_pause = love.graphics.newImage("ressource/icons/control-pause.png")
 
-	self.fft_canvas = love.graphics.newCanvas(fft_bin/2, 1)
-
+	self:reload()
 
 	local record_list = love.audio.getRecordingDevices()
 	self.mic = record_list[1]
@@ -175,7 +169,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	self.slider_lerp:SetPos(100, start_y+step_y*2)
 	self.slider_lerp:SetWidth(panel_music:GetWidth()-100-8)
 	self.slider_lerp:SetMinMax(0.01, 1)
-	self.slider_lerp:SetValue(0.3)
+	self.slider_lerp:SetValue(0.8)
 
 	self.slider_lerp_text = loveframes.Create("text", panel_music)
 	self.slider_lerp_text:SetPos(8, start_y+step_y*2+4)
@@ -257,8 +251,8 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		self.sound:play()
 		self.progressbar:SetMinMax(0, self.sound:getDuration("seconds"))
 
-		-- for i=0, fft_bin/2 do
-		-- 	print(i * self.soundData:getSampleRate() / fft_bin) -- frequency bin
+		-- for i=0, self.fft_bin/2 do
+		-- 	print(i * self.soundData:getSampleRate() / self.fft_bin) -- frequency bin
 		-- end
 	end
 
@@ -303,7 +297,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 				if v:getName() == self.choice_mic:GetValue() then
 					self.mic = v
 					if self.mic_checkbox:GetChecked() then
-						self.mic:start(math.floor(mic_sample_rate/mapping.fps), mic_sample_rate, mic_depth, 1)
+						self.mic:start(math.floor(self.mic_sample_rate/mapping.fps), self.mic_sample_rate, self.mic_depth, 1)
 					end
 					break
 				end
@@ -332,7 +326,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 
 	self.spectre = {}
 	self.spectre_old = {}
-	for i=1, fft_bin do
+	for i=1, self.fft_bin do
 		self.spectre[i] = 0
 		self.spectre_old[i] = 0
 	end
@@ -360,6 +354,20 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		end
 	end
 	self.panel_music = panel_music
+end
+
+function music:reload()
+	self.fft_bin = 1024
+	self.mic_sample_size = 2081*2
+	self.mic_sample_rate = 48000
+	self.mic_depth = 16
+
+	self.fft_canvas = love.graphics.newCanvas(self.fft_bin/2, 1)
+
+	self.multiplier = {}
+	for i=0, self.fft_bin do
+		self.multiplier[i+1] = .5 * (1 - math.cos(2*math.pi*i/(self.fft_bin-1)));
+	end
 end
 
 return music
