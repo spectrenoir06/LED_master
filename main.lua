@@ -179,6 +179,7 @@ function love.update(dt)
 		-- if last_id then channel_data:hasRead(last_id) end
 		last_id = channel_data:push({type= "image", data = data})
 		timer = timer - (1 / mapping.fps)
+		need_draw = true
 	end
 
 	if shaders[shader_nb] then
@@ -277,17 +278,10 @@ function love.mousereleased(x, y, button)
 	loveframes.mousereleased(x, y, button)
 end
 
-function love.keypressed( key, scancode, isrepeat )
-	-- print(key)
+function love.keypressed(key, scancode, isrepeat)
+	-- print(key, scancode, isrepeat)
 	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
-
-	if key == "r" then
-		print(gen_map_file(mapping))
-		local data = gen_map_file(mapping)
-		print(love.filesystem.write( "ressource/map/new.map", data))
-		-- frame_settings.load_save.choice_file:SelectChoice("new.map")
-	end
 
 	if key == "up" then
 		ly = ly + 1
