@@ -1,10 +1,10 @@
-print(package.path)
-package.path = package.path..";./lib/?.lua;./lib/?/init.lua;./lib/?/?.lua"
-print(package.path)
--- love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua;./lib/?/init.lua")
+-- print(package.path)
+-- package.path = package.path..";./lib/?.lua;./lib/?/init.lua;./lib/?/?.lua"
+-- print(package.path)
+love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua;lib/?/init.lua;lib/?/?.lua")
 local socket = require("socket")
 
-local loveframes         = require("loveframes")
+local loveframes         = require("lib.loveframes")
 local LEDsController     = require("LEDsController")
 -- local Yeelight           = require("Yeelight")
 local json               = require("json")

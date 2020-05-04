@@ -2,7 +2,7 @@ require "love.system"
 require "love.image"
 local socket = require("socket")
 
-local LEDsController = require "lib.LEDsController"
+local LEDsController = require("LEDsController")
 
 local nodes = {}
 local nodes_map = {}
