@@ -7,3 +7,6 @@
 [submodule "lib/loveframes"]
 	path = lib/loveframes
 	url = git@github.com:spectrenoir06/loveframes.git
+[submodule "lib/middleclass"]
+	path = lib/middleclass
+	url = git@github.com:kikito/middleclass.git
