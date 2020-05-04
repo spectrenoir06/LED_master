@@ -25,11 +25,6 @@ function love.load(arg)
 	-- love.profiler = require('profile')
 	-- love.profiler.start()
 
-	-- local os = love.system.getOS()
-	-- if os == "Android" or  os == "iOS" then
-	-- 	love.window.setMode( 411, 838, {resizable = false} )
-	-- end
-
 	-- light1 = Yeelight:new{ip = "192.168.1.219"}
 	-- light2 = Yeelight:new{ip = "192.168.1.141"}
 

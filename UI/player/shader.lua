@@ -68,7 +68,7 @@ function shader:load(loveframes, frame, tabs, start_y, step_y)
 			end
 		end
 	end
-	choice_shader:SelectChoice("julia.glsl")
+	choice_shader:SelectChoice("distord.glsl")
 
 
 end
