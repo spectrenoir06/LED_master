@@ -44,7 +44,7 @@ function music:spectre_update(dt)
 		if self.mic_checkbox:GetChecked() and self.mic then
 			if self.mic:getSampleCount() >= self.fft_bin then
 				-- self.spectre_old = self.spectre
-				self.spectre = self:fft(self.mic:getData(), 0, self.fft_bin, self.fft_dec)
+				self.spectre = self:fft(self.mic:getData(), 0, self.fft_bin, 1)
 				self.fft_timer = 0
 			else
 				-- print("wait mic")
@@ -249,7 +249,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		if self.sound then self.sound:stop() end
 
 		self.soundData = love.sound.newSoundData("ressource/music/"..choice)
-		print(self.soundData:getBitDepth(), self.soundData:getSampleRate(), self.soundData:getChannelCount())
+		--print(self.soundData:getBitDepth(), self.soundData:getSampleRate(), self.soundData:getChannelCount())
 		self.sound = love.audio.newSource(self.soundData)
 		self.sound:play()
 		self.progressbar:SetMinMax(0, self.sound:getDuration("seconds"))
@@ -300,7 +300,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 				if v:getName() == self.choice_mic:GetValue() then
 					self.mic = v
 					if self.mic_checkbox:GetChecked() then
-						self.mic:start(math.floor(self.mic_sample_rate/mapping.fps), self.mic_sample_rate, self.mic_depth, 1)
+						self.mic:start(self.mic_sample_size, self.mic_sample_rate, self.mic_depth, 1)
 					end
 					break
 				end
@@ -360,12 +360,23 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 end
 
 function music:reload()
+
 	self.fft_bin = 1024
-	self.fft_fps = 30
-	self.fft_dec = 1
-	self.mic_sample_size = self.fft_bin*self.fft_dec
-	self.mic_sample_rate = 48000/2
-	self.mic_depth = 16
+	self.fft_fps = 60
+
+	local os = love.system.getOS()
+	if os == "Android" or  os == "iOS" then
+
+		self.mic_sample_size = 2081
+		self.mic_sample_rate = 48000
+		self.mic_depth = 8
+	else
+		self.fft_dec = 2
+		self.mic_sample_size = self.fft_bin
+		self.mic_sample_rate = 44100/self.fft_dec
+		self.mic_depth = 16
+		print("self.mic_sample_size", self.mic_sample_size, self.mic_sample_rate/self.mic_sample_size)
+	end
 
 	self.fft_canvas = love.graphics.newCanvas(self.fft_bin/2, 1)
 
