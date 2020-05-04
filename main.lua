@@ -1,10 +1,13 @@
-love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua")
+print(package.path)
+package.path = package.path..";./lib/?.lua;./lib/?/init.lua;./lib/?/?.lua"
+print(package.path)
+-- love.filesystem.setRequirePath("?.lua;?/init.lua;lib/?.lua;./lib/?/init.lua")
 local socket = require("socket")
 
-local LEDsController     = require("lib.LEDsController")
--- local Yeelight           = require("lib.Yeelight")
-local loveframes         = require("lib.loveframes")
-local json               = require("lib.json")
+local loveframes         = require("loveframes")
+local LEDsController     = require("LEDsController")
+-- local Yeelight           = require("Yeelight")
+local json               = require("json")
 
 local frame_animation    = require("UI.animation.frame")
 local frame_player       = require("UI.player.frame")
@@ -18,7 +21,7 @@ local counter = 0
 time = 0
 
 
-require("lib/color")
+require("color")
 
 function love.load(arg)
 
@@ -74,7 +77,9 @@ function love.load(arg)
 	print("Load maps:")
 	for k,v in ipairs(list) do
 		print("    "..v)
-		maps[v] = json.decode(love.filesystem.read("ressource/map/"..v))
+		local tmp = love.filesystem.read("ressource/map/"..v)
+		-- print(tmp)
+		maps[v] = json.decode(tmp)
 		maps[v].name = v
 	end
 
