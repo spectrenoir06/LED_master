@@ -153,7 +153,6 @@ function pixel_map:reload()
 			end
 		end
 	end
-	print("helllo")
 	love.graphics.setCanvas()
 end
 
