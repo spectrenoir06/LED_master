@@ -366,7 +366,7 @@ function music:reload()
 
 	local os = love.system.getOS()
 	if os == "Android" or  os == "iOS" then
-
+		self.fft_dec = 2
 		self.mic_sample_size = 2081
 		self.mic_sample_rate = 48000
 		self.mic_depth = 8
