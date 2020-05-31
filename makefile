@@ -23,10 +23,10 @@ releases/LED-Master.deb: releases/LED-Master.love
 	mv releases/LED-Master-0.9.0_all.deb releases/LED-Master.deb
 
 clean:
-	rm -f releases/*.apk releases/*.love releases/*.zip releases/*.deb
+	rm -f releases/*.apk releases/*.love* releases/*.zip releases/*.deb
 
 clean_love:
-	rm -f releases/*.love
+	rm -f releases/*.love*
 
 apk_install: releases/LED-Master-aligned-debugSigned.apk
 	adb install releases/LED-Master-aligned-debugSigned.apk
@@ -48,7 +48,7 @@ debug_run: debug_install
 debug_log:
 	adb logcat --pid=`adb shell pidof -s org.love2d.android`
 
-all: clean releases/LED-Master-aligned-debugSigned.apk clean_love releases/LED-Master-macos.zip releases/LED-Master-win32.zip releases/LED-Master-win64.zip releases/LED-Master.deb
+all: clean releases/LED-Master-aligned-debugSigned.apk releases/LED-Master-macos.zip releases/LED-Master-win32.zip releases/LED-Master-win64.zip releases/LED-Master.deb
 	echo "Done"
 
 
