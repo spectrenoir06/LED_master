@@ -117,7 +117,9 @@ end
 function pixel_map:reload()
 	love.graphics.setFont(small_font)
 	local limits = love.graphics.getSystemLimits()
-	self.cv = love.graphics.newCanvas(math.min(24*mapping.lx,4096), math.min(24*mapping.ly,4096))
+	local cx, cy = math.min(24*mapping.lx,4096), math.min(24*mapping.ly,4096)
+	self.cv = love.graphics.newCanvas(cx,cy)
+	-- print(cx,cy)
 	love.graphics.setCanvas(self.cv)
 	local l = 0.8
 
@@ -126,6 +128,7 @@ function pixel_map:reload()
 
 	for x=1,mapping.lx do
 		for y=1,mapping.ly do
+			-- print(x,y,self.map[x], self.map[x] and self.map[x][y])
 			local v
 			if self.map[x] then
 				v = self.map[x][y]
@@ -134,6 +137,7 @@ function pixel_map:reload()
 				local ur,ug,ub = hslToRgb((v.uni/8)%1,1,l-( (v.id%170)/170) * (l * 0.8) )
 
 				love.graphics.setColor(ur, ug, ub)
+
 				love.graphics.rectangle("fill", v.x*24, v.y*24, 24, 24)
 				love.graphics.setColor(0.2,0.2,0.2,1)
 				love.graphics.rectangle("line", v.x*24, v.y*24, 24, 24)
@@ -149,6 +153,7 @@ function pixel_map:reload()
 			end
 		end
 	end
+	print("helllo")
 	love.graphics.setCanvas()
 end
 
