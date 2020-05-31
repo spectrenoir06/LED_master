@@ -1,8 +1,7 @@
 releases/LED-Master.love: main.lua conf.lua UI/ lib/
-	love-release -b
-
-releases/LED-Master.apk: clean_love
 	love-release
+
+releases/LED-Master.apk: releases/LED-Master.love
 	mv releases/LED-Master.love ../love2apk/love_decoded/assets/game.love
 	cp ressource/AndroidManifest.xml ../love2apk/love_decoded/
 	apktool b -o releases/LED-Master.apk ../love2apk/love_decoded
