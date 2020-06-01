@@ -48,6 +48,7 @@ while true do
 			for k,v in ipairs(d.data) do
 				v.udp = udp
 				v.debug = debug
+				v.remote_port = v.port
 				local n = LEDsController:new(v)
 				table.insert(nodes, n)
 				nodes_map[v.net*256+v.uni] = n
