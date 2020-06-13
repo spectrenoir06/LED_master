@@ -22,8 +22,8 @@ LED_Master
 - You can add shader / music / video / script
 - For this you need to add your ressource on the ressource folder locate at:
   - Windows: `C:\Users\user\AppData\Roaming\LOVE`
-   - Mac: `/Users/user/Library/Application Support/LOVE\`
-   - Linux: `~/.local/share/love/` 
+   - Mac: `/Users/user/Library/Application Support/LOVE`
+   - Linux: `~/.local/share/love` 
 - Or you can directly drag and drop your files on the window when LEDs master is running.
 
 
