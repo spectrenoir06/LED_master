@@ -28,7 +28,7 @@ LED_Master
     - [x] RLE888
     - [x] BRO888 (brotli)
     - [x] Z888 (zlib)
-    - [ ] udpx
+    - [x] udpx
   - Player
     - Shader
       - [x] Fragment Shader
