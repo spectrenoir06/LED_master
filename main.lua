@@ -20,7 +20,6 @@ local counter = 0
 
 time = 0
 
-
 require("color")
 
 function love.load(arg)

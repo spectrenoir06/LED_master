@@ -63,8 +63,8 @@ function love.conf(t)
 		identifier = "org.spectre.led-master.",
 		excludeFileList = {'build'},
 		compile = true,
-		projectDirectory = '/home/spectre/dev/lua/love2d/led_streamer',
-		releaseDirectory = '/home/spectre/dev/lua/love2d/led_streamer/releases',
+		projectDirectory = '/home/spectre/dev/lua/love2d/LED_master',
+		releaseDirectory = '/home/spectre/dev/lua/love2d/LED_master/releases',
 	}
 
 end
