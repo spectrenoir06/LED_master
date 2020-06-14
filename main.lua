@@ -82,7 +82,7 @@ function love.load(arg)
 		maps[v].name = v
 	end
 
-	mapping = maps["42.map"]
+	mapping = maps["42_party.map"]
 	local lx = mapping.lx
 	local ly = mapping.ly
 

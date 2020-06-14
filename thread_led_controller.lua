@@ -7,7 +7,6 @@ local LEDsController = require("LEDsController")
 local nodes = {}
 local nodes_map = {}
 local pixel_map = {}
-local ctn = 0
 
 local sync, debug = ...
 -- local delay = 1/fps/2
@@ -39,8 +38,7 @@ while true do
 				end
 			end
 			for k,v in ipairs(nodes) do
-				v:send(0, true, ctn)
-				ctn = ctn + 1
+				v:send(0, true)
 			end
 			-- if sync then controller:sendArtnetSync() end
 		elseif d.type == "nodes" then

@@ -11,7 +11,7 @@
 			"ip":       "192.168.4.1",
 			"port":     6454,
 			"rgbw":     false,
-			"protocol": "artnet_big",
+			"protocol": "Z888",
 			"led_nb":   307,
 		},
 	],
