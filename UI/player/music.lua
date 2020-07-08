@@ -6,6 +6,7 @@ local music = {}
 local abs = math.abs
 local new = complex.new
 local floor = math.floor
+local pow = math.pow
 
 local function lerp(a, b, t)
 	-- return a + (b - a) * t
@@ -28,10 +29,26 @@ function music:fft(sdata, start, size, dec)
 	for i=0, size-1 do
 		local pos = start+i*(dec or 1)
 		if pos >= sdata:getSampleCount() then pos = sdata:getSampleCount()-1 end
-		List[#List+1] = new(sdata:getSample(pos, 1), 0) * self.multiplier[i+1]
+		List[#List+1] = new(sdata:getSample(pos, 1), 0)
 	end
 
-	return fft(List, false)
+	-- local a = 0.97
+	local a = 0.90
+	for i=size, 2, -1 do
+		List[i] = List[i] - a * List[i-1] -- Pre-Emphasis
+	end
+
+	for i=1, size do
+		List[i] = List[i] * self.multiplier[i+1] -- Window
+	end
+
+	local r = fft(List, false)
+
+	-- for i=1, size/2 do
+	-- 	r[i] = pow(r[i], 0.8)
+	-- end
+
+	return r
 end
 
 function music:spectre_update(dt)
@@ -54,11 +71,27 @@ function music:spectre_update(dt)
 			-- self.spectre_old = self.spectre
 			self.spectre = self:fft(self.soundData, self.sound:tell("samples"), self.fft_bin, self.fft_dec)
 			self.fft_timer = 0
+
+
+			-- fbank = numpy.zeros((
+			-- 	nfilt,
+			-- 	int(numpy.floor(NFFT / 2 + 1))
+			-- ))
+			-- for m in range(1, nfilt + 1):
+			-- f_m_minus = int(bin[m - 1])   # left
+			-- f_m = int(bin[m])             # center
+			-- f_m_plus = int(bin[m + 1])    # right
+			--
+			-- for k in range(f_m_minus, f_m):
+			-- 	fbank[m - 1, k] = (k - bin[m - 1]) / (bin[m] - bin[m - 1])
+			-- for k in range(f_m, f_m_plus):
+			-- 	fbank[m - 1, k] = (bin[m + 1] - k) / (bin[m + 1] - bin[m])
+
 		end
 	end
 
 	if self.canvas_timer  > (1/mapping.fps) then
-		for i=0, self.fft_bin-1 do
+		for i=0, self.fft_bin/2-1 do
 			self.spectre_disp[i+1] = lerp(self.spectre_disp[i+1], self.spectre[i+1] * self.slider_amp:GetValue() / 100, self.slider_lerp:GetValue())
 		end
 
@@ -72,9 +105,9 @@ function music:spectre_update(dt)
 		end
 
 		-- if self.mic_checkbox:GetChecked() and self.mic then
-		-- 	print(id, max, (id-1) * self.mic:getSampleRate() / self.fft_bin)
+		-- 	print(id, max, (id-1) * self.mic:getSampleRate() / self.fft_bin / 2)
 		-- else
-		-- 	print(id, max, (id-1) * self.soundData:getSampleRate() / self.fft_bin)
+		-- 	print(id, max, (id-1) * self.soundData:getSampleRate() / self.fft_bin /2)
 		-- end
 
 		self.fft_canvas:renderTo(function()
@@ -382,7 +415,7 @@ function music:reload()
 
 	self.multiplier = {}
 	for i=0, self.fft_bin do
-		self.multiplier[i+1] = .5 * (1 - math.cos(2*math.pi*i/(self.fft_bin-1)));
+		self.multiplier[i+1] = .5 * (1 - math.cos(2*math.pi*i/(self.fft_bin-1))) -- Hamming Window
 	end
 end
 
