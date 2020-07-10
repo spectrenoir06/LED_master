@@ -1,6 +1,19 @@
 LED_Master
 ============
 
+LEDs master is a software for controlling big RGB LED matrix.
+
+It work on PC ( Windows / OSX / Linux ) and on smartphone ( Android / IOS )
+
+You can load shaders, musics, microphone, videos and custom scripts to create live animation.
+
+And stream them to nodes using art-net or to my [Wifi LEDs driver](https://antoine.doussaud.org/esp32_LED) using Zlib compression
+
+![](img/3.png)
+![](img/1.png)
+<!-- ![](img/2.png) -->
+
+
 ## Dependencies
  - You need to install [Löve](https://love2d.org/#download)
 
@@ -23,7 +36,7 @@ LED_Master
 - For this you need to add your ressource on the ressource folder locate at:
   - Windows: `C:\Users\user\AppData\Roaming\LOVE`
    - Mac: `/Users/user/Library/Application Support/LOVE`
-   - Linux: `~/.local/share/love` 
+   - Linux: `~/.local/share/love`
 - Or you can directly drag and drop your files on the window when LEDs master is running.
 
 
