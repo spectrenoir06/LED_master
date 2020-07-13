@@ -38,6 +38,8 @@ And stream them to nodes using art-net or to my [Wifi LEDs driver](https://antoi
    - Mac: `/Users/user/Library/Application Support/LOVE`
    - Linux: `~/.local/share/love`
 - Or you can directly drag and drop your files on the window when LEDs master is running.
+- video must be convert to ogv `ffmpeg -i input.mp4 -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 1 output.ogv`
+)
 
 
 ## Roadmap
