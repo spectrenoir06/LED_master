@@ -282,6 +282,17 @@ function love.keypressed(key, scancode, isrepeat)
 	local lx, ly = canvas:getDimensions()
 	loveframes.keypressed(key, unicode)
 
+	if key == "space" then
+		azerty = azerty or 0
+		local data = canvas:newImageData()
+		data:encode("png", "test"..azerty..".png")
+		local compressedData = love.data.compress( "string", "zlib", data:getString() )
+		love.filesystem.write( "test"..azerty..".zlib", compressedData)
+		love.filesystem.write( "test"..azerty..".raw", data:getString())
+
+		azerty = azerty + 1
+	end
+
 	if key == "up" then
 		ly = ly + 1
 	elseif key == "down" and canvas:getHeight() > 1 then
