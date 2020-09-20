@@ -1,5 +1,7 @@
 require "love.system"
 require "love.image"
+require "love.filesystem"
+require "lib.dither"
 local socket = require("socket")
 
 local LEDsController = require("LEDsController")
@@ -27,6 +29,7 @@ while true do
 	if d then
 		if d.type == "image" then
 			local img_data = d.data
+			-- dither_fs(img_data, 5, 6, 5)
 			local lx, ly = img_data:getDimensions()
 			for k,v in ipairs(pixel_map) do
 				if v.x >= 0 and v.x < lx and v.y >= 0 and v.y < ly then
@@ -63,6 +66,8 @@ while true do
 			for k,v in ipairs(nodes) do
 				v.rgbw_mode = d.data
 			end
+		elseif d.type == "dump" then
+			nodes[1]:start_dump("Z565", os.time(os.date("!*t")))
 		end
 	end
 	--

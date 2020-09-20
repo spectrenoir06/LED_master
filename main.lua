@@ -42,12 +42,52 @@ function love.load(arg)
 	-- light1:setCT(3500)
 	-- light2:setCT(3500)
 
+	-- local list = love.filesystem.getDirectoryItems("dump/")
+	-- -- canvas = love.graphics.newCanvas( 64, 64 )
+	-- local imageData = love.image.newImageData( 64, 64 )
+	-- print("Load animimation:")
+	-- for k,v in ipairs(list) do
+	-- 	local pos = 1
+	-- 	print("    "..v)
+	-- 	local tmp = love.filesystem.read("dump/"..v)
+		
+	-- 	local type, fps, nb = love.data.unpack("bHH", tmp, pos)
+	-- 	pos = pos + 5
+	-- 	local frame = 0
+	-- 	while pos < #tmp do
+	-- 		-- print("Frame:", frame)
+	-- 		local size = love.data.unpack("H", tmp, pos)
+	-- 		-- print(tmp:sub(pos+1):byte(), size)
+	-- 		local data = love.data.decompress( "string", "zlib", tmp:sub(pos+2))
+	-- 			-- for y=0,63 do
+	-- 			-- 	for x=0,63 do
+	-- 			-- 		local id = x+y*64
+	-- 			-- 		local c1 = data:byte(id*2+1)
+	-- 			-- 		local c2 = data:byte(id*2+2)
+						
+	-- 			-- 		-- local r,g,b = conv565to888(c1 + c2 * 255)
+	-- 			-- 		-- print(c1+c2*256, r, g, b)
+	-- 			-- 		-- imageData:setPixel(x, y, r/255, g/255, b/255, 1)
+	-- 			-- 	end
+	-- 			-- end
+	-- 		-- imageData:encode("png", v.."_"..frame..".png")
+
+	-- 		print(#data)
+	-- 		-- print(data:getSize())
+	-- 		pos = pos + size + 2
+	-- 		-- print(size)
+	-- 		frame = frame + 1
+	-- 	end 
+	-- 	print("  ", type, fps, nb, frame, frame / 60, #tmp)
+	-- end
+
 
 	love.filesystem.createDirectory("ressource/music")
 	love.filesystem.createDirectory("ressource/shader")
 	love.filesystem.createDirectory("ressource/script")
 	love.filesystem.createDirectory("ressource/video")
 	love.filesystem.createDirectory("ressource/map")
+	love.filesystem.createDirectory("dump")
 
 	local thread = love.thread.newThread("thread_led_controller.lua")
 
@@ -119,6 +159,7 @@ function love.load(arg)
 	bgimage = image
 
 	print("Save dir:",love.filesystem.getSaveDirectory())
+
 end
 
 function love.joystickpressed( joystick, button )
@@ -283,14 +324,16 @@ function love.keypressed(key, scancode, isrepeat)
 	loveframes.keypressed(key, unicode)
 
 	if key == "space" then
-		azerty = azerty or 0
-		local data = canvas:newImageData()
-		data:encode("png", "test"..azerty..".png")
-		local compressedData = love.data.compress( "string", "zlib", data:getString() )
-		love.filesystem.write( "test"..azerty..".zlib", compressedData)
-		love.filesystem.write( "test"..azerty..".raw", data:getString())
+		-- azerty = azerty or 0
+		-- local data = canvas:newImageData()
+		-- data:encode("png", "test"..azerty..".png")
+		-- local compressedData = love.data.compress( "string", "zlib", data:getString() )
+		-- love.filesystem.write( "test"..azerty..".zlib", compressedData)
+		-- love.filesystem.write( "test"..azerty..".raw", data:getString())
 
-		azerty = azerty + 1
+		-- azerty = azerty + 1
+
+		channel_data:push({type = "dump"})
 	end
 
 	if key == "up" then

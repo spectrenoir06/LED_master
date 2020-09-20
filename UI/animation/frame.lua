@@ -1,3 +1,5 @@
+require "lib.dither"
+
 local animation = {}
 
 function animation:load(loveframes)
@@ -31,9 +33,16 @@ function animation:load(loveframes)
 	panel.Draw = function(object)
 		-- local b = 0.5 + shaders_param.bright / 2
 		local b = 1
+		local img = nil
+		if false then
+			local data = canvas:newImageData()
+			dither_fs(data, 5, 6, 5)
+			img = love.graphics.newImage(data)
+		end
+
 		love.graphics.setColor(b, b, b)
 		love.graphics.draw(
-			canvas,
+			img or canvas,
 			object:GetX(),
 			object:GetY(),
 			0,

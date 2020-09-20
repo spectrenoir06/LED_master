@@ -139,3 +139,19 @@ function hsvToRgb(h, s, v, a)
 
   return r, g, b, a
 end
+
+
+local bit = require("bit")
+local band = bit.band
+local lshift, rshift = bit.lshift, bit.rshift
+
+local RGB565_MASK_RED       = 0xF800
+local RGB565_MASK_GREEN     = 0x07E0
+local RGB565_MASK_BLUE      = 0x001F
+
+function conv565to888(c)
+  local r = lshift(rshift(band(c, RGB565_MASK_RED),  11), 3)%256
+  local g = lshift(rshift(band(c, RGB565_MASK_GREEN), 5), 2)%256
+  local b = lshift(band(c, RGB565_MASK_BLUE), 3)
+	return r, g, b
+end
