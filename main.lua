@@ -14,7 +14,7 @@ local frame_player       = require("UI.player.frame")
 local frame_settings     = require("UI.settings.frame")
 
 local timer = 0
-local debug = false
+local debug = true
 local sync = false
 local counter = 0
 
@@ -217,6 +217,10 @@ function love.update(dt)
 	if timer > (1 / mapping.fps) then
 		local data = canvas:newImageData()
 		-- if last_id then channel_data:hasRead(last_id) end
+		if channel_data:getCount()>0 then
+			channel_data:clear()
+		end
+
 		last_id = channel_data:push({type= "image", data = data})
 		timer = timer - (1 / mapping.fps)
 		need_draw = true
@@ -412,6 +416,7 @@ function love.filedropped(file)
 end
 
 function love.quit()
+	channel_data:push({type = "stop"})
 	-- light1:setPower("on", 2000)
 	-- light2:setPower("on", 2000)
 end

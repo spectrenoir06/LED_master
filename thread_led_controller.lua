@@ -45,6 +45,9 @@ while true do
 			end
 			-- if sync then controller:sendArtnetSync() end
 		elseif d.type == "nodes" then
+			for k,v in ipairs(nodes) do
+				v:stop()
+			end
 			nodes = {}
 			for k,v in ipairs(d.data) do
 				v.udp = udp
@@ -68,6 +71,10 @@ while true do
 			end
 		elseif d.type == "dump" then
 			nodes[1]:start_dump("Z565", os.time(os.date("!*t")))
+		elseif d.type == "stop" then
+			for k,v in ipairs(nodes) do
+				v:stop()
+			end
 		end
 	end
 	--
