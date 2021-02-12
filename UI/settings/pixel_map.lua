@@ -124,7 +124,7 @@ function pixel_map:reload()
 	local l = 0.8
 
 	local channel_data = love.thread.getChannel("data")
-	channel_data:push({type = "map", data = mapping.map})
+	channel_data:supply({type = "map", data = mapping.map})
 
 	for x=1,mapping.lx do
 		for y=1,mapping.ly do

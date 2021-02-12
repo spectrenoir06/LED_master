@@ -245,8 +245,8 @@ function load_save:load(loveframes, frame, tabs, start_y, step_y)
 		print("OnRowSelected", data[1])
 		mapping = maps[data[1]]
 		local channel_data = love.thread.getChannel("data")
-		channel_data:push({type = "map", data = mapping.map})
-		channel_data:push({type = "nodes", data = mapping.nodes})
+		channel_data:supply({type = "map", data = mapping.map})
+		channel_data:supply({type = "nodes", data = mapping.nodes})
 
 		canvas = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})
 		canvas_test = love.graphics.newCanvas(mapping.lx, mapping.ly, {dpiscale = 1, mipmaps = "none"})

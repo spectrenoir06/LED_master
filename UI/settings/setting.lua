@@ -76,7 +76,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 	self.slider_bright.OnValueChanged = function(object)
 		self.slider_bright_text:SetText("Bright: "..(math.floor(self.slider_bright:GetValue()*100)/100*100).." %")
 		shaders_param.bright = self.slider_bright:GetValue()
-		love.thread.getChannel('data'):push({ type = "bright", data = self.slider_bright:GetValue()})
+		love.thread.getChannel('data'):supply({ type = "bright", data = self.slider_bright:GetValue()})
 	end
 
 	self.choice_rgbw_text = loveframes.Create("text", panel_setting)
@@ -107,7 +107,7 @@ function setting:load(loveframes, frame, tabs, start_y, step_y)
 		if choice == "Mode 1" then v = 1 end
 		if choice == "Mode 2" then v = 2 end
 		if choice == "Mode 3" then v = 3 end
-		love.thread.getChannel('data'):push({ type = "rgbw", data = v})
+		love.thread.getChannel('data'):supply({ type = "rgbw", data = v})
 	end
 
 	self.choice_fft_size_text = loveframes.Create("text", panel_setting)

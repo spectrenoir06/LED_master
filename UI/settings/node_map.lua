@@ -91,7 +91,7 @@ function node_map:reload()
 		)
 	end
 	local channel_data = love.thread.getChannel("data")
-	channel_data:push({type = "nodes", data = mapping.nodes})
+	channel_data:supply({type = "nodes", data = mapping.nodes})
 end
 
 return node_map

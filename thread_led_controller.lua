@@ -27,6 +27,9 @@ local udp = controller.udp
 while true do
 	local d = data_channel:demand(1)
 	if d then
+		if d.type ~= "image" then
+			print(d.type)
+		end
 		if d.type == "image" then
 			local img_data = d.data
 			-- dither_fs(img_data, 5, 6, 5)

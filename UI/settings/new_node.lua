@@ -71,7 +71,10 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 	self.choice_protocol:AddChoice("Z565")
 	-- self.choice_protocol:AddChoice("UDPX")
 	-- self.choice_protocol:AddChoice("UDPX565")
+	self.choice_protocol:AddChoice("DRGB")
+	self.choice_protocol:AddChoice("DNRGB")
 	self.choice_protocol:SelectChoice("artnet")
+	
 
 	local choice_protocol_text = loveframes.Create("text", panel_node_new)
 	choice_protocol_text:SetPos(8, start_y+step_y*4+6)

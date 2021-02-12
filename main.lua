@@ -14,7 +14,7 @@ local frame_player       = require("UI.player.frame")
 local frame_settings     = require("UI.settings.frame")
 
 local timer = 0
-local debug = true
+local debug = false
 local sync = false
 local counter = 0
 
@@ -143,8 +143,8 @@ function love.load(arg)
 
 	channel_data = love.thread.getChannel("data")
 
-	channel_data:push({type = "map", data = mapping.map})
-	channel_data:push({type = "nodes", data = mapping.nodes})
+	channel_data:supply({type = "map", data = mapping.map})
+	channel_data:supply({type = "nodes", data = mapping.nodes})
 
 	spectre_img = love.graphics.newImage("ressource/image/spectre.png")
 	spectre_img:setFilter("linear", "linear")
@@ -337,7 +337,7 @@ function love.keypressed(key, scancode, isrepeat)
 
 		-- azerty = azerty + 1
 
-		channel_data:push({type = "dump"})
+		channel_data:supply({type = "dump"})
 	end
 
 	if key == "up" then
@@ -416,7 +416,7 @@ function love.filedropped(file)
 end
 
 function love.quit()
-	channel_data:push({type = "stop"})
+	channel_data:supply({type = "stop"})
 	-- light1:setPower("on", 2000)
 	-- light2:setPower("on", 2000)
 end

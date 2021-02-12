@@ -81,7 +81,7 @@ function node_scan:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	self.button_scan.OnClick = function(object, x, y)
 		self.node_list:Clear()
-		love.thread.getChannel("data"):push({type = "poll"})
+		love.thread.getChannel("data"):supply({type = "poll"})
 	end
 end
 
