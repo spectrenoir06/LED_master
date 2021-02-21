@@ -11,11 +11,12 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	self.node_list:AddColumn("net").children[1].width = 30
 	self.node_list:AddColumn("sub").children[2].width = 30
-	self.node_list:AddColumn("ip").children[3].width = 80
-	self.node_list:AddColumn("port").children[4].width = 40
-	self.node_list:AddColumn("protocol").children[5].width = 50
-	self.node_list:AddColumn("RGBW").children[6].width = 40
-	self.node_list:AddColumn("LEDs nb").children[7].width = 50
+	self.node_list:AddColumn("uni").children[3].width = 30
+	self.node_list:AddColumn("ip").children[4].width = 80
+	self.node_list:AddColumn("port").children[5].width = 40	
+	self.node_list:AddColumn("protocol").children[6].width = 50
+	self.node_list:AddColumn("RGBW").children[7].width = 40
+	self.node_list:AddColumn("LEDs nb").children[8].width = 50
 
 	self.button_add = loveframes.Create("button", self.panel_node_map)
 	self.button_add:SetWidth(130)
@@ -35,8 +36,9 @@ function node_map:load(loveframes, frame, tabs, start_y, step_y, parent)
 	local function edit_node()
 		tabs:SetVisible(false)
 		local data = self.node_list:GetSelectedRows()[1]:GetColumnData()
-		local net, sub, ip, port, protocol, rgbw, led_nb = data[1], data[2], data[3], data[4], data[5], data[6], data[7]
-		parent.new_node:reload(net, sub, ip, port, protocol, rgbw, led_nb)
+		local net, sub, uni, ip, port, protocol, rgbw, led_nb = data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]
+
+		parent.new_node:reload(net, sub, uni, ip, port, protocol, rgbw, led_nb)
 		parent.new_node.panel_node_new:SetVisible(true)
 		for k,v in ipairs(self.node_list.internals[1].children) do
 			if v == self.node_list:GetSelectedRows()[1] then
@@ -79,9 +81,12 @@ end
 function node_map:reload()
 	self.node_list:Clear()
 	for k,v in ipairs(mapping.nodes) do
+		local uni = (bit.band(v.uni or 0, 0xF))
+		local subnet = bit.rshift(v.uni or 0, 4)
 		self.node_list:AddRow(
 			v.net,
-			v.uni,
+			subnet,
+			uni,
 			v.ip,
 			v.port,
 			v.protocol,

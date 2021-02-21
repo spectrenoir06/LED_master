@@ -1,17 +1,17 @@
 {
 	"lx":  30,
 	"ly":  1,
-	"fps": 60,
+	"fps": 15,
 
 	"nodes":[
 		{
 			"net":      0,
 			"subnet":   0,
 			"uni":      0,
-			"ip":       "192.168.1.146",
+			"ip":       "192.168.1.150",
 			"port":     6454,
 			"rgbw":     false,
-			"protocol": "RGB888",
+			"protocol": "artnet",
 			"led_nb":   30,
 		},
 	],

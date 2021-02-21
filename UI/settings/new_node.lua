@@ -33,8 +33,76 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 	panel_node_new:SetPos(8, 30)
 	panel_node_new:SetSize(frame:GetWidth()-16, frame:GetHeight()-8-30)
 
-	self.numberbox_net = new_numberbox("Net", 8, start_y+step_y*0, 0, 127, panel_node_new, loveframes)
-	self.numberbox_sub = new_numberbox("Sub-net", 8, start_y+step_y*1, 0, 255, panel_node_new, loveframes)
+	-- self.numberbox_net = new_numberbox("Net", 8, start_y+step_y*0, 0, 127, panel_node_new, loveframes)
+	-- self.numberbox_sub = new_numberbox("Sub-net", 8, start_y+step_y*1, 0, 255, panel_node_new, loveframes)
+	-- self.numberbox_uni = new_numberbox("Universe", 8, start_y+step_y*2, 0, 255, panel_node_new, loveframes)
+
+	self.net = loveframes.Create("numberbox", panel_node_new)
+	self.net:SetPos(70+8, start_y+step_y*1)
+	self.net:SetSize(100, 25)
+	self.net:SetWidth(60)
+	self.net:SetMinMax(0, 127)
+	self.net:SetValue(0)
+
+	self.net_text = loveframes.Create("text", panel_node_new)
+	self.net_text:SetPos(70+8, start_y+step_y*0+8)
+	self.net_text:SetText("Net:")
+	self.net_text:SetFont(small_font)
+
+	self.net:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.net:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+	self.subnet = loveframes.Create("numberbox", panel_node_new)
+	self.subnet:SetPos(70+8+59, start_y+step_y*1)
+	self.subnet:SetSize(100, 25)
+	self.subnet:SetWidth(45)
+	self.subnet:SetMinMax(0, 15)
+	self.subnet:SetValue(0)
+
+	self.subnet_text = loveframes.Create("text", panel_node_new)
+	self.subnet_text:SetPos(70+8+59, start_y+step_y*0+8)
+	self.subnet_text:SetText("Subnet:")
+	self.subnet_text:SetFont(small_font)
+
+	self.subnet:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.subnet:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+
+	self.uni = loveframes.Create("numberbox", panel_node_new)
+	self.uni:SetPos(70+8+103, start_y+step_y*1)
+	self.uni:SetSize(100, 25)
+	self.uni:SetWidth(45)
+	self.uni:SetMinMax(0, 15)
+	self.uni:SetValue(0)
+
+	self.uni_text = loveframes.Create("text", panel_node_new)
+	self.uni_text:SetPos(70+8+103, start_y+step_y*0+8)
+	self.uni_text:SetText("Uni:")
+	self.uni_text:SetFont(small_font)
+
+	-- self.uni.OnValueChanged = function(obj, value)
+	-- 	self:preview()
+	-- end
+
+	self.uni:GetInternals()[1].OnFocusGained = function(object, value)
+		love.keyboard.setTextInput(true, frame:GetX(), frame:GetY(), frame:GetWidth(), frame:GetHeight())
+	end
+
+	self.uni:GetInternals()[1].OnFocusLost = function(object, value)
+		love.keyboard.setTextInput(false)
+	end
+
+
 	self.numberbox_port = new_numberbox("Port", 8, start_y+step_y*3, 0, 65535, panel_node_new, loveframes)
 	self.numberbox_LED_nb = new_numberbox("LED nb", 8, start_y+step_y*6, 0, 65535, panel_node_new, loveframes)
 
@@ -111,8 +179,9 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	add_button.OnClick = function()
 		local t = {}
-		t.net = self.numberbox_net:GetValue()
-		t.uni = self.numberbox_sub:GetValue()
+		t.net = self.net:GetValue()
+		t.subnet = self.subnet:GetValue()
+		t.uni = self.uni:GetValue()
 		t.ip = self.ip_textinput:GetText()
 		t.port = self.numberbox_port:GetValue()
 		t.rgbw = self.rgbw_checkbox:GetChecked()
@@ -138,8 +207,8 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 
 	panel_node_new.Update = function(object, dt)
 		local lx = object:GetWidth()
-		self.numberbox_net:SetWidth(lx-16-70)
-		self.numberbox_sub:SetWidth(lx-16-70)
+		-- self.numberbox_net:SetWidth(lx-16-70)
+		-- self.numberbox_sub:SetWidth(lx-16-70)
 		self.ip_textinput:SetWidth(lx-16-70)
 		self.numberbox_port:SetWidth(lx-16-70)
 		self.choice_protocol:SetWidth(lx-16-70)
@@ -157,10 +226,13 @@ function new_node:load(loveframes, frame, tabs, start_y, step_y, parent)
 	return panel_node_new
 end
 
-function new_node:reload(net, sub, ip, port, protocol, rgbw, led_nb)
-	print(net, sub, ip, port, protocol, type(rgbw), led_nb)
-	self.numberbox_net:SetValue(net or 0)
-	self.numberbox_sub:SetValue(sub or 0)
+function new_node:reload(net, sub, uni, ip, port, protocol, rgbw, led_nb)
+	print(net, sub, uni, ip, port, protocol, type(rgbw), led_nb)
+	
+	self.net:SetValue(net or 0)
+	self.subnet:SetValue(sub)
+	self.uni:SetValue(uni)
+
 	self.ip_textinput:SetText(ip or "192.168.1.1")
 	self.numberbox_port:SetValue(port or 6454)
 	self.choice_protocol:SelectChoice(protocol or "artnet")
