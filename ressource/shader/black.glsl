@@ -1,4 +1,4 @@
-#pragma language glsl3
+// #pragma language glsl3
 
 vec4 effect( vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {

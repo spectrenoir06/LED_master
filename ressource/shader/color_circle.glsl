@@ -1,4 +1,4 @@
-#pragma language glsl3
+// #pragma language glsl3
 
 uniform highp float density;
 uniform highp float iTime;
