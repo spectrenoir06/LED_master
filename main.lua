@@ -122,7 +122,8 @@ function love.load(arg)
 		maps[v].name = v
 	end
 
-	mapping = maps["42_party.map"]
+	print(arg[1])
+	mapping = maps[arg[1] or "42_party.map"]
 	local lx = mapping.lx
 	local ly = mapping.ly
 
@@ -138,7 +139,7 @@ function love.load(arg)
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes)
-	frame_player_frame = frame_player:load(loveframes)
+	frame_player_frame = frame_player:load(loveframes, arg[2])
 	frame_settings:load(loveframes)
 
 	channel_data = love.thread.getChannel("data")
@@ -158,7 +159,7 @@ function love.load(arg)
 	bgquad = love.graphics.newQuad(0, 0, width, height, image:getWidth(), image:getHeight())
 	bgimage = image
 
-	print("Save dir:",love.filesystem.getSaveDirectory())
+	print("Save dir:", love.filesystem.getSaveDirectory())
 
 end
 

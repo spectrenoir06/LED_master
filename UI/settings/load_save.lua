@@ -271,11 +271,15 @@ end
 
 function load_save:load_list()
 	self.list:Clear()
+	local i = 1
 	for k,v in pairs(maps) do
 		self.list:AddRow(v.name, v.lx, v.ly, v.fps, #v.nodes, #v.map, false)
+		if mapping.name == v.name then
+			self.list:SelectRow(self.list.internals[1].children[i])
+		end
+		i = i + 1
 	end
 	self.list.internals[1]:Sort(1, true)
-	self.list:SelectRow(self.list.internals[1].children[1])
 end
 
 function load_save:checkChange()

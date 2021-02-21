@@ -6,7 +6,7 @@ local script = require "UI.player.script"
 
 local player = {}
 
-function player:load(loveframes)
+function player:load(loveframes, nb)
 	local frame = loveframes.Create("frame")
 	frame:SetName("Player")
 
@@ -44,7 +44,7 @@ function player:load(loveframes)
 	video:load(loveframes, frame, tabs, start_y, step_y)
 	script:load(loveframes, frame, tabs, start_y, step_y)
 
-	tabs:SwitchToTab(1)
+	tabs:SwitchToTab(tonumber(nb) or 1)
 	script.choice_script:SelectChoice("snake.lua")
 
 	frame.Update = function(obj, dt)
