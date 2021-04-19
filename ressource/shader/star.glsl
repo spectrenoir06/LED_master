@@ -1,6 +1,5 @@
 // #pragma language glsl3
 
-uniform highp float density;
 uniform highp float iTime;
 uniform vec3 iResolution;
 
@@ -19,8 +18,12 @@ float snoise(vec3 uv, float res)	// by trisomie21
 
 	vec3 f = fract(uv); f = f*f*(3.0-2.0*f);
 
-	vec4 v = vec4(uv0.x+uv0.y+uv0.z, uv1.x+uv0.y+uv0.z,
-		      	  uv0.x+uv1.y+uv0.z, uv1.x+uv1.y+uv0.z);
+	vec4 v = vec4(
+		uv0.x+uv0.y+uv0.z,
+		uv1.x+uv0.y+uv0.z,
+		uv0.x+uv1.y+uv0.z,
+		uv1.x+uv1.y+uv0.z
+	);
 
 	vec4 r = fract(sin(v*1e-3)*1e5);
 	float r0 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);

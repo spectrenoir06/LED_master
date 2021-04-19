@@ -14,7 +14,7 @@ function pokemon:update(dt, lx, ly)
 	love.graphics.setShader()
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.draw(img, math.floor(x)%img:getWidth(), y, 0, k, k)
-	love.graphics.draw(img,  math.floor(x)%img:getWidth()-img:getWidth(), y, 0, k, k)
+	love.graphics.draw(img, math.floor(x)%img:getWidth()-img:getWidth(), y, 0, k, k)
 end
 
 return pokemon

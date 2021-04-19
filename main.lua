@@ -100,12 +100,43 @@ function love.load(arg)
 
 	local list = love.filesystem.getDirectoryItems("ressource/shader/")
 	print("Compile shader:")
+	local i = 1
 	for k,v in ipairs(list) do
-		print("    "..v)
-		shaders[k] = {}
-		shaders[k].shader = love.graphics.newShader("ressource/shader/"..v)
-		shaders[k].name = v
+		local path, filename, extention = v:match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
+		if extention == "glsl" then
+			print("    "..v)
+			shaders[i] = {}
+			shaders[i].shader = love.graphics.newShader("ressource/shader/"..v)
+			shaders[i].name = v
+			shaders[i].param = {}
+
+			local tmp = love.filesystem.read("ressource/shader/"..v:sub(1, -6)..".conf")
+			if tmp then
+				shaders[i].param = json.decode(tmp)
+			else
+				shaders[i].param = {}
+			end
+			table.insert(shaders[i].param,
+			{
+				name = "speed",
+				min= 0,
+				max= 10,
+				default= 1
+			})
+			for _,j in ipairs(shaders[i].param) do
+				print(k,v,j)
+				j.value = j.default or 0
+				print(shaders[i])
+				shaders[i].param[j.name] = j
+			end
+			for k,v in pairs(shaders[i].param) do
+				print("####",k,v, v.value, v.name)
+			end
+			
+			i = i + 1
+		end
 	end
+
 
 	love.graphics.setDefaultFilter("nearest", "nearest", 0)
 
@@ -211,9 +242,7 @@ local last_id = nil
 love.frame = 0
 
 function love.update(dt)
-	timer = timer + dt
-	time = time + (dt * shaders_param.speed)
-	-- print(1/dt)
+	time = time + (dt * (shaders[shader_nb].param["speed"].value))
 
 	if timer > (1 / mapping.fps) then
 		local data = canvas:newImageData()
@@ -227,22 +256,25 @@ function love.update(dt)
 		need_draw = true
 	end
 
-	if shaders[shader_nb] then
-		if shaders[shader_nb].shader:hasUniform('iResolution') then
+	local current_shader = shaders[shader_nb]
+
+	if current_shader then
+		if current_shader.shader:hasUniform('iResolution') then
 			local lx, ly = canvas:getDimensions()
-			shaders[shader_nb].shader:send('iResolution', { lx, ly, 1 })
+			current_shader.shader:send('iResolution', { lx, ly, 1 })
 		end
-		if shaders[shader_nb].shader:hasUniform('iTime') then
-			shaders[shader_nb].shader:send('iTime', time)
+		if current_shader.shader:hasUniform('iTime') then
+			current_shader.shader:send('iTime', time)
 		end
-		if shaders[shader_nb].shader:hasUniform('iMouse') then
+		if current_shader.shader:hasUniform('iMouse') then
 			local lx, ly = love.graphics.getDimensions()
 			local lx, ly = canvas:getDimensions()
-			shaders[shader_nb].shader:send('iMouse', { lx/love.mouse.getX(), ly/love.mouse.getY()})
+			current_shader.shader:send('iMouse', { lx/love.mouse.getX(), ly/love.mouse.getY()})
 		end
-		for k,v in pairs(shaders_param) do
-			if shaders[shader_nb].shader:hasUniform(k) then
-				shaders[shader_nb].shader:send(k,v)
+		for k,v in ipairs(current_shader.param) do
+			-- print(k,v)
+			if current_shader.shader:hasUniform(v.name) then
+				current_shader.shader:send(v.name, v.value)
 			end
 		end
 	end
@@ -338,7 +370,7 @@ function love.keypressed(key, scancode, isrepeat)
 
 		-- azerty = azerty + 1
 
-		channel_data:supply({type = "dump"})
+		-- channel_data:supply({type = "dump"})
 	end
 
 	if key == "up" then
