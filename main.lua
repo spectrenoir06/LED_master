@@ -242,6 +242,7 @@ local last_id = nil
 love.frame = 0
 
 function love.update(dt)
+	timer = timer + 1
 	time = time + (dt * (shaders[shader_nb].param["speed"].value))
 
 	if timer > (1 / mapping.fps) then
