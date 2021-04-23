@@ -60,7 +60,7 @@ function shader:load(loveframes, frame, tabs, start_y, step_y)
 				self.param_panel:SetPos(0, start_y+step_y*1)
 
 				for i,j in ipairs(v.param) do
-					print(i,j)
+					-- print(i,j)
 					j.param_text = loveframes.Create("text", self.param_panel)
 					j.param_text:SetPos(8, step_y*(i-1)+4)
 					j.param_text:SetText(j.name..": "..math.floor(j.value*100)/100)

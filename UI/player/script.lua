@@ -11,17 +11,19 @@ function script:load(loveframes, frame, tabs, start_y, step_y)
 
 	local list = love.filesystem.getDirectoryItems("ressource/script/")
 	local scripts = {}
-	print("Load scripts:")
+	print("\nLoad scripts:")
 	for k,v in ipairs(list) do
 		print("    "..v)
-		scripts[v] = require("ressource/script/"..v:gsub(".lua",""))
-		scripts[v].name = v
+		local name = v:gsub(".lua", "")
+		print(name)
+		scripts[name] = require("ressource/script/"..name)
+		scripts[name].name = name
 	end
 
 	for k,v in pairs(scripts) do
 		self.choice_script:AddChoice(v.name)
 	end
-	self.choice_script:SelectChoice("42.lua")
+	self.choice_script:SelectChoice("42")
 
 
 	panel_script.Update = function(object, dt)
@@ -30,6 +32,7 @@ function script:load(loveframes, frame, tabs, start_y, step_y)
 
 		love.graphics.setCanvas(canvas)
 			love.graphics.setColor(1,1,1,1)
+			-- print(self.choice_script:GetChoice())
 			scripts[self.choice_script:GetChoice()]:update(dt, canvas:getWidth(), canvas:getHeight())
 		love.graphics.setCanvas()
 	end

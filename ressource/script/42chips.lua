@@ -9,7 +9,7 @@ local timer = 0
 local text = "42Chips   "
 local text_w = font:getWidth(text)
 local text_h = font:getHeight()
-print(text_h)
+-- print(text_h)
 
 function script:update(dt, lx, ly)
 	local k = math.max(ly / text_h, 1)

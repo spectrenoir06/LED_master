@@ -292,7 +292,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 		-- end
 	end
 
-	print("Load music:")
+	print("\nLoad music:")
 	for k,v in ipairs(list) do
 		print("    "..v)
 		musics[v] = {}
@@ -311,7 +311,7 @@ function music:load(loveframes, frame, tabs, start_y, step_y)
 	self.choice_mic:SetPos(100, start_y+step_y*4)
 	self.choice_mic:SetSize(panel_music:GetWidth()-130-8, 25)
 
-	print("Load audio in:")
+	print("\nLoad audio in:")
 	if #record_list == 0 then
 		self.choice_mic:AddChoice("No audio in")
 		self.choice_mic:SelectChoice("No audio in")

@@ -99,7 +99,7 @@ function love.load(arg)
 	shader_nb = 1
 
 	local list = love.filesystem.getDirectoryItems("ressource/shader/")
-	print("Compile shader:")
+	print("\nCompile shader:")
 	local i = 1
 	for k,v in ipairs(list) do
 		local path, filename, extention = v:match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
@@ -124,15 +124,11 @@ function love.load(arg)
 				default= 1
 			})
 			for _,j in ipairs(shaders[i].param) do
-				print(k,v,j)
+				-- print(k,v,j)
 				j.value = j.default or 0
-				print(shaders[i])
+				-- print(shaders[i])
 				shaders[i].param[j.name] = j
 			end
-			for k,v in pairs(shaders[i].param) do
-				print("####",k,v, v.value, v.name)
-			end
-			
 			i = i + 1
 		end
 	end
@@ -144,7 +140,7 @@ function love.load(arg)
 
 	local list = love.filesystem.getDirectoryItems("ressource/map/")
 	maps = {}
-	print("Load maps:")
+	print("\nLoad maps:")
 	for k,v in ipairs(list) do
 		print("    "..v)
 		local tmp = love.filesystem.read("ressource/map/"..v)
@@ -153,7 +149,7 @@ function love.load(arg)
 		maps[v].name = v
 	end
 
-	print(arg[1])
+	-- print(arg[1])
 	mapping = maps[arg[1] or "42_party.map"]
 	local lx = mapping.lx
 	local ly = mapping.ly

@@ -45,7 +45,7 @@ function player:load(loveframes, nb)
 	script:load(loveframes, frame, tabs, start_y, step_y)
 
 	tabs:SwitchToTab(tonumber(nb) or 1)
-	script.choice_script:SelectChoice("snake.lua")
+	-- script.choice_script:SelectChoice("snake.lua")
 
 	frame.Update = function(obj, dt)
 		music:spectre_update(dt)

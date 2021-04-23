@@ -46,7 +46,7 @@ function video:load(loveframes, frame, tabs, start_y, step_y)
 		video_progressbar:SetMinMax(0, math.floor(self.video_source:getDuration()))
 	end
 
-	print("Load Video:")
+	print("\nLoad Video:")
 	for k,v in ipairs(list) do
 		print("    "..v)
 		videos[v] = {}
