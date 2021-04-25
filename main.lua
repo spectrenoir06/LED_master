@@ -166,7 +166,7 @@ function love.load(arg)
 	-- loveframes.SetActiveSkin("Dark red")
 
 	frame_animation:load(loveframes)
-	frame_player_frame = frame_player:load(loveframes, arg[2])
+	frame_player_frame = frame_player:load(loveframes, arg)
 	frame_settings:load(loveframes)
 
 	channel_data = love.thread.getChannel("data")

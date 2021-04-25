@@ -1,6 +1,6 @@
 local script = {}
 
-function script:load(loveframes, frame, tabs, start_y, step_y)
+function script:load(loveframes, frame, tabs, start_y, step_y, select)
 
 	local panel_script = loveframes.Create("panel")
 
@@ -15,7 +15,7 @@ function script:load(loveframes, frame, tabs, start_y, step_y)
 	for k,v in ipairs(list) do
 		print("    "..v)
 		local name = v:gsub(".lua", "")
-		print(name)
+		-- print(name)
 		scripts[name] = require("ressource/script/"..name)
 		scripts[name].name = name
 	end
@@ -23,7 +23,14 @@ function script:load(loveframes, frame, tabs, start_y, step_y)
 	for k,v in pairs(scripts) do
 		self.choice_script:AddChoice(v.name)
 	end
-	self.choice_script:SelectChoice("42")
+
+	self.choice_script.OnChoiceSelected = function(object, choice)
+		if scripts[choice].load then
+			scripts[choice]:load(canvas:getWidth(), canvas:getHeight())
+		end
+	end
+
+	self.choice_script:SelectChoice(select or "42")
 
 
 	panel_script.Update = function(object, dt)
