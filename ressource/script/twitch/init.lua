@@ -4,7 +4,7 @@ local path = ...
 require(path.."/irc")
 
 local nick    = "spectrenoir06_bot"
-local oauth   = ""
+local oauth   = "" 
 local channel = "spectrenoir06"
 
 local div = 1
@@ -25,6 +25,7 @@ love.filesystem.createDirectory("cache")
 love.filesystem.createDirectory("cache/emotes")
 
 function twitch:load(lx, ly)
+	self.connect = false
 	self.irc = irc.new{nick = nick}
 
 	self.font = love.graphics.newFont(ly*0.9/div)
@@ -120,28 +121,46 @@ function twitch:load(lx, ly)
 		end
 	)
 
-	self.irc:connect({
-		host = "irc.chat.twitch.tv",
-		password = "oauth:"..oauth,
-	}, 6667)
-	print("connect")
-	
-	self.irc:join("#"..channel)
-	self.irc:send("CAP REQ :twitch.tv/tags twitch.tv/commands")
-	self.irc:think()
-	
-	-- self.irc:sendChat("#"..channel, "bonsoir @"..channel)
+	if #oauth<1 then
+		print("please enter a valide oauth", err)
+		local msg = {
+			data = {{text = "please enter a valide oauth", pos = 0}},
+			size = self.font:getWidth("please enter a valide oauth")
+		}
+		table.insert(self.messages, msg)
+	else
+		print("try to connect")
+		local status, err = pcall(
+			self.irc.connect,
+			self.irc,
+			{host = "irc.chat.twitch.tv", password = "oauth:"..oauth},
+			6667
+		)
+		if status then
+			self.connect = true
+			self.irc:join("#"..channel)
+			self.irc:send("CAP REQ :twitch.tv/tags twitch.tv/commands")
+			self.irc:think()
+			-- self.irc:sendChat("#"..channel, "bonsoir @"..channel)
+		else
+			print("can't connect to Twitch", err)
+			local msg = {
+				data = {{text = "can't connect to Twitch",pos = 0}},
+				size = self.font:getWidth("can't connect to Twitch")
+			}
+			table.insert(self.messages, msg)
+		end
+	end
 end
 
 function twitch:update(dt, lx, ly)
-	self.irc:think()
+	if self.connect then self.irc:think() end
 	love.graphics.setFont(self.font)
 	love.graphics.clear(0,0,0,1)
 	
 	if self.messages[1] then
 		local msg = self.messages[1]
-		if not msg.x then msg.x = lx end 
-
+		if not msg.x then msg.x = lx end
 		for k, v in ipairs(msg.data) do
 			if v.em then
 				love.graphics.draw(v.em.img, math.floor(v.pos+ msg.x), 0, 0, v.em.k, v.em.k)
@@ -150,7 +169,7 @@ function twitch:update(dt, lx, ly)
 			end
 		end
 
-		msg.x = msg.x - dt*80
+		msg.x = msg.x - 1/60*80 -- dt*80
 		if msg.x < -msg.size then
 			table.remove( self.messages, 1)
 		end
